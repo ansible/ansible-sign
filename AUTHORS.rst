@@ -2,4 +2,4 @@
 Contributors
 ============
 
-* Rick Elrod <rick@elrod.me>
+* Rick Elrod <relrod@redhat.com>
