@@ -17,6 +17,7 @@ _logger = logging.getLogger(__name__)
 DIFFER_MAP = {
     "git": GitChecksumFileExistenceDiffer,
     "directory": DirectoryChecksumFileExistenceDiffer,
+    "manifest": DistlibManifestChecksumFileExistenceDiffer,
 }
 
 
@@ -80,6 +81,15 @@ def parse_args(args):
         dest="ignore_file_list_differences",
     )
     cmd_validate_checksum.add_argument(
+        "--algorithm",
+        help="Which checksum hashing algorithm to use",
+        required=False,
+        choices=ChecksumFile.MODES,
+        metavar="ALGORITHM",
+        dest="algorithm",
+        default="sha256",
+    )
+    cmd_validate_checksum.add_argument(
         "project_root",
         help="The directory containing the files being validated and verified",
         metavar="PROJECT_ROOT",
@@ -138,6 +148,11 @@ def parse_args(args):
         default="auto",
         choices=list(DIFFER_MAP.keys()) + ["auto"],
     )
+    cmd_checksum_manifest.add_argument(
+        "project_root",
+        help="The directory containing the files being validated and verified",
+        metavar="PROJECT_ROOT",
+    )
     return parser.parse_args(args)
 
 
@@ -176,7 +191,7 @@ def determine_differ_from_auto(project_root):
 
 def validate_checksum(args):
     differ = get_differ(args.scm, args.project_root)
-    checksum = ChecksumFile(args.project_root, differ=differ)
+    checksum = ChecksumFile(args.project_root, differ=differ, mode=args.algorithm)
 
     if not os.path.exists(args.checksum_file):
         print(f"Checksum file does not exist: {args.checksum_file}")
@@ -200,8 +215,15 @@ def validate_gpg_signature(args):
 
 
 def checksum_manifest(args):
-    print("hi")
-
+    differ = get_differ(args.scm, args.project_root)
+    checksum = ChecksumFile(args.project_root, differ=differ, mode=args.algorithm)
+    checksum_file_contents = checksum.generate_gnu_style()
+    if args.output == "-":
+        print(checksum_file_contents)
+    else:
+        with open(args.output, 'w') as f:
+            f.write(checksum_file_contents)
+            print(f"Wrote {args.output}")
 
 def main(args):
     """Wrapper allowing :func:`fib` to be called with string arguments in a CLI fashion
