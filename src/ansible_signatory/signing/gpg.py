@@ -13,7 +13,10 @@ import sys
 import tempfile
 
 from ansible_signatory import __version__
-from ansible_signatory.signing.base import SignatureVerifier, SignatureVerificationResult
+from ansible_signatory.signing.base import (
+    SignatureVerifier,
+    SignatureVerificationResult,
+)
 
 __author__ = "Rick Elrod"
 __copyright__ = "(c) 2022 Red Hat, Inc."

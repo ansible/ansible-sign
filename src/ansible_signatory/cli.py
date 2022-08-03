@@ -15,9 +15,10 @@ _logger = logging.getLogger(__name__)
 
 
 DIFFER_MAP = {
-    'git': GitChecksumFileExistenceDiffer,
-    'directory': DirectoryChecksumFileExistenceDiffer,
+    "git": GitChecksumFileExistenceDiffer,
+    "directory": DirectoryChecksumFileExistenceDiffer,
 }
+
 
 def parse_args(args):
     """Parse command line parameters
@@ -30,7 +31,9 @@ def parse_args(args):
       :obj:`argparse.Namespace`: command line parameters namespace
     """
 
-    parser = argparse.ArgumentParser(description="Signing and validation for Ansible content")
+    parser = argparse.ArgumentParser(
+        description="Signing and validation for Ansible content"
+    )
     parser.add_argument(
         "--version",
         action="version",
@@ -41,7 +44,7 @@ def parse_args(args):
         help="Print a bunch of debug info",
         action="store_const",
         dest="loglevel",
-        const=logging.DEBUG
+        const=logging.DEBUG,
     )
 
     commands = parser.add_subparsers(required=True, dest="command")
@@ -67,7 +70,7 @@ def parse_args(args):
         metavar="SCM",
         dest="scm",
         default="auto",
-        choices=list(DIFFER_MAP.keys()) + ['auto'],
+        choices=list(DIFFER_MAP.keys()) + ["auto"],
     )
     cmd_validate_checksum.add_argument(
         "--ignore-file-list-differences",
@@ -133,7 +136,7 @@ def parse_args(args):
         metavar="SCM",
         dest="scm",
         default="auto",
-        choices=list(DIFFER_MAP.keys()) + ['auto'],
+        choices=list(DIFFER_MAP.keys()) + ["auto"],
     )
     return parser.parse_args(args)
 
@@ -149,12 +152,14 @@ def setup_logging(loglevel):
         level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
     )
 
+
 def get_differ(scm, project_root):
-    if scm == 'auto':
+    if scm == "auto":
         return determine_differ_from_auto(project_root)
 
     # This key is guaranteed to exist by the arg choices limit
     return DIFFER_MAP[scm]
+
 
 def determine_differ_from_auto(project_root):
     """
@@ -162,11 +167,12 @@ def determine_differ_from_auto(project_root):
     """
 
     root_files = os.listdir(project_root)
-    if '.git' in root_files:
+    if ".git" in root_files:
         return GitChecksumFileExistenceDiffer
-    #if '.svn' in root_files:
+    # if '.svn' in root_files:
     #    return SubversionChecksumFileExistenceDiffer
     return DirectoryChecksumFileExistenceDiffer
+
 
 def validate_checksum(args):
     differ = get_differ(args.scm, args.project_root)
@@ -176,7 +182,7 @@ def validate_checksum(args):
         print(f"Checksum file does not exist: {args.checksum_file}")
         return 1
 
-    checksum_file_contents = open(args.checksum_file, 'r').read()
+    checksum_file_contents = open(args.checksum_file, "r").read()
     manifest = checksum.parse(checksum_file_contents)
 
     try:
@@ -188,11 +194,14 @@ def validate_checksum(args):
 
     print("Checksum validation SUCCEEDED!")
 
+
 def validate_gpg_signature(args):
-    print('hi')
+    print("hi")
+
 
 def checksum_manifest(args):
-    print('hi')
+    print("hi")
+
 
 def main(args):
     """Wrapper allowing :func:`fib` to be called with string arguments in a CLI fashion

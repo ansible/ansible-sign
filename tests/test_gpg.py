@@ -19,14 +19,12 @@ FIXTURES_DIR = os.path.join(
     [
         ("hao-signed", True),
         ("hao-signed-invalid", False),
-    ]
+    ],
 )
 def test_gpg(directory, expected):
     pubkey = open(os.path.join(FIXTURES_DIR, "gpgkeys", "hao_pubkey.txt"), "r").read()
     manifest_path = os.path.join(FIXTURES_DIR, "gpg", directory, "sha256sum.txt")
-    signature_path = os.path.join(
-        FIXTURES_DIR, "gpg", directory, "sha256sum.txt.sig"
-    )
+    signature_path = os.path.join(FIXTURES_DIR, "gpg", directory, "sha256sum.txt.sig")
     verifier = GPGVerifier(
         pubkey,
         manifest_path=manifest_path,
