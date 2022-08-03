@@ -70,7 +70,7 @@ def parse_args(args):
         required=False,
         metavar="SCM",
         dest="scm",
-        default="auto",
+        default="manifest",
         choices=list(DIFFER_MAP.keys()) + ["auto"],
     )
     cmd_validate_checksum.add_argument(
@@ -145,7 +145,7 @@ def parse_args(args):
         required=False,
         metavar="SCM",
         dest="scm",
-        default="auto",
+        default="manifest",
         choices=list(DIFFER_MAP.keys()) + ["auto"],
     )
     cmd_checksum_manifest.add_argument(
@@ -182,6 +182,8 @@ def determine_differ_from_auto(project_root):
     """
 
     root_files = os.listdir(project_root)
+    if "MANIFEST.in" in root_files:
+        return DistlibManifestChecksumFileExistenceDiffer
     if ".git" in root_files:
         return GitChecksumFileExistenceDiffer
     # if '.svn' in root_files:
