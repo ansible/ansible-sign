@@ -13,7 +13,7 @@ class DistlibManifestChecksumFileExistenceDiffer(ChecksumFileExistenceDiffer):
     def gather_files(self):
         files_set = set()
 
-        with open(os.path.join(self.root, 'MANIFEST.in'), 'r') as f:
+        with open(os.path.join(self.root, "MANIFEST.in"), "r") as f:
             manifest_in = f.read()
 
         manifest = Manifest(self.root)
