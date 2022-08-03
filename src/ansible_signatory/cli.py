@@ -59,7 +59,7 @@ def parse_args(args):
     cmd_validate_checksum.set_defaults(func=validate_checksum)
     cmd_validate_checksum.add_argument(
         "--checksum-file",
-        help="The checksum file to use",
+        help="The checksum file to use (default: %(default)s)",
         required=False,
         metavar="CHECKSUM_FILE",
         dest="checksum_file",
@@ -67,7 +67,7 @@ def parse_args(args):
     )
     cmd_validate_checksum.add_argument(
         "--scm",
-        help="The source code management system (if any) storing the files. Used for skipping files that the SCM ignores.",
+        help="The source code management system (if any) storing the files. Used for skipping files that the SCM ignores. (choices: %(choices)s; default: %(default)s)",
         required=False,
         metavar="SCM",
         dest="scm",
@@ -76,14 +76,14 @@ def parse_args(args):
     )
     cmd_validate_checksum.add_argument(
         "--ignore-file-list-differences",
-        help="Do not fail validation even if files have been added or removed, and the current manifest is out of date. Only check those files listed in the manifest.",
+        help="Do not fail validation even if files have been added or removed, and the current manifest is out of date. Only check those files listed in the manifest. (default: %(default)s)",
         default=False,
         action="store_true",
         dest="ignore_file_list_differences",
     )
     cmd_validate_checksum.add_argument(
         "--algorithm",
-        help="Which checksum hashing algorithm to use",
+        help="Which checksum hashing algorithm to use. (default: %(default)s)",
         required=False,
         choices=ChecksumFile.MODES,
         metavar="ALGORITHM",
@@ -104,7 +104,7 @@ def parse_args(args):
     cmd_validate_gpg_signature.set_defaults(func=validate_gpg_signature)
     cmd_validate_gpg_signature.add_argument(
         "--signature-file",
-        help="An optional detached signature file (default: sha256sum.txt.sig)",
+        help="An optional detached signature file. (default: %(default)s)",
         required=False,
         metavar="SIGNATURE_FILE",
         dest="signature_file",
@@ -118,7 +118,7 @@ def parse_args(args):
     )
     cmd_validate_gpg_signature.add_argument(
         "checksum_file",
-        help="The checksum file that was signed",
+        help="The checksum file that was signed. (default: %(default)s)",
         metavar="CHECKSUM_FILE",
         default="sha256sum.txt",
     )
@@ -131,7 +131,7 @@ def parse_args(args):
     cmd_checksum_manifest.set_defaults(func=checksum_manifest)
     cmd_checksum_manifest.add_argument(
         "--algorithm",
-        help="Which checksum hashing algorithm to use",
+        help="Which checksum hashing algorithm to use. (default: %(default)s)",
         required=False,
         choices=ChecksumFile.MODES,
         metavar="ALGORITHM",
@@ -140,7 +140,7 @@ def parse_args(args):
     )
     cmd_checksum_manifest.add_argument(
         "--output",
-        help="An optional filename to which to write the resulting manifest",
+        help="An optional filename to which to write the resulting manifest. (default: %(default)s)",
         required=False,
         metavar="OUTPUT",
         dest="output",
@@ -148,7 +148,7 @@ def parse_args(args):
     )
     cmd_checksum_manifest.add_argument(
         "--scm",
-        help="The source code management system (if any) storing the files. Used for skipping files that the SCM ignores.",
+        help="The source code management system (if any) storing the files. Used for skipping files that the SCM ignores. (choices: %(choices)s; default: %(default)s)",
         required=False,
         metavar="SCM",
         dest="scm",
