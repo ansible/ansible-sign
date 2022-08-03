@@ -137,9 +137,8 @@ class ChecksumFile:
         return "\n".join(lines) + "\n"
 
     def calculate_checksum(self, path):
-        fullpath = os.path.join(self.root, path)
         shasum = hashlib.sha256()
-        with open(fullpath, "rb") as f:
+        with open(path, "rb") as f:
             while True:
                 chunk = f.read(65536)
                 if not chunk:
