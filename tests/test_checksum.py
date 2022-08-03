@@ -43,6 +43,10 @@ def test_simple_gnu_generate():
             DirectoryChecksumFileExistenceDiffer,
         ),
         (
+            "manifest",
+            DistlibManifestChecksumFileExistenceDiffer,
+        ),
+        (
             "git",
             GitChecksumFileExistenceDiffer,
         ),
