@@ -6,6 +6,7 @@ import sys
 from ansible_signatory import __version__
 from ansible_signatory.checksum import ChecksumFile, ChecksumMismatch
 from ansible_signatory.checksum.differ import *
+from ansible_signatory.signing import *
 
 __author__ = "Rick Elrod"
 __copyright__ = "(c) 2022 Red Hat, Inc."
@@ -98,16 +99,22 @@ def parse_args(args):
     # command: validate-gpg-signature
     cmd_validate_gpg_signature = commands.add_parser(
         "validate-gpg-signature",
-        help="Perform GPG signature validation on the checksum manifest (NOT including checksum verification)",
+        help="Perform signature validation on the checksum manifest (NOT including checksum verification)",
     )
     cmd_validate_gpg_signature.set_defaults(func=validate_gpg_signature)
     cmd_validate_gpg_signature.add_argument(
         "--signature-file",
-        help="An optional detached signature file",
+        help="An optional detached signature file (default: sha256sum.txt.sig)",
         required=False,
         metavar="SIGNATURE_FILE",
         dest="signature_file",
         default="sha256sum.txt.sig",
+    )
+    # TODO: Allow using the user's real keyring and accept a fingerprint instead.
+    cmd_validate_gpg_signature.add_argument(
+        "pubkey_file",
+        help="Path to the GPG public key to import",
+        metavar="PUBKEY_FILE",
     )
     cmd_validate_gpg_signature.add_argument(
         "checksum_file",
@@ -216,7 +223,36 @@ def validate_checksum(args):
 
 
 def validate_gpg_signature(args):
-    print("hi")
+    if not os.path.exists(args.signature_file):
+        # It might be nice to try falling back to inline signature if the
+        # detached one is default and does not exist.
+        print(f"Signature file does not exist: {args.signature_file}")
+        return 1
+
+    if not os.path.exists(args.pubkey_file):
+        print(f"Public key file does not exist: {args.pubkey_file}")
+        return 1
+    if not os.path.exists(args.checksum_file):
+        print(f"Checksum file does not exist: {args.checksum_file}")
+        return 1
+
+    # Right now we only handle gpg
+    with open(args.pubkey_file) as f:
+        pubkey = f.read()
+    verifier = GPGVerifier(
+        pubkey,
+        manifest_path=args.checksum_file,
+        detached_signature_path=args.signature_file,
+    )
+    result = verifier.verify()
+    if result.success is True:
+        print("Signature validation SUCCEEDED!")
+        print(result.summary)
+        return 0
+    print("Signature validation FAILED!")
+    print(result.summary)
+    print(result.extra_information)
+    return 3
 
 
 def checksum_manifest(args):
@@ -226,9 +262,10 @@ def checksum_manifest(args):
     if args.output == "-":
         print(checksum_file_contents)
     else:
-        with open(args.output, 'w') as f:
+        with open(args.output, "w") as f:
             f.write(checksum_file_contents)
             print(f"Wrote {args.output}")
+
 
 def main(args):
     """Wrapper allowing :func:`fib` to be called with string arguments in a CLI fashion
