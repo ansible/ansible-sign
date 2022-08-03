@@ -204,6 +204,9 @@ def validate_checksum(args):
 
     try:
         checksum.verify(manifest, diff=not args.ignore_file_list_differences)
+    except InvalidChecksumLine as e:
+        print(f"Invalid line encountered in checksum manifest: {e}")
+        return 1
     except ChecksumMismatch as e:
         print("Checksum validation FAILED!")
         print(str(e))
