@@ -205,12 +205,13 @@ def determine_differ_from_auto(project_root):
 def validate_checksum(args):
     differ = get_differ(args.scm, args.project_root)
     checksum = ChecksumFile(args.project_root, differ=differ, mode=args.algorithm)
+    checksum_file = os.path.join(args.project_root, args.checksum_file)
 
-    if not os.path.exists(args.checksum_file):
-        print(f"Checksum file does not exist: {args.checksum_file}")
+    if not os.path.exists(checksum_file):
+        print(f"Checksum file does not exist: {checksum_file}")
         return 1
 
-    checksum_file_contents = open(args.checksum_file, "r").read()
+    checksum_file_contents = open(checksum_file, "r").read()
     manifest = checksum.parse(checksum_file_contents)
 
     try:
