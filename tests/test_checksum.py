@@ -14,6 +14,21 @@ FIXTURES_DIR = os.path.join(
     "checksum",
 )
 
+DUPLICATE_LINES_FIXTURE = """
+2a1b1ab320215205675234744dc03f028b46da4d94657bbb7dca7b1a3a25e91e  tests/fixtures/checksum/directory-success/hello1
+2a1b1ab320215205675234744dc03f028b46da4d94657bbb7dca7b1a3a25e91e  tests/fixtures/checksum/directory-success/hello1
+""".strip()
+
+# Missing extra space
+INVALID_LINE_FIXTURE1 = """
+2a1b1ab320215205675234744dc03f028b46da4d94657bbb7dca7b1a3a25e91e tests/fixtures/checksum/directory-success/hello1
+""".strip()
+
+# Hash isn't 64 characters long
+INVALID_LINE_FIXTURE2 = """
+2a1b1ab320215205675234744dc03f028b46da4d94657bbb7dca7b1a3a25e91  tests/fixtures/checksum/directory-success/hello1
+""".strip()
+
 
 def test_simple_gnu_generate():
     root = os.path.join(
@@ -33,6 +48,21 @@ def test_simple_gnu_generate():
         "r",
     ).read()
     assert generated_manifest == actual_manifest
+
+
+@pytest.mark.parametrize(
+    "fixture, exc_substr",
+    [
+        (DUPLICATE_LINES_FIXTURE, "Duplicate path in checksum, line 2"),
+        (INVALID_LINE_FIXTURE1, "Unparsable checksum, line 1"),
+        (INVALID_LINE_FIXTURE2, "Unparsable checksum, line 1"),
+    ],
+)
+def test_parse_invalid_manifests(fixture, exc_substr):
+    checksum = ChecksumFile("/tmp", differ=None)
+    with pytest.raises(InvalidChecksumLine) as exc:
+        checksum.parse(fixture)
+    assert exc_substr in str(exc)
 
 
 @pytest.mark.parametrize(
