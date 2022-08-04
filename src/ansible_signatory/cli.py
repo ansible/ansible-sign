@@ -212,13 +212,15 @@ def validate_checksum(args):
         return 1
 
     checksum_file_contents = open(checksum_file, "r").read()
-    manifest = checksum.parse(checksum_file_contents)
 
     try:
-        checksum.verify(manifest, diff=not args.ignore_file_list_differences)
+        manifest = checksum.parse(checksum_file_contents)
     except InvalidChecksumLine as e:
         print(f"Invalid line encountered in checksum manifest: {e}")
         return 1
+
+    try:
+        checksum.verify(manifest, diff=not args.ignore_file_list_differences)
     except ChecksumMismatch as e:
         print("Checksum validation FAILED!")
         print(str(e))
