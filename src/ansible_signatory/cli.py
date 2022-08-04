@@ -100,13 +100,13 @@ def parse_args(args):
         metavar="PROJECT_ROOT",
     )
 
-    # command: validate-gpg-signature
-    cmd_validate_gpg_signature = commands.add_parser(
-        "validate-gpg-signature",
+    # command: gpg-validate-manifest
+    cmd_gpg_validate_manifest = commands.add_parser(
+        "gpg-validate-checksum",
         help="Perform signature validation on the checksum manifest (NOT including checksum verification)",
     )
-    cmd_validate_gpg_signature.set_defaults(func=validate_gpg_signature)
-    cmd_validate_gpg_signature.add_argument(
+    cmd_gpg_validate_manifest.set_defaults(func=gpg_validate_manifest)
+    cmd_gpg_validate_manifest.add_argument(
         "--signature-file",
         help="An optional detached signature file. (default: %(default)s)",
         required=False,
@@ -115,12 +115,40 @@ def parse_args(args):
         default="sha256sum.txt.sig",
     )
     # TODO: Allow using the user's real keyring and accept a fingerprint instead.
-    cmd_validate_gpg_signature.add_argument(
+    cmd_gpg_validate_manifest.add_argument(
         "pubkey_file",
         help="Path to the GPG public key to import",
         metavar="PUBKEY_FILE",
     )
-    cmd_validate_gpg_signature.add_argument(
+    cmd_gpg_validate_manifest.add_argument(
+        "checksum_file",
+        help="The checksum file that was signed. (default: %(default)s)",
+        metavar="CHECKSUM_FILE",
+        default="sha256sum.txt",
+    )
+
+    # command: gpg-sign-manifest
+    # TODO: Allow for inline signatures.
+    cmd_gpg_sign_manifest = commands.add_parser(
+        "gpg-sign-manifest",
+        help="Perform GPG signing on the checksum manifest",
+    )
+    cmd_gpg_sign_manifest.set_defaults(func=gpg_sign_manifest)
+    cmd_gpg_sign_manifest.add_argument(
+        "--output",
+        help="An optional filename to which to write the resulting detached signature. (default: %(default)s)",
+        required=False,
+        metavar="OUTPUT",
+        dest="output",
+        default="sha256sum.txt.sig",
+    )
+    # TODO: Allow using the user's real keyring and accept a fingerprint instead.
+    cmd_gpg_sign_manifest.add_argument(
+        "pubkey_file",
+        help="Path to the GPG public key to import",
+        metavar="PUBKEY_FILE",
+    )
+    cmd_gpg_sign_manifest.add_argument(
         "checksum_file",
         help="The checksum file that was signed. (default: %(default)s)",
         metavar="CHECKSUM_FILE",
@@ -229,7 +257,7 @@ def validate_checksum(args):
     print("Checksum validation SUCCEEDED!")
 
 
-def validate_gpg_signature(args):
+def gpg_validate_manifest(args):
     if not os.path.exists(args.signature_file):
         # It might be nice to try falling back to inline signature if the
         # detached one is default and does not exist.
@@ -260,6 +288,10 @@ def validate_gpg_signature(args):
     print(result.summary)
     print(result.extra_information)
     return 3
+
+
+def gpg_sign_manifest(args):
+    print("todo")
 
 
 def checksum_manifest(args):
