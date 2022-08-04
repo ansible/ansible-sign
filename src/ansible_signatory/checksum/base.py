@@ -29,6 +29,7 @@ class ChecksumFile:
         if differ is not None:
             self.differ = differ(root=self.root)
         else:
+            from .differ.directory import DirectoryChecksumFileExistenceDiffer
             self.differ = DirectoryChecksumFileExistenceDiffer(root=self.root)
         if mode not in self.MODES:
             raise Exception(f"mode argument must be one of: {', '.join(self.MODES)}")
