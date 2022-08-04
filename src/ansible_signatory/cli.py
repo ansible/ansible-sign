@@ -4,7 +4,11 @@ import os
 import sys
 
 from ansible_signatory import __version__
-from ansible_signatory.checksum import ChecksumFile, ChecksumMismatch
+from ansible_signatory.checksum import (
+    ChecksumFile,
+    ChecksumMismatch,
+    InvalidChecksumLine,
+)
 from ansible_signatory.checksum.differ import *
 from ansible_signatory.signing import *
 
