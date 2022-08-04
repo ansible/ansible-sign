@@ -38,6 +38,24 @@ def test_determine_differ_from_auto(fixture, expected):
             "",
             0,
         ),
+        (
+            ["validate-checksum", "--checksum-file=nonexistent", "tests/fixtures/checksum/manifest-success"],
+            "Checksum file does not exist: tests/fixtures/checksum/manifest-success/nonexistent",
+            "",
+            1,
+        ),
+        (
+            ["validate-checksum", "tests/fixtures/checksum/invalid-checksum-1"],
+            "Invalid line encountered in checksum manifest:",
+            "",
+            1,
+        ),
+        (
+            ["validate-checksum", "tests/fixtures/checksum/invalid-checksum-2"],
+            "Invalid line encountered in checksum manifest:",
+            "",
+            1,
+        ),
     ],
 )
 def test_main(capsys, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
