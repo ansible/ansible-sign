@@ -267,7 +267,7 @@ def checksum_manifest(args):
     checksum = ChecksumFile(args.project_root, differ=differ, mode=args.algorithm)
     checksum_file_contents = checksum.generate_gnu_style()
     if args.output == "-":
-        print(checksum_file_contents)
+        print(checksum_file_contents, end="")
     else:
         with open(args.output, "w") as f:
             f.write(checksum_file_contents)
