@@ -22,7 +22,7 @@ class DistlibManifestChecksumFileExistenceDiffer(ChecksumFileExistenceDiffer):
         lines = manifest_in.splitlines()
 
         if verifying:
-            lines = ["include **"] + lines
+            lines = ["global-include *"] + lines
 
         for line in lines:
             manifest.process_directive(line)
