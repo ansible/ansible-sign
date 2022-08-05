@@ -53,10 +53,17 @@ def parse_args(args):
         const=logging.DEBUG,
     )
 
-    commands = parser.add_subparsers(required=True, dest="command")
+    # Future-proofing for future content types.
+    content_type_parser = parser.add_subparsers(required=True, dest="content_type")
+
+    project = content_type_parser.add_parser(
+        "project",
+        help="Act on an Ansible project directory",
+    )
+    project_commands = project.add_subparsers(required=True, dest="command")
 
     # command: validate-checksum
-    cmd_validate_checksum = commands.add_parser(
+    cmd_validate_checksum = project_commands.add_parser(
         "validate-checksum",
         help="Perform checksum file validation (NOT including signature signing)",
     )
@@ -101,7 +108,7 @@ def parse_args(args):
     )
 
     # command: gpg-validate-manifest
-    cmd_gpg_validate_manifest = commands.add_parser(
+    cmd_gpg_validate_manifest = project_commands.add_parser(
         "gpg-validate-checksum",
         help="Perform signature validation on the checksum manifest (NOT including checksum verification)",
     )
@@ -129,7 +136,7 @@ def parse_args(args):
 
     # command: gpg-sign-manifest
     # TODO: Allow for inline signatures.
-    cmd_gpg_sign_manifest = commands.add_parser(
+    cmd_gpg_sign_manifest = project_commands.add_parser(
         "gpg-sign-manifest",
         help="Perform GPG signing on the checksum manifest",
     )
@@ -156,7 +163,7 @@ def parse_args(args):
     )
 
     # command: checksum-manifest
-    cmd_checksum_manifest = commands.add_parser(
+    cmd_checksum_manifest = project_commands.add_parser(
         "checksum-manifest",
         help="Generate a checksum manifest file for the project",
     )

@@ -33,13 +33,18 @@ def test_determine_differ_from_auto(fixture, expected):
     "args, exp_stdout_substr, exp_stderr_substr, exp_rc",
     [
         (
-            ["checksum-manifest", "tests/fixtures/checksum/manifest-success"],
+            [
+                "project",
+                "checksum-manifest",
+                "tests/fixtures/checksum/manifest-success",
+            ],
             "dc920c7f31a4869fb9f94519a4a77f6c7c43c6c3e66b0e57a5bcda52e9b02ce3  dir/hello2",
             "",
             0,
         ),
         (
             [
+                "project",
                 "validate-checksum",
                 "--checksum-file=nonexistent",
                 "tests/fixtures/checksum/manifest-success",
@@ -49,13 +54,21 @@ def test_determine_differ_from_auto(fixture, expected):
             1,
         ),
         (
-            ["validate-checksum", "tests/fixtures/checksum/invalid-checksum-1"],
+            [
+                "project",
+                "validate-checksum",
+                "tests/fixtures/checksum/invalid-checksum-1",
+            ],
             "Invalid line encountered in checksum manifest:",
             "",
             1,
         ),
         (
-            ["validate-checksum", "tests/fixtures/checksum/invalid-checksum-2"],
+            [
+                "project",
+                "validate-checksum",
+                "tests/fixtures/checksum/invalid-checksum-2",
+            ],
             "Invalid line encountered in checksum manifest:",
             "",
             1,
@@ -84,6 +97,7 @@ def test_validate_checksum_via_main_success(capsys, fixture):
         # Ensure that all of the differs work as 'auto' too in their respective
         # fixture directories.
         args = [
+            "project",
             "validate-checksum",
             f"--scm={scm}",
             f"tests/fixtures/checksum/{fixture}-success",
@@ -110,6 +124,7 @@ def test_validate_checksum_via_main_failure(capsys, fixture):
         # Ensure that all of the differs work as 'auto' too in their respective
         # fixture directories.
         args = [
+            "project",
             "validate-checksum",
             f"--scm={scm}",
             f"tests/fixtures/checksum/{fixture}-files-changed",
@@ -127,7 +142,7 @@ def test_validate_checksum_via_main_failure(capsys, fixture):
 
 
 def test_checksum_manifest_output_flag(capsys, tmp_path):
-    args = ["checksum-manifest", "tests/fixtures/checksum/manifest-success"]
+    args = ["project", "checksum-manifest", "tests/fixtures/checksum/manifest-success"]
     rc = main(args)
     captured = capsys.readouterr()
     expected_out = """d2d1320f7f4fe3abafe92765732d2aa6c097e7adf05bbd53481777d4a1f0cdab  MANIFEST.in
@@ -139,6 +154,7 @@ dc920c7f31a4869fb9f94519a4a77f6c7c43c6c3e66b0e57a5bcda52e9b02ce3  dir/hello2
 
     # Now do it again, but write to a file
     args = [
+        "project",
         "checksum-manifest",
         f"--output={tmp_path / 'sha256sum.txt'}",
         "tests/fixtures/checksum/manifest-success",
