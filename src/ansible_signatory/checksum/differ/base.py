@@ -44,9 +44,13 @@ class ChecksumFileExistenceDiffer:
         is what is used to toggle this logic.
         """
         gathered = self.gather_files(verifying=verifying)
-        files = (
-            set(os.path.normpath(f) for f in gathered) - self.ignored_files
-        ) | self.always_added_files
+        files = set(os.path.normpath(f) for f in gathered) - self.ignored_files
+
+        for path in self.always_added_files:
+            if not os.path.exists(os.path.join(self.root, path)):
+                raise FileNotFoundError(path)
+            files.add(path)
+
         return sorted(files)
 
     def compare_filelist(self, checksum_paths):
