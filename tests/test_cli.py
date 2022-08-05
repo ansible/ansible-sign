@@ -130,7 +130,8 @@ def test_checksum_manifest_output_flag(capsys, tmp_path):
     args = ["checksum-manifest", "tests/fixtures/checksum/manifest-success"]
     rc = main(args)
     captured = capsys.readouterr()
-    expected_out = """dc920c7f31a4869fb9f94519a4a77f6c7c43c6c3e66b0e57a5bcda52e9b02ce3  dir/hello2
+    expected_out = """d2d1320f7f4fe3abafe92765732d2aa6c097e7adf05bbd53481777d4a1f0cdab  MANIFEST.in
+dc920c7f31a4869fb9f94519a4a77f6c7c43c6c3e66b0e57a5bcda52e9b02ce3  dir/hello2
 2a1b1ab320215205675234744dc03f028b46da4d94657bbb7dca7b1a3a25e91e  hello1
 """
     assert captured.out == expected_out

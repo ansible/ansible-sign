@@ -135,3 +135,29 @@ def test_directory_diff(
         with pytest.raises(ChecksumMismatch) as ex:
             checksum.verify(parsed_manifest)
         assert str(ex.value) == diff_output
+
+
+def test_manifest_evil_file_added():
+    """
+    Test a specific scenario: We wildcard *.yml but NOT *.yaml.
+    We want to ensure an unexpected evil.yaml blocks validation.
+    """
+
+    root = os.path.join(
+        FIXTURES_DIR,
+        "manifest-files-added-not-in-manifest",
+    )
+    checksum = ChecksumFile(
+        root,
+        differ=DistlibManifestChecksumFileExistenceDiffer,
+    )
+    actual_manifest = open(
+        os.path.join(
+            root,
+            "sha256sum.txt",
+        ),
+        "r",
+    ).read()
+    parsed_manifest = checksum.parse(actual_manifest)
+    with pytest.raises(ChecksumMismatch) as ex:
+        checksum.verify(parsed_manifest)

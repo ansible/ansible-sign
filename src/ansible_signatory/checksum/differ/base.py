@@ -16,6 +16,8 @@ class ChecksumFileExistenceDiffer:
     should be listed in the checksum file.
     """
 
+    # Files that are removed (relative to the project root) from the checksum
+    # manifest automatically.
     ignored_files = set(
         [
             "sha256sum.txt",
@@ -23,18 +25,28 @@ class ChecksumFileExistenceDiffer:
         ]
     )
 
+    # Files that get added to the manifest in list_files() even if not
+    # explicitly found by gather_files()
+    always_added_files = set()
+
     def __init__(self, root):
         self.root = root
-        self.files = self.gather_files()
 
-    def gather_files(self):
+    def gather_files(self, verifying=False):
         return set()
 
-    def list_files(self):
+    def list_files(self, verifying):
         """
         Return a (sorted, normalized) list of files.
+
+        Individual differs can implement logic based on whether we are
+        using this to generate a manifest or to verify one, and 'verifying'
+        is what is used to toggle this logic.
         """
-        files = set(os.path.normpath(f) for f in self.files) - self.ignored_files
+        gathered = self.gather_files(verifying=verifying)
+        files = (
+            set(os.path.normpath(f) for f in gathered) - self.ignored_files
+        ) | self.always_added_files
         return sorted(files)
 
     def compare_filelist(self, checksum_paths):
@@ -47,7 +59,7 @@ class ChecksumFileExistenceDiffer:
         and deletions are list with respect to it.
         """
 
-        real_paths = set(self.list_files())
+        real_paths = set(self.list_files(verifying=True))
         out = {}
         out["added"] = sorted(real_paths - checksum_paths)
         out["removed"] = sorted(checksum_paths - real_paths)

@@ -9,7 +9,7 @@ class GitChecksumFileExistenceDiffer(ChecksumFileExistenceDiffer):
     branch that is currently checked out.
     """
 
-    def gather_files(self):
+    def gather_files(self, verifying=False):
         repo = git.Repo(self.root)
         files = set()
         stack = [repo.head.commit.tree]

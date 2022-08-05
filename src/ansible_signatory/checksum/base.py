@@ -132,7 +132,7 @@ class ChecksumFile:
         The resulting list is always sorted by filename.
         """
         lines = []
-        calculated = self.calculate_checksums_from_root()
+        calculated = self.calculate_checksums_from_root(verifying=False)
         for path, checksum in sorted(calculated.items()):
             # *two* spaces here - it's important for compat with coreutils.
             lines.append(f"{checksum}  {path}")
@@ -148,7 +148,7 @@ class ChecksumFile:
                 shasum.update(chunk)
         return shasum.hexdigest()
 
-    def calculate_checksums_from_root(self):
+    def calculate_checksums_from_root(self, verifying):
         """
         Using the root of the project and the differ class passed to the
         constructor, iterate over all files in the project and calculate their
@@ -160,7 +160,7 @@ class ChecksumFile:
         or use verify() which does it for you.
         """
         out = {}
-        for path in self.differ.list_files():
+        for path in self.differ.list_files(verifying=verifying):
             shasum = self.calculate_checksum(os.path.join(self.root, path))
             out[path] = shasum
         return out
@@ -184,7 +184,7 @@ class ChecksumFile:
             if differences["added"] or differences["removed"]:
                 raise ChecksumMismatch(differences)
 
-        recalculated = self.calculate_checksums_from_root()
+        recalculated = self.calculate_checksums_from_root(verifying=True)
         mismatches = set()
         for parsed_path, parsed_checksum in parsed_manifest_dct.items():
             if recalculated[parsed_path] != parsed_checksum:

@@ -9,7 +9,7 @@ class DirectoryChecksumFileExistenceDiffer(ChecksumFileExistenceDiffer):
     except those ignored in 'ignored_files', are part of the checksum manifest.
     """
 
-    def gather_files(self):
+    def gather_files(self, verifying=False):
         files_set = set()
         for base, dirs, files in os.walk(self.root):
             relative = os.path.relpath(base, self.root)
