@@ -29,40 +29,14 @@ class ChecksumFile:
         if differ is not None:
             self.differ = differ(root=self.root)
         else:
-            from .differ.directory import DirectoryChecksumFileExistenceDiffer
+            from .differ.distlib_manifest import (
+                DistlibManifestChecksumFileExistenceDiffer,
+            )
 
-            self.differ = DirectoryChecksumFileExistenceDiffer(root=self.root)
+            self.differ = DistlibManifestChecksumFileExistenceDiffer(root=self.root)
         if mode not in self.MODES:
             raise Exception(f"mode argument must be one of: {', '.join(self.MODES)}")
         self.mode = mode
-
-    # def _parse_bsd_style(self, line):
-    #     """
-    #     Attempt to parse a BSD style checksum line, returning False if we
-    #     are unable to.
-    #
-    #     Only supports SHA256 for right now, since the indices will have to
-    #     change for other shasum variants.
-    #
-    #     A BSD style line looks like this:
-    #     SHA256 (hello_world.yml) = f712979c4c5dfe739253908d122f5c87faa8b5de6f15ba7a1548ae028ff22d13
-    #     """
-    #
-    #     # Each BSD line is prefixed with 'SHA256 ('. Then, starting from the
-    #     # right (and assuming sha256 only, for now) we can count 68
-    #     # characters ( sha length and ") = " ) to look for another pattern.
-    #     if line.startswith("SHA256 (") and line[-68:-64] == ") = ":
-    #         # If both of those criteria match, we are pretty confident this
-    #         # is a BSD style line. From the right, split once at the = sign
-    #         # and parse out the path, and we are done. If the split
-    #         # doesn't work, or the sha isn't length 64, then assume it's
-    #         # not a BSD line, after all.
-    #         parts = line.rsplit(" = ", 1)
-    #         if len(parts) == 2 and len(parts[1]) == 64:
-    #             path = parts[0][8:-1]
-    #             shasum = parts[1]
-    #         return (path, shasum)
-    #     return False
 
     def _parse_gnu_style(self, line):
         """

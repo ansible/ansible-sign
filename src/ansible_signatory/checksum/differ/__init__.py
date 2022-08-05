@@ -1,3 +1,1 @@
-from .directory import DirectoryChecksumFileExistenceDiffer
 from .distlib_manifest import DistlibManifestChecksumFileExistenceDiffer
-from .git import GitChecksumFileExistenceDiffer

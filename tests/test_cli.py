@@ -17,19 +17,6 @@ FIXTURES_DIR = os.path.join(
 
 
 @pytest.mark.parametrize(
-    "fixture, expected",
-    [
-        ("git-success", GitChecksumFileExistenceDiffer),
-        ("manifest-success", DistlibManifestChecksumFileExistenceDiffer),
-        ("directory-success", DirectoryChecksumFileExistenceDiffer),
-    ],
-)
-def test_determine_differ_from_auto(fixture, expected):
-    root = os.path.join(FIXTURES_DIR, fixture)
-    assert determine_differ_from_auto(root) == expected
-
-
-@pytest.mark.parametrize(
     "args, exp_stdout_substr, exp_stderr_substr, exp_rc",
     [
         (
@@ -87,58 +74,47 @@ def test_main(capsys, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
     assert rc == exp_rc
 
 
-@pytest.mark.parametrize("fixture", ["git", "directory", "manifest"])
-def test_validate_checksum_via_main_success(capsys, fixture):
+def test_validate_checksum_via_main_success(capsys):
     """
-    test validate-checksum using each of the supported differs and auto
-    """
-
-    for scm in (fixture, "auto"):
-        # Ensure that all of the differs work as 'auto' too in their respective
-        # fixture directories.
-        args = [
-            "project",
-            "validate-checksum",
-            f"--scm={scm}",
-            f"tests/fixtures/checksum/{fixture}-success",
-        ]
-        rc = main(args)
-        captured = capsys.readouterr()
-        assert captured.out == "Checksum validation SUCCEEDED!\n"
-        assert captured.err == ""
-
-        if rc is None:
-            rc = 0
-
-        assert rc == 0
-
-
-@pytest.mark.parametrize("fixture", ["git", "directory", "manifest"])
-def test_validate_checksum_via_main_failure(capsys, fixture):
-    """
-    test validate-checksum fails correctly using each of the supported differs
-    and auto
+    test validate-checksum
     """
 
-    for scm in (fixture, "auto"):
-        # Ensure that all of the differs work as 'auto' too in their respective
-        # fixture directories.
-        args = [
-            "project",
-            "validate-checksum",
-            f"--scm={scm}",
-            f"tests/fixtures/checksum/{fixture}-files-changed",
-        ]
-        rc = main(args)
-        captured = capsys.readouterr()
-        assert "Checksum validation FAILED!" in captured.out
-        assert "Checksum mismatch: hello1" in captured.out
-        assert captured.err == ""
+    args = [
+        "project",
+        "validate-checksum",
+        f"tests/fixtures/checksum/manifest-success",
+    ]
+    rc = main(args)
+    captured = capsys.readouterr()
+    assert captured.out == "Checksum validation SUCCEEDED!\n"
+    assert captured.err == ""
 
-        if rc is None:
-            rc = 0
+    if rc is None:
+        rc = 0
 
-        assert rc == 2
+    assert rc == 0
+
+
+def test_validate_checksum_via_main_failure(capsys):
+    """
+    test validate-checksum fails correctly
+    """
+
+    args = [
+        "project",
+        "validate-checksum",
+        f"tests/fixtures/checksum/manifest-files-changed",
+    ]
+    rc = main(args)
+    captured = capsys.readouterr()
+    assert "Checksum validation FAILED!" in captured.out
+    assert "Checksum mismatch: hello1" in captured.out
+    assert captured.err == ""
+
+    if rc is None:
+        rc = 0
+
+    assert rc == 2
 
 
 def test_checksum_manifest_output_flag(capsys, tmp_path):

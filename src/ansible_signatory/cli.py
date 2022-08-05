@@ -9,7 +9,7 @@ from ansible_signatory.checksum import (
     ChecksumMismatch,
     InvalidChecksumLine,
 )
-from ansible_signatory.checksum.differ import *
+from ansible_signatory.checksum.differ import DistlibManifestChecksumFileExistenceDiffer
 from ansible_signatory.signing import *
 
 __author__ = "Rick Elrod"
@@ -17,13 +17,6 @@ __copyright__ = "(c) 2022 Red Hat, Inc."
 __license__ = "MIT"
 
 _logger = logging.getLogger(__name__)
-
-
-DIFFER_MAP = {
-    "git": GitChecksumFileExistenceDiffer,
-    "directory": DirectoryChecksumFileExistenceDiffer,
-    "manifest": DistlibManifestChecksumFileExistenceDiffer,
-}
 
 
 def parse_args(args):
@@ -75,15 +68,6 @@ def parse_args(args):
         metavar="CHECKSUM_FILE",
         dest="checksum_file",
         default="sha256sum.txt",
-    )
-    cmd_validate_checksum.add_argument(
-        "--scm",
-        help="The source code management system (if any) storing the files. Used for skipping files that the SCM ignores. (choices: %(choices)s; default: %(default)s)",
-        required=False,
-        metavar="SCM",
-        dest="scm",
-        default="manifest",
-        choices=list(DIFFER_MAP.keys()) + ["auto"],
     )
     cmd_validate_checksum.add_argument(
         "--ignore-file-list-differences",
@@ -186,15 +170,6 @@ def parse_args(args):
         default="-",
     )
     cmd_checksum_manifest.add_argument(
-        "--scm",
-        help="The source code management system (if any) storing the files. Used for skipping files that the SCM ignores. (choices: %(choices)s; default: %(default)s)",
-        required=False,
-        metavar="SCM",
-        dest="scm",
-        default="manifest",
-        choices=list(DIFFER_MAP.keys()) + ["auto"],
-    )
-    cmd_checksum_manifest.add_argument(
         "project_root",
         help="The directory containing the files being validated and verified",
         metavar="PROJECT_ROOT",
@@ -214,31 +189,8 @@ def setup_logging(loglevel):
     )
 
 
-def get_differ(scm, project_root):
-    if scm == "auto":
-        return determine_differ_from_auto(project_root)
-
-    # This key is guaranteed to exist by the arg choices limit
-    return DIFFER_MAP[scm]
-
-
-def determine_differ_from_auto(project_root):
-    """
-    Attempt to determine the SCM a project is using, if any.
-    """
-
-    root_files = os.listdir(project_root)
-    if "MANIFEST.in" in root_files:
-        return DistlibManifestChecksumFileExistenceDiffer
-    if ".git" in root_files:
-        return GitChecksumFileExistenceDiffer
-    # if '.svn' in root_files:
-    #    return SubversionChecksumFileExistenceDiffer
-    return DirectoryChecksumFileExistenceDiffer
-
-
 def validate_checksum(args):
-    differ = get_differ(args.scm, args.project_root)
+    differ = DistlibManifestChecksumFileExistenceDiffer
     checksum = ChecksumFile(args.project_root, differ=differ, mode=args.algorithm)
     checksum_file = os.path.join(args.project_root, args.checksum_file)
 
@@ -302,7 +254,7 @@ def gpg_sign_manifest(args):
 
 
 def checksum_manifest(args):
-    differ = get_differ(args.scm, args.project_root)
+    differ = DistlibManifestChecksumFileExistenceDiffer
     checksum = ChecksumFile(args.project_root, differ=differ, mode=args.algorithm)
     checksum_file_contents = checksum.generate_gnu_style()
     if args.output == "-":

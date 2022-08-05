@@ -33,11 +33,11 @@ INVALID_LINE_FIXTURE2 = """
 def test_simple_gnu_generate():
     root = os.path.join(
         FIXTURES_DIR,
-        "directory-success",
+        "manifest-success",
     )
     checksum = ChecksumFile(
         root,
-        differ=DirectoryChecksumFileExistenceDiffer,
+        differ=DistlibManifestChecksumFileExistenceDiffer,
     )
     generated_manifest = checksum.generate_gnu_style()
     actual_manifest = open(
@@ -66,23 +66,6 @@ def test_parse_invalid_manifests(fixture, exc_substr):
 
 
 @pytest.mark.parametrize(
-    "directory_prefix, differ_cls",
-    [
-        (
-            "directory",
-            DirectoryChecksumFileExistenceDiffer,
-        ),
-        (
-            "manifest",
-            DistlibManifestChecksumFileExistenceDiffer,
-        ),
-        (
-            "git",
-            GitChecksumFileExistenceDiffer,
-        ),
-    ],
-)
-@pytest.mark.parametrize(
     "fixture, diff_output",
     [
         (
@@ -108,18 +91,16 @@ def test_parse_invalid_manifests(fixture, exc_substr):
     ],
 )
 def test_directory_diff(
-    directory_prefix,
-    differ_cls,
     fixture,
     diff_output,
 ):
     root = os.path.join(
         FIXTURES_DIR,
-        f"{directory_prefix}-{fixture}",
+        f"manifest-{fixture}",
     )
     checksum = ChecksumFile(
         root,
-        differ=differ_cls,
+        differ=DistlibManifestChecksumFileExistenceDiffer,
     )
     actual_manifest = open(
         os.path.join(
