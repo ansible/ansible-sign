@@ -10,9 +10,7 @@ class SignatureVerificationResult:
 class SignatureVerifier:
     """
     Represents a way of performing content verification. It doesn't make any
-    assumptions about the kind of verification being done. The constructor takes
-    raw parameters from the action, and subclasses can make use of those as
-    needed to perform whatever kind of verification they want to.
+    assumptions about the kind of verification being done.
     """
 
     def verify(self) -> SignatureVerificationResult:
@@ -22,3 +20,25 @@ class SignatureVerifier:
         Returns an instance of SignatureVerificationResult.
         """
         raise NotImplementedError("verify")
+
+
+class SignatureSigningResult:
+    """Represents the result after performing signing."""
+
+    def __init__(self, success, summary, extra_information={}):
+        self.success = success
+        self.summary = summary
+        self.extra_information = extra_information
+
+
+class SignatureSigner:
+    """
+    Represents a way of signing content for later verification. This interface
+    makes no assumptions about the kind of verification being done.
+    """
+
+    def sign(self):
+        """
+        Signs a file.
+        """
+        raise NotImplementedError("sign")

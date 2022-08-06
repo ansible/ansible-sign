@@ -119,7 +119,6 @@ def parse_args(args):
     )
 
     # command: gpg-sign-manifest
-    # TODO: Allow for inline signatures.
     cmd_gpg_sign_manifest = project_commands.add_parser(
         "gpg-sign-manifest",
         help="Perform GPG signing on the checksum manifest",

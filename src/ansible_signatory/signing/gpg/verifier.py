@@ -1,9 +1,6 @@
 """
-This module handles GPG signature verification and generation for Ansible
-content. It makes use of python-gnupg (which ultimately shells out to GPG).
-
-The primary supported method of signing content is with a detached signature,
-but this module should work with inline signatures as well.
+This module handles GPG signature verification for Ansible content. It makes use
+of python-gnupg (which ultimately shells out to GPG).
 """
 
 import argparse
@@ -24,7 +21,7 @@ __license__ = "MIT"
 
 
 class GPGVerifier(SignatureVerifier):
-    def __init__(self, pubkey, manifest_path=None, detached_signature_path=None):
+    def __init__(self, pubkey, manifest_path, detached_signature_path):
         super(GPGVerifier, self).__init__()
 
         if pubkey is None:
@@ -33,19 +30,18 @@ class GPGVerifier(SignatureVerifier):
 
         if manifest_path is None:
             raise RuntimeError("manifest_path must not be None")
-
         self.manifest_path = manifest_path
+
+        if detached_signature_path is None:
+            raise RuntimeError("detached_signature_path must not be None")
         self.detached_signature_path = detached_signature_path
 
     def verify(self) -> SignatureVerificationResult:
-        detached_mode = False
-        if self.detached_signature_path is not None:
-            if not os.path.exists(self.detached_signature_path):
-                return SignatureVerificationResult(
-                    success=False,
-                    summary="The specified detached signature path does not exist.",
-                )
-            detached_mode = True
+        if not os.path.exists(self.detached_signature_path):
+            return SignatureVerificationResult(
+                success=False,
+                summary="The specified detached signature path does not exist.",
+            )
 
         extra = {}
 
@@ -55,12 +51,8 @@ class GPGVerifier(SignatureVerifier):
             extra["gpg_pubkeys_imported"] = import_result.count
             extra["gpg_fingerprints"] = import_result.fingerprints
 
-            if detached_mode:
-                with open(self.detached_signature_path, "rb") as sig:
-                    verified = gpg.verify_file(sig, self.manifest_path)
-            # else:
-            # TODO: what is the python-gnupg call for inline sig?
-            # verified =
+            with open(self.detached_signature_path, "rb") as sig:
+                verified = gpg.verify_file(sig, self.manifest_path)
 
             if not verified:
                 extra["stderr"] = verified.stderr
