@@ -18,6 +18,9 @@ __license__ = "MIT"
 
 _logger = logging.getLogger(__name__)
 
+# This is relative to the project root passed in by the user at runtime.
+ANSIBLE_SIGN_DIR = ".ansible-sign"
+
 
 def parse_args(args):
     """Parse command line parameters
@@ -67,7 +70,7 @@ def parse_args(args):
         required=False,
         metavar="CHECKSUM_FILE",
         dest="checksum_file",
-        default="sha256sum.txt",
+        default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt"),
     )
     cmd_validate_checksum.add_argument(
         "--ignore-file-list-differences",
@@ -115,7 +118,7 @@ def parse_args(args):
         "checksum_file",
         help="The checksum file that was signed. (default: %(default)s)",
         metavar="CHECKSUM_FILE",
-        default="sha256sum.txt",
+        default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt"),
     )
 
     # command: gpg-sign-manifest
@@ -130,7 +133,7 @@ def parse_args(args):
         required=False,
         metavar="OUTPUT",
         dest="output",
-        default="sha256sum.txt.sig",
+        default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt.sig"),
     )
     # TODO: Allow using the user's real keyring and accept a fingerprint instead.
     cmd_gpg_sign_manifest.add_argument(
@@ -142,7 +145,7 @@ def parse_args(args):
         "checksum_file",
         help="The checksum file that was signed. (default: %(default)s)",
         metavar="CHECKSUM_FILE",
-        default="sha256sum.txt",
+        default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt"),
     )
 
     # command: checksum-manifest

@@ -43,6 +43,7 @@ def test_simple_gnu_generate():
     actual_manifest = open(
         os.path.join(
             root,
+            ".ansible-sign",
             "sha256sum.txt",
         ),
         "r",
@@ -105,6 +106,7 @@ def test_directory_diff(
     actual_manifest = open(
         os.path.join(
             root,
+            ".ansible-sign",
             "sha256sum.txt",
         ),
         "r",
@@ -135,6 +137,7 @@ def test_manifest_evil_file_added():
     actual_manifest = open(
         os.path.join(
             root,
+            ".ansible-sign",
             "sha256sum.txt",
         ),
         "r",

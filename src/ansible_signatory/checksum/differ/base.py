@@ -1,4 +1,6 @@
 import os
+import pathlib
+from pathlib import PurePath
 
 
 class ChecksumFileExistenceDiffer:
@@ -16,12 +18,12 @@ class ChecksumFileExistenceDiffer:
     should be listed in the checksum file.
     """
 
-    # Files that are removed (relative to the project root) from the checksum
-    # manifest automatically.
-    ignored_files = set(
+    # These are tuples of path elements, compared to the path's parts (as
+    # presented by pathlib).
+    ignored_paths = set(
         [
-            "sha256sum.txt",
-            "sha256sum.txt.sig",
+            ".ansible-sign",
+            ".ansible-sign/**",
         ]
     )
 
@@ -44,7 +46,12 @@ class ChecksumFileExistenceDiffer:
         is what is used to toggle this logic.
         """
         gathered = self.gather_files(verifying=verifying)
-        files = set(os.path.normpath(f) for f in gathered) - self.ignored_files
+        files = set(os.path.normpath(f) for f in gathered)
+
+        for path in files.copy():
+            for ignored_path in self.ignored_paths:
+                if PurePath(path).match(ignored_path):
+                    files.remove(path)
 
         for path in self.always_added_files:
             if not os.path.exists(os.path.join(self.root, path)):
