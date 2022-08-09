@@ -1,8 +1,8 @@
 import os
 import pytest
 
-from ansible_signatory.cli import *
-from ansible_signatory.checksum.differ import *
+from ansible_sign.cli import *
+from ansible_sign.checksum.differ import *
 
 __author__ = "Rick Elrod"
 __copyright__ = "(c) 2022 Red Hat, Inc."

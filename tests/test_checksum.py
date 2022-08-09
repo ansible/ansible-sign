@@ -1,7 +1,7 @@
 import os
 import pytest
 
-from ansible_signatory.checksum import *
+from ansible_sign.checksum import *
 
 __author__ = "Rick Elrod"
 __copyright__ = "(c) 2022 Red Hat, Inc."

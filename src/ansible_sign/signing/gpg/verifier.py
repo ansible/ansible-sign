@@ -9,8 +9,8 @@ import os
 import sys
 import tempfile
 
-from ansible_signatory import __version__
-from ansible_signatory.signing.base import (
+from ansible_sign import __version__
+from ansible_sign.signing.base import (
     SignatureVerifier,
     SignatureVerificationResult,
 )

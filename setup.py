@@ -1,5 +1,5 @@
 """
-    Setup file for ansible-signatory.
+    Setup file for ansible-sign.
     Use setup.cfg to configure your project.
 
     This file was generated with PyScaffold 4.3.

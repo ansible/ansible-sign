@@ -1,4 +1,4 @@
-name: ansible-signatory tests
+name: ansible-sign tests
 on:
   push:
   pull_request:

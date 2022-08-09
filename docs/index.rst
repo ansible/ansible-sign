@@ -1,8 +1,8 @@
 =================
-ansible-signatory
+ansible-sign
 =================
 
-This is the documentation of **ansible-signatory**.
+This is the documentation of **ansible-sign**.
 
 .. note::
 

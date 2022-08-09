@@ -3,14 +3,14 @@ import logging
 import os
 import sys
 
-from ansible_signatory import __version__
-from ansible_signatory.checksum import (
+from ansible_sign import __version__
+from ansible_sign.checksum import (
     ChecksumFile,
     ChecksumMismatch,
     InvalidChecksumLine,
 )
-from ansible_signatory.checksum.differ import DistlibManifestChecksumFileExistenceDiffer
-from ansible_signatory.signing import *
+from ansible_sign.checksum.differ import DistlibManifestChecksumFileExistenceDiffer
+from ansible_sign.signing import *
 
 __author__ = "Rick Elrod"
 __copyright__ = "(c) 2022 Red Hat, Inc."
@@ -39,7 +39,7 @@ def parse_args(args):
     parser.add_argument(
         "--version",
         action="version",
-        version="ansible-signatory {ver}".format(ver=__version__),
+        version="ansible-sign {ver}".format(ver=__version__),
     )
     parser.add_argument(
         "--debug",

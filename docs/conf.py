@@ -34,7 +34,7 @@ except ImportError:
     from sphinx import apidoc
 
 output_dir = os.path.join(__location__, "api")
-module_dir = os.path.join(__location__, "../src/ansible_signatory")
+module_dir = os.path.join(__location__, "../src/ansible_sign")
 try:
     shutil.rmtree(output_dir)
 except FileNotFoundError:
@@ -87,7 +87,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "ansible-signatory"
+project = "ansible-sign"
 copyright = "2022, Rick Elrod"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -99,7 +99,7 @@ copyright = "2022, Rick Elrod"
 # If you don’t need the separation provided between version and release,
 # just set them both to the same value.
 try:
-    from ansible_signatory import __version__ as version
+    from ansible_sign import __version__ as version
 except ImportError:
     version = ""
 
@@ -226,7 +226,7 @@ html_static_path = ["_static"]
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "ansible-signatory-doc"
+htmlhelp_basename = "ansible-sign-doc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -246,7 +246,7 @@ latex_documents = [
     (
         "index",
         "user_guide.tex",
-        "ansible-signatory Documentation",
+        "ansible-sign Documentation",
         "Rick Elrod",
         "manual",
     )
