@@ -21,12 +21,15 @@ __license__ = "MIT"
 
 
 class GPGSigner(SignatureSigner):
-    def __init__(self, privkey, manifest_path, output_path, passphrase=None):
+    def __init__(
+        self,
+        manifest_path,
+        output_path,
+        privkey=None,
+        passphrase=None,
+        gpg_home=None,
+    ):
         super(GPGSigner, self).__init__()
-
-        if privkey is None:
-            raise RuntimeError("privkey must not be None")
-        self.privkey = privkey
 
         if manifest_path is None:
             raise RuntimeError("manifest_path must not be None")
@@ -36,13 +39,15 @@ class GPGSigner(SignatureSigner):
             raise RuntimeError("output_path must not be None")
         self.output_path = output_path
 
+        self.privkey = privkey
         self.passphrase = passphrase
+        self.gpg_home = gpg_home
 
     def sign(self) -> SignatureSigningResult:
         # TODO: We currently use the default GPG home directory in the signing
         # case and assume the secret key exists in it. Is there a better way to
         # do this?
-        gpg = gnupg.GPG()
+        gpg = gnupg.GPG(gnupghome=self.gpg_home)
         with open(self.manifest_path, "rb") as f:
             sign_result = gpg.sign_file(
                 f,
