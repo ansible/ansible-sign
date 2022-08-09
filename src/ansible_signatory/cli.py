@@ -191,6 +191,19 @@ def setup_logging(loglevel):
     )
 
 
+def _generate_checksum_manifest(project_root, algorithm):
+    differ = DistlibManifestChecksumFileExistenceDiffer
+    checksum = ChecksumFile(project_root, differ=differ, mode=algorithm)
+    manifest = checksum.generate_gnu_style()
+    _logger.debug(
+        "Full calculated %s checksum manifest (%s):\n%s",
+        algorithm,
+        project_root,
+        manifest,
+    )
+    return manifest
+
+
 def validate_checksum(args):
     differ = DistlibManifestChecksumFileExistenceDiffer
     checksum = ChecksumFile(args.project_root, differ=differ, mode=args.algorithm)
@@ -255,16 +268,27 @@ def gpg_sign_manifest(args):
     print("todo")
 
 
+def _write_file_or_print(dest, contents):
+    if dest == "-":
+        print(contents, end="")
+        return
+
+    outdir = os.path.dirname(dest)
+
+    if len(outdir) > 0 and not os.path.isdir(outdir):
+        _logger.info("Creating output directory: %s", outdir)
+        os.makedirs(outdir)
+
+    with open(dest, "w") as f:
+        f.write(contents)
+        _logger.info("Wrote to file: %s", dest)
+
+
 def checksum_manifest(args):
-    differ = DistlibManifestChecksumFileExistenceDiffer
-    checksum = ChecksumFile(args.project_root, differ=differ, mode=args.algorithm)
-    checksum_file_contents = checksum.generate_gnu_style()
-    if args.output == "-":
-        print(checksum_file_contents, end="")
-    else:
-        with open(args.output, "w") as f:
-            f.write(checksum_file_contents)
-            print(f"Wrote {args.output}")
+    checksum_file_contents = _generate_checksum_manifest(
+        args.project_root, args.algorithm
+    )
+    _write_file_or_print(args.output, checksum_file_contents)
 
 
 def main(args):

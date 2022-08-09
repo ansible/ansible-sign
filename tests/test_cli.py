@@ -130,14 +130,45 @@ dc920c7f31a4869fb9f94519a4a77f6c7c43c6c3e66b0e57a5bcda52e9b02ce3  dir/hello2
 
     # Now do it again, but write to a file
     args = [
+        "--debug",
         "project",
         "checksum-manifest",
         f"--output={tmp_path / 'sha256sum.txt'}",
         "tests/fixtures/checksum/manifest-success",
     ]
     rc = main(args)
+    assert rc in (None, 0)
+
+    with open(tmp_path / "sha256sum.txt") as f:
+        assert f.read() == expected_out
+
+
+def test_checksum_manifest_output_flag_without_existing_ansible_sign_dir(
+    capsys, tmp_path
+):
+    args = [
+        "project",
+        "checksum-manifest",
+        "tests/fixtures/checksum/manifest-no-ansible-sign-dir",
+    ]
+    rc = main(args)
     captured = capsys.readouterr()
-    assert captured.out == f"Wrote {tmp_path / 'sha256sum.txt'}\n"
+    expected_out = """d2d1320f7f4fe3abafe92765732d2aa6c097e7adf05bbd53481777d4a1f0cdab  MANIFEST.in
+dc920c7f31a4869fb9f94519a4a77f6c7c43c6c3e66b0e57a5bcda52e9b02ce3  dir/hello2
+2a1b1ab320215205675234744dc03f028b46da4d94657bbb7dca7b1a3a25e91e  hello1
+"""
+    assert captured.out == expected_out
+    assert rc in (None, 0)
+
+    # Now do it again, but write to a file
+    args = [
+        "--debug",
+        "project",
+        "checksum-manifest",
+        f"--output={tmp_path / 'sha256sum.txt'}",
+        "tests/fixtures/checksum/manifest-no-ansible-sign-dir",
+    ]
+    rc = main(args)
     assert rc in (None, 0)
 
     with open(tmp_path / "sha256sum.txt") as f:
