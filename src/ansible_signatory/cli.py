@@ -121,13 +121,13 @@ def parse_args(args):
         default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt"),
     )
 
-    # command: gpg-sign-manifest
-    cmd_gpg_sign_manifest = project_commands.add_parser(
-        "gpg-sign-manifest",
+    # command: gpg-sign
+    cmd_gpg_sign = project_commands.add_parser(
+        "gpg-sign",
         help="Perform GPG signing on the checksum manifest",
     )
-    cmd_gpg_sign_manifest.set_defaults(func=gpg_sign_manifest)
-    cmd_gpg_sign_manifest.add_argument(
+    cmd_gpg_sign.set_defaults(func=gpg_sign)
+    cmd_gpg_sign.add_argument(
         "--output",
         help="An optional filename to which to write the resulting detached signature. (default: %(default)s)",
         required=False,
@@ -135,13 +135,18 @@ def parse_args(args):
         dest="output",
         default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt.sig"),
     )
-    # TODO: Allow using the user's real keyring and accept a fingerprint instead.
-    cmd_gpg_sign_manifest.add_argument(
-        "pubkey_file",
-        help="Path to the GPG public key to import",
-        metavar="PUBKEY_FILE",
+    cmd_gpg_sign.add_argument(
+        "--fingerprint",
+        help=(
+            "The GPG private key fingerprint to sign with. (default: First "
+            "usable key in the user's keyring)"
+        ),
+        required=False,
+        metavar="PRIVATE_KEY",
+        dest="fingerprint",
+        default=None,
     )
-    cmd_gpg_sign_manifest.add_argument(
+    cmd_gpg_sign.add_argument(
         "checksum_file",
         help="The checksum file that was signed. (default: %(default)s)",
         metavar="CHECKSUM_FILE",
@@ -264,7 +269,7 @@ def gpg_validate_manifest(args):
     return 3
 
 
-def gpg_sign_manifest(args):
+def gpg_sign(args):
     print("todo")
 
 
