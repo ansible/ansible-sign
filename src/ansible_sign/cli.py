@@ -1,4 +1,5 @@
 import argparse
+import gnupg
 import logging
 import os
 import sys
@@ -74,7 +75,11 @@ def parse_args(args):
     )
     cmd_validate_checksum.add_argument(
         "--ignore-file-list-differences",
-        help="Do not fail validation even if files have been added or removed, and the current manifest is out of date. Only check those files listed in the manifest. (default: %(default)s)",
+        help=(
+            "Do not fail validation even if files have been added or removed, "
+            "and the current manifest is out of date. Only check those files "
+            "listed in the manifest. (default: %(default)s)"
+        ),
         default=False,
         action="store_true",
         dest="ignore_file_list_differences",
@@ -96,29 +101,61 @@ def parse_args(args):
 
     # command: gpg-validate-manifest
     cmd_gpg_validate_manifest = project_commands.add_parser(
-        "gpg-validate-checksum",
-        help="Perform signature validation on the checksum manifest (NOT including checksum verification)",
+        "gpg-validate-manifest",
+        help=(
+            "Perform signature validation on the checksum manifest (NOT "
+            "including checksum verification)"
+        ),
     )
     cmd_gpg_validate_manifest.set_defaults(func=gpg_validate_manifest)
     cmd_gpg_validate_manifest.add_argument(
         "--signature-file",
-        help="An optional detached signature file. (default: %(default)s)",
+        help=(
+            "An optional detached signature file, relative to the project "
+            "root. (default: %(default)s)"
+        ),
         required=False,
         metavar="SIGNATURE_FILE",
         dest="signature_file",
-        default="sha256sum.txt.sig",
-    )
-    # TODO: Allow using the user's real keyring and accept a fingerprint instead.
-    cmd_gpg_validate_manifest.add_argument(
-        "pubkey_file",
-        help="Path to the GPG public key to import",
-        metavar="PUBKEY_FILE",
+        default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt.sig"),
     )
     cmd_gpg_validate_manifest.add_argument(
-        "checksum_file",
-        help="The checksum file that was signed. (default: %(default)s)",
-        metavar="CHECKSUM_FILE",
+        "--manifest-file",
+        help=(
+            "The signed checksum manifest file, relative to the project root."
+            "(default: %(default)s)"
+        ),
+        required=False,
+        metavar="MANIFEST_FILE",
+        dest="manifest_file",
         default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt"),
+    )
+    cmd_gpg_validate_manifest.add_argument(
+        "--keyring",
+        help=(
+            "The GPG keyring file to use to find the matching public key. "
+            "(default: the user's default keyring)"
+        ),
+        required=False,
+        metavar="KEYRING",
+        dest="keyring",
+        default=None,
+    )
+    cmd_gpg_validate_manifest.add_argument(
+        "--gnupg-home",
+        help=(
+            "A valid GNUPG home directory. (default: the GNUPG default, "
+            "usually ~/.gnupg)"
+        ),
+        required=False,
+        metavar="GNUPG_HOME",
+        dest="gnupg_home",
+        default=None,
+    )
+    cmd_gpg_validate_manifest.add_argument(
+        "project_root",
+        help="The directory containing the files being validated and verified",
+        metavar="PROJECT_ROOT",
     )
 
     # command: gpg-sign
@@ -237,32 +274,39 @@ def validate_checksum(args):
 
 
 def gpg_validate_manifest(args):
-    if not os.path.exists(args.signature_file):
-        # It might be nice to try falling back to inline signature if the
-        # detached one is default and does not exist.
-        print(f"Signature file does not exist: {args.signature_file}")
+    signature_file = os.path.join(args.project_root, args.signature_file)
+    manifest_file = os.path.join(args.project_root, args.manifest_file)
+
+    if not os.path.exists(signature_file):
+        print(f"Signature file does not exist: {signature_file}")
         return 1
 
-    if not os.path.exists(args.pubkey_file):
-        print(f"Public key file does not exist: {args.pubkey_file}")
-        return 1
-    if not os.path.exists(args.checksum_file):
-        print(f"Checksum file does not exist: {args.checksum_file}")
+    if not os.path.exists(manifest_file):
+        print(f"Checksum manifest file does not exist: {manifest_file}")
         return 1
 
-    # Right now we only handle gpg
-    with open(args.pubkey_file) as f:
-        pubkey = f.read()
+    if args.keyring is not None and not os.path.exists(args.keyring):
+        print(f"Specified keyring file not found: {args.keyring}")
+        return 1
+
+    if args.gnupg_home is not None and not os.path.isdir(args.gnupg_home):
+        print(f"Specified GNUPG home is not a directory: {args.gnupg_home}")
+        return 1
+
     verifier = GPGVerifier(
-        pubkey,
-        manifest_path=args.checksum_file,
-        detached_signature_path=args.signature_file,
+        manifest_path=manifest_file,
+        detached_signature_path=signature_file,
+        gpg_home=args.gnupg_home,
+        keyring=args.keyring,
     )
+
     result = verifier.verify()
+
     if result.success is True:
         print("Signature validation SUCCEEDED!")
         print(result.summary)
         return 0
+
     print("Signature validation FAILED!")
     print(result.summary)
     print(result.extra_information)
