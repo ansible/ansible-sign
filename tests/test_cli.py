@@ -147,3 +147,19 @@ dc920c7f31a4869fb9f94519a4a77f6c7c43c6c3e66b0e57a5bcda52e9b02ce3  dir/hello2
 
     with open(tmp_path / "sha256sum.txt") as f:
         assert f.read() == expected_out
+
+
+def test_gpg_validate_manifest_with_keyring(capsys, signed_project_and_gpg):
+    project_root = signed_project_and_gpg[0]
+    gpg_home = signed_project_and_gpg[1]
+    keyring = os.path.join(gpg_home, "pubring.kbx")
+    args = [
+        "project",
+        "gpg-validate-manifest",
+        f"--keyring={keyring}",
+        str(project_root),
+    ]
+    rc = main(args)
+    captured = capsys.readouterr()
+    assert "Signature validation SUCCEEDED!" in captured.out
+    assert rc in (None, 0)

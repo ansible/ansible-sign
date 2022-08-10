@@ -58,7 +58,7 @@ def signed_project_and_gpg(
     unsigned_project_with_checksum_manifest,
 ):
     out = (
-        unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt.asc"
+        unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt.sig"
     )
     manifest_path = (
         unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt"

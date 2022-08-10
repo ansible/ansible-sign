@@ -49,7 +49,7 @@ def test_gpg_simple_sign(
     unsigned_project_with_checksum_manifest,
 ):
     out = (
-        unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt.asc"
+        unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt.sig"
     )
     manifest_path = (
         unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt"
@@ -70,7 +70,7 @@ def test_gpg_sign_verify_end_to_end(signed_project_and_gpg):
     gpg_home = signed_project_and_gpg[1]
 
     manifest_path = project_root / ".ansible-sign" / "sha256sum.txt"
-    signature_path = project_root / ".ansible-sign" / "sha256sum.txt.asc"
+    signature_path = project_root / ".ansible-sign" / "sha256sum.txt.sig"
 
     verifier = GPGVerifier(
         manifest_path=manifest_path,
