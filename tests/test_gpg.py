@@ -1,3 +1,4 @@
+import gnupg
 import os
 import pytest
 
@@ -21,15 +22,24 @@ FIXTURES_DIR = os.path.join(
         ("hao-signed-invalid", False),
     ],
 )
-def test_gpg_simple_verify(directory, expected):
+def test_gpg_simple_verify(tmp_path, directory, expected):
+    gpg = gnupg.GPG(gnupghome=tmp_path)
     pubkey = open(os.path.join(FIXTURES_DIR, "gpgkeys", "hao_pubkey.txt"), "r").read()
-    manifest_path = os.path.join(FIXTURES_DIR, "gpg", directory, "sha256sum.txt")
-    signature_path = os.path.join(FIXTURES_DIR, "gpg", directory, "sha256sum.txt.sig")
+    gpg.import_keys(pubkey)
+
+    manifest_path = os.path.join(
+        FIXTURES_DIR, "gpg", directory, ".ansible-sign", "sha256sum.txt"
+    )
+    signature_path = os.path.join(
+        FIXTURES_DIR, "gpg", directory, ".ansible-sign", "sha256sum.txt.sig"
+    )
+
     verifier = GPGVerifier(
-        pubkey,
         manifest_path=manifest_path,
         detached_signature_path=signature_path,
+        gpg_home=tmp_path,
     )
+
     result = verifier.verify()
     assert result.success is expected
 
@@ -53,3 +63,19 @@ def test_gpg_simple_sign(
     result = signer.sign()
     assert result.success is True
     assert os.path.exists(out)
+
+
+def test_gpg_sign_verify_end_to_end(signed_project_and_gpg):
+    project_root = signed_project_and_gpg[0]
+    gpg_home = signed_project_and_gpg[1]
+
+    manifest_path = project_root / ".ansible-sign" / "sha256sum.txt"
+    signature_path = project_root / ".ansible-sign" / "sha256sum.txt.asc"
+
+    verifier = GPGVerifier(
+        manifest_path=manifest_path,
+        detached_signature_path=signature_path,
+        gpg_home=gpg_home,
+    )
+    result = verifier.verify()
+    assert result.success is True

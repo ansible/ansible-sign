@@ -21,12 +21,10 @@ __license__ = "MIT"
 
 
 class GPGVerifier(SignatureVerifier):
-    def __init__(self, pubkey, manifest_path, detached_signature_path):
+    def __init__(
+        self, manifest_path, detached_signature_path, gpg_home=None, keyring=None
+    ):
         super(GPGVerifier, self).__init__()
-
-        if pubkey is None:
-            raise RuntimeError("pubkey must not be None")
-        self.pubkey = pubkey
 
         if manifest_path is None:
             raise RuntimeError("manifest_path must not be None")
@@ -35,6 +33,9 @@ class GPGVerifier(SignatureVerifier):
         if detached_signature_path is None:
             raise RuntimeError("detached_signature_path must not be None")
         self.detached_signature_path = detached_signature_path
+
+        self.gpg_home = gpg_home
+        self.keyring = keyring
 
     def verify(self) -> SignatureVerificationResult:
         if not os.path.exists(self.detached_signature_path):
@@ -45,31 +46,27 @@ class GPGVerifier(SignatureVerifier):
 
         extra = {}
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            gpg = gnupg.GPG(gnupghome=tmpdir)
-            import_result = gpg.import_keys(self.pubkey)
-            extra["gpg_pubkeys_imported"] = import_result.count
-            extra["gpg_fingerprints"] = import_result.fingerprints
+        gpg = gnupg.GPG(gnupghome=self.gpg_home, keyring=self.keyring)
 
-            with open(self.detached_signature_path, "rb") as sig:
-                verified = gpg.verify_file(sig, self.manifest_path)
+        with open(self.detached_signature_path, "rb") as sig:
+            verified = gpg.verify_file(sig, self.manifest_path)
 
-            if not verified:
-                extra["stderr"] = verified.stderr
-                return SignatureVerificationResult(
-                    success=False,
-                    summary="Signature verification of checksum file failed.",
-                    extra_information=extra,
-                )
-
+        if not verified:
             extra["stderr"] = verified.stderr
-            extra["fingerprint"] = verified.fingerprint
-            extra["creation_date"] = verified.creation_date
-            extra["status"] = verified.status
-            extra["timestamp"] = verified.timestamp
-
             return SignatureVerificationResult(
-                success=True,
-                summary="Verification of checksum file succeeded.",
+                success=False,
+                summary="Signature verification of checksum file failed.",
                 extra_information=extra,
             )
+
+        extra["stderr"] = verified.stderr
+        extra["fingerprint"] = verified.fingerprint
+        extra["creation_date"] = verified.creation_date
+        extra["status"] = verified.status
+        extra["timestamp"] = verified.timestamp
+
+        return SignatureVerificationResult(
+            success=True,
+            summary="Verification of checksum file succeeded.",
+            extra_information=extra,
+        )

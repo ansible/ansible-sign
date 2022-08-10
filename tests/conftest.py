@@ -7,6 +7,8 @@ import os
 import pytest
 import shutil
 
+from ansible_sign.signing import *
+
 
 @pytest.fixture
 def gpg_home_with_secret_key(tmp_path):
@@ -48,3 +50,28 @@ def unsigned_project_with_checksum_manifest(tmp_path):
         dirs_exist_ok=True,
     )
     yield tmp_path
+
+
+@pytest.fixture
+def signed_project_and_gpg(
+    gpg_home_with_secret_key,
+    unsigned_project_with_checksum_manifest,
+):
+    out = (
+        unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt.asc"
+    )
+    manifest_path = (
+        unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt"
+    )
+    signer = GPGSigner(
+        manifest_path=manifest_path,
+        output_path=out,
+        passphrase="doYouEvenPassphrase",
+        gpg_home=gpg_home_with_secret_key,
+    )
+    result = signer.sign()
+    assert result.success is True
+    assert os.path.exists(out)
+
+    # now signed
+    yield (unsigned_project_with_checksum_manifest, gpg_home_with_secret_key)
