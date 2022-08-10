@@ -1,4 +1,5 @@
 import argparse
+import getpass
 import gnupg
 import logging
 import os
@@ -152,16 +153,41 @@ def parse_args(args):
     # command: gpg-sign
     cmd_gpg_sign = project_commands.add_parser(
         "gpg-sign",
-        help="Perform GPG signing on the checksum manifest",
+        help="Generate a checksum manifest and GPG sign it",
     )
     cmd_gpg_sign.set_defaults(func=gpg_sign)
     cmd_gpg_sign.add_argument(
-        "--output",
-        help="An optional filename to which to write the resulting detached signature. (default: %(default)s)",
+        "--signature-output",
+        help=(
+            "An optional filename to which to write the resulting detached "
+            "signature. (default: %(default)s)"
+        ),
         required=False,
-        metavar="OUTPUT",
-        dest="output",
+        metavar="SIGNATURE",
+        dest="signature_output",
         default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt.sig"),
+    )
+    cmd_gpg_sign.add_argument(
+        "--manifest-output",
+        help=(
+            "An optional filename to which to write the resulting checksum "
+            "manifest. (default: %(default)s)"
+        ),
+        required=False,
+        metavar="MANIFEST",
+        dest="manifest_output",
+        default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt"),
+    )
+    cmd_gpg_sign.add_argument(
+        "--manifest",
+        help=(
+            "A manifest to use as input instead of generating one. (default: "
+            "%(default)s)"
+        ),
+        required=False,
+        metavar="MANIFEST_INPUT",
+        dest="manifest_input",
+        default=None,
     )
     cmd_gpg_sign.add_argument(
         "--fingerprint",
@@ -175,10 +201,29 @@ def parse_args(args):
         default=None,
     )
     cmd_gpg_sign.add_argument(
-        "checksum_file",
-        help="The checksum file that was signed. (default: %(default)s)",
-        metavar="CHECKSUM_FILE",
-        default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt"),
+        "-p",
+        "--prompt-passphrase",
+        help="Prompt for a GPG key passphrase",
+        required=False,
+        dest="prompt_passphrase",
+        default=False,
+        action="store_true",
+    )
+    cmd_gpg_sign.add_argument(
+        "--gnupg-home",
+        help=(
+            "A valid GNUPG home directory. (default: the GNUPG default, "
+            "usually ~/.gnupg)"
+        ),
+        required=False,
+        metavar="GNUPG_HOME",
+        dest="gnupg_home",
+        default=None,
+    )
+    cmd_gpg_sign.add_argument(
+        "project_root",
+        help="The directory containing the files being validated and verified",
+        metavar="PROJECT_ROOT",
     )
 
     # command: checksum-manifest
@@ -294,10 +339,6 @@ def gpg_validate_manifest(args):
     return 3
 
 
-def gpg_sign(args):
-    print("todo")
-
-
 def _write_file_or_print(dest, contents):
     if dest == "-":
         print(contents, end="")
@@ -312,6 +353,59 @@ def _write_file_or_print(dest, contents):
     with open(dest, "w") as f:
         f.write(contents)
         _logger.info("Wrote to file: %s", dest)
+
+
+def gpg_sign(args):
+    # Step 1: Manifest
+    # If --manifest is given, then use that file as the input manifest to sign.
+    # Otherwise, generate the manifest from scratch.
+    if args.manifest_input is None:
+        # It was NOT given, so we need to generate it. But we can't if the user
+        # is trying to pass "-" to _generate_checksum_manifest().
+        if args.manifest_output == "-":
+            print(
+                "Cannot output checksum manifest to stdout, because then we "
+                "couldn't sign it!"
+            )
+            return 1
+
+        manifest_output = os.path.join(args.project_root, args.manifest_output)
+        checksum_file_contents = _generate_checksum_manifest(args.project_root)
+        _write_file_or_print(manifest_output, checksum_file_contents)
+        manifest_path = manifest_output
+    else:
+        manifest_input = os.path.join(args.project_root, args.manifest_input)
+        if not os.path.exists(manifest_input):
+            print(f"Checksum manifest file does not exist: {manifest_input}")
+            return 1
+        manifest_path = manifest_input
+
+    # Step 2: Signing
+    # Do they need a passphrase?
+    passphrase = None
+    if args.prompt_passphrase:
+        passphrase = getpass.getpass("GPG Key Passphrase: ")
+
+    signature_output = os.path.join(args.project_root, args.signature_output)
+    signer = GPGSigner(
+        manifest_path=manifest_path,
+        output_path=args.signature_output,
+        privkey=args.fingerprint,
+        passphrase=passphrase,
+        gpg_home=args.gnupg_home,
+    )
+    result = signer.sign()
+    if result.success:
+        print("GPG signing successful!")
+        retcode = 0
+    else:
+        print("GPG signing FAILED!")
+        retcode = 4
+
+    print(f"Checksum manifest: {manifest_path}")
+    print(f"GPG summary: {result.summary}")
+    print(f"GPG Details: {result.extra_information}")
+    return retcode
 
 
 def checksum_manifest(args):
