@@ -57,13 +57,13 @@ class GPGSigner(SignatureSigner):
                 output=self.output_path,
             )
 
+        extra_information = {}
+        for k in ("stderr", "fingerprint", "hash_algo", "timestamp", "returncode"):
+            if hasattr(sign_result, k):
+                extra_information[k] = getattr(sign_result, k)
+
         return SignatureSigningResult(
             success=sign_result.returncode == 0 and sign_result.status is not None,
             summary=sign_result.status,
-            extra_information={
-                "stderr": sign_result.stderr,
-                "fingerprint": sign_result.fingerprint,
-                "hash_algo": sign_result.hash_algo,
-                "timestamp": sign_result.timestamp,
-            },
+            extra_information=extra_information,
         )
