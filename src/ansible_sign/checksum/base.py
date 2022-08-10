@@ -22,9 +22,7 @@ class ChecksumFile:
     We only allow sha256 for now, though supporting 512, etc. would be easy.
     """
 
-    MODES = ("sha256",)
-
-    def __init__(self, root, differ=None, mode="sha256"):
+    def __init__(self, root, differ=None):
         self.root = root
         if differ is not None:
             self.differ = differ(root=self.root)
@@ -34,9 +32,6 @@ class ChecksumFile:
             )
 
             self.differ = DistlibManifestChecksumFileExistenceDiffer(root=self.root)
-        if mode not in self.MODES:
-            raise Exception(f"mode argument must be one of: {', '.join(self.MODES)}")
-        self.mode = mode
 
     def _parse_gnu_style(self, line):
         """

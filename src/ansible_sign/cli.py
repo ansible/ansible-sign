@@ -85,15 +85,6 @@ def parse_args(args):
         dest="ignore_file_list_differences",
     )
     cmd_validate_checksum.add_argument(
-        "--algorithm",
-        help="Which checksum hashing algorithm to use. (default: %(default)s)",
-        required=False,
-        choices=ChecksumFile.MODES,
-        metavar="ALGORITHM",
-        dest="algorithm",
-        default="sha256",
-    )
-    cmd_validate_checksum.add_argument(
         "project_root",
         help="The directory containing the files being validated and verified",
         metavar="PROJECT_ROOT",
@@ -197,15 +188,6 @@ def parse_args(args):
     )
     cmd_checksum_manifest.set_defaults(func=checksum_manifest)
     cmd_checksum_manifest.add_argument(
-        "--algorithm",
-        help="Which checksum hashing algorithm to use. (default: %(default)s)",
-        required=False,
-        choices=ChecksumFile.MODES,
-        metavar="ALGORITHM",
-        dest="algorithm",
-        default="sha256",
-    )
-    cmd_checksum_manifest.add_argument(
         "--output",
         help="An optional filename to which to write the resulting manifest. (default: %(default)s)",
         required=False,
@@ -233,13 +215,12 @@ def setup_logging(loglevel):
     )
 
 
-def _generate_checksum_manifest(project_root, algorithm):
+def _generate_checksum_manifest(project_root):
     differ = DistlibManifestChecksumFileExistenceDiffer
-    checksum = ChecksumFile(project_root, differ=differ, mode=algorithm)
+    checksum = ChecksumFile(project_root, differ=differ)
     manifest = checksum.generate_gnu_style()
     _logger.debug(
-        "Full calculated %s checksum manifest (%s):\n%s",
-        algorithm,
+        "Full calculated checksum manifest (%s):\n%s",
         project_root,
         manifest,
     )
@@ -248,7 +229,7 @@ def _generate_checksum_manifest(project_root, algorithm):
 
 def validate_checksum(args):
     differ = DistlibManifestChecksumFileExistenceDiffer
-    checksum = ChecksumFile(args.project_root, differ=differ, mode=args.algorithm)
+    checksum = ChecksumFile(args.project_root, differ=differ)
     checksum_file = os.path.join(args.project_root, args.checksum_file)
 
     if not os.path.exists(checksum_file):
@@ -334,9 +315,7 @@ def _write_file_or_print(dest, contents):
 
 
 def checksum_manifest(args):
-    checksum_file_contents = _generate_checksum_manifest(
-        args.project_root, args.algorithm
-    )
+    checksum_file_contents = _generate_checksum_manifest(args.project_root)
     _write_file_or_print(args.output, checksum_file_contents)
 
 
