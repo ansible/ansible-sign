@@ -145,3 +145,16 @@ def test_manifest_evil_file_added():
     parsed_manifest = checksum.parse(actual_manifest)
     with pytest.raises(ChecksumMismatch) as ex:
         checksum.verify(parsed_manifest)
+
+
+def test_missing_manifest():
+    root = os.path.join(FIXTURES_DIR, "missing-manifest")
+    checksum = ChecksumFile(
+        root,
+        differ=DistlibManifestChecksumFileExistenceDiffer,
+    )
+
+    with pytest.raises(FileNotFoundError) as ex:
+        checksum.verify({})
+
+    assert "missing-manifest/MANIFEST.in" in str(ex)
