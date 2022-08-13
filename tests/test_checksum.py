@@ -98,6 +98,21 @@ def test_parse_manifest_with_blank_lines():
     )
 
 
+def test_parse_manifest_with_only_blank_lines():
+    checksum = ChecksumFile("/tmp", differ=None)
+    parsed = checksum.parse("\n\n\n\n\n")
+    assert len(parsed) == 0
+
+
+def test_parse_manifest_empty():
+    """
+    Don't throw on empty manifest, but return an empty dict.
+    """
+    checksum = ChecksumFile("/tmp", differ=None)
+    parsed = checksum.parse("")
+    assert len(parsed) == 0
+
+
 @pytest.mark.parametrize(
     "fixture, diff_output",
     [
