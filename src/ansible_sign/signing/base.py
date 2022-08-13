@@ -6,6 +6,9 @@ class SignatureVerificationResult:
         self.summary = summary
         self.extra_information = extra_information
 
+    def __bool__(self):
+        return self.success
+
 
 class SignatureVerifier:
     """
@@ -29,6 +32,9 @@ class SignatureSigningResult:
         self.success = success
         self.summary = summary
         self.extra_information = extra_information
+
+    def __bool__(self):
+        return self.success
 
 
 class SignatureSigner:

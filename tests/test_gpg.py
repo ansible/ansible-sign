@@ -42,6 +42,7 @@ def test_gpg_simple_verify(tmp_path, directory, expected):
 
     result = verifier.verify()
     assert result.success is expected
+    assert bool(result) is expected
 
 
 def test_gpg_simple_sign(
@@ -62,6 +63,7 @@ def test_gpg_simple_sign(
     )
     result = signer.sign()
     assert result.success is True
+    assert bool(result)
     assert os.path.exists(out)
 
 
@@ -79,6 +81,7 @@ def test_gpg_sign_verify_end_to_end(signed_project_and_gpg):
     )
     result = verifier.verify()
     assert result.success is True
+    assert bool(result)
 
 
 def test_gpg_none_manifest():
