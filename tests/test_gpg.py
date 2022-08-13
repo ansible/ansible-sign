@@ -79,3 +79,25 @@ def test_gpg_sign_verify_end_to_end(signed_project_and_gpg):
     )
     result = verifier.verify()
     assert result.success is True
+
+
+def test_gpg_none_manifest():
+    with pytest.raises(RuntimeError) as ex:
+        GPGSigner(
+            manifest_path=None,
+            output_path="/tmp/this-file-should-not-exist",
+            passphrase="doYouEvenPassphrase",
+            gpg_home="/tmp",
+        )
+    assert "manifest_path must not be None" in str(ex)
+
+
+def test_gpg_none_output_path():
+    with pytest.raises(RuntimeError) as ex:
+        GPGSigner(
+            manifest_path="/tmp/this-file-should-not-exist",
+            output_path=None,
+            passphrase="doYouEvenPassphrase",
+            gpg_home="/tmp",
+        )
+    assert "output_path must not be None" in str(ex)
