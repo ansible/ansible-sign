@@ -95,8 +95,8 @@ def parse_args(args):
     cmd_gpg_validate_manifest = project_commands.add_parser(
         "gpg-validate-manifest",
         help=(
-            "Perform signature validation on the checksum manifest (NOT "
-            "including checksum verification)"
+            "Perform signature validation AND checksum verification on the "
+            "checksum manifest"
         ),
     )
     cmd_gpg_validate_manifest.set_defaults(func=gpg_validate_manifest)
