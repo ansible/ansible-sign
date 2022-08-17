@@ -91,16 +91,16 @@ def parse_args(args):
         metavar="PROJECT_ROOT",
     )
 
-    # command: gpg-validate-manifest
-    cmd_gpg_validate_manifest = project_commands.add_parser(
-        "gpg-validate-manifest",
+    # command: gpg-verify
+    cmd_gpg_verify = project_commands.add_parser(
+        "gpg-verify",
         help=(
             "Perform signature validation AND checksum verification on the "
             "checksum manifest"
         ),
     )
-    cmd_gpg_validate_manifest.set_defaults(func=gpg_validate_manifest)
-    cmd_gpg_validate_manifest.add_argument(
+    cmd_gpg_verify.set_defaults(func=gpg_verify)
+    cmd_gpg_verify.add_argument(
         "--signature-file",
         help=(
             "An optional detached signature file, relative to the project "
@@ -111,7 +111,7 @@ def parse_args(args):
         dest="signature_file",
         default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt.sig"),
     )
-    cmd_gpg_validate_manifest.add_argument(
+    cmd_gpg_verify.add_argument(
         "--manifest-file",
         help=(
             "The signed checksum manifest file, relative to the project root."
@@ -122,7 +122,7 @@ def parse_args(args):
         dest="manifest_file",
         default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt"),
     )
-    cmd_gpg_validate_manifest.add_argument(
+    cmd_gpg_verify.add_argument(
         "--keyring",
         help=(
             "The GPG keyring file to use to find the matching public key. "
@@ -133,7 +133,7 @@ def parse_args(args):
         dest="keyring",
         default=None,
     )
-    cmd_gpg_validate_manifest.add_argument(
+    cmd_gpg_verify.add_argument(
         "--gnupg-home",
         help=(
             "A valid GNUPG home directory. (default: the GNUPG default, "
@@ -144,7 +144,7 @@ def parse_args(args):
         dest="gnupg_home",
         default=None,
     )
-    cmd_gpg_validate_manifest.add_argument(
+    cmd_gpg_verify.add_argument(
         "project_root",
         help="The directory containing the files being validated and verified",
         metavar="PROJECT_ROOT",
@@ -299,7 +299,7 @@ def validate_checksum(args):
     print("Checksum validation SUCCEEDED!")
 
 
-def gpg_validate_manifest(args):
+def gpg_verify(args):
     signature_file = os.path.join(args.project_root, args.signature_file)
     manifest_file = os.path.join(args.project_root, args.manifest_file)
 

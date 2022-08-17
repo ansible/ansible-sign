@@ -155,7 +155,7 @@ def test_gpg_validate_manifest_with_keyring(capsys, signed_project_and_gpg):
     keyring = os.path.join(gpg_home, "pubring.kbx")
     args = [
         "project",
-        "gpg-validate-manifest",
+        "gpg-verify",
         f"--keyring={keyring}",
         str(project_root),
     ]
