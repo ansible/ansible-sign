@@ -88,7 +88,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "ansible-sign"
-copyright = "2022, Rick Elrod"
+copyright = "2022, Red Hat, Inc."
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -247,7 +247,7 @@ latex_documents = [
         "index",
         "user_guide.tex",
         "ansible-sign Documentation",
-        "Rick Elrod",
+        "Red Hat, Inc.",
         "manual",
     )
 ]
