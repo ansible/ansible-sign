@@ -36,7 +36,6 @@ jobs:
           touch docs/_build/html/.nojekyll
 
       - name: "Deploy 'em 🚀"
-        uses: peaceiris/actions-gh-pages@v3
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/_build/html
+          folder: docs/_build/html
