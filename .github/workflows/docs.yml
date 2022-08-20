@@ -35,7 +35,7 @@ jobs:
           sed -i 's/term-missing/html/' setup.cfg
           tox
 
-      - run: mv htmlcov docs/_build/html/coverage
+      - run: ls -lR && mv -v htmlcov docs/_build/html/coverage && ls -lR
 
       - name: "Deploy 'em 🚀"
         uses: JamesIves/github-pages-deploy-action@v4
