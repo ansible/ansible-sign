@@ -1,0 +1,177 @@
+=======================================
+Rundown of ``ansible-sign`` (CLI) usage
+=======================================
+
+For Ansible Automation Platform content developers (project maintainers), the
+primary and supported way of using **ansible-sign** is through the command-line
+interface that comes with it.
+
+The command-line interface aims to make it easy to use cryptographic technology
+like GPG_ to validate that specified files within a project have not been
+tampered with in any way.
+
+Though in the future other means of signing and validating might be supported,
+GPG is the only current supported means of signing and validation. As such, the
+rest of this tutorial assumes the use of GPG.
+
+The process of creating a GPG public key for signing content is well documented
+online, such as in this `Red Hat "Enable Sysadmin" blog post`_. As such, we will
+assume that you have a valid GPG keypair already available and in your default
+GnuPG keyring.
+
+You can verify that you have a keypair with the following command:
+
+.. code-block:: shell
+   :caption: Verifying that a valid secret GPG key exists for signing content
+
+   $ gpg --list-secret-keys
+
+If the above command produces no output, or one line of output that says that a
+"trustdb" was created, then you do not have a secret key in your default
+keyring. If it produces output other than that, then you have a valid secret key
+and are ready to move on!
+
+.. _GPG: https://www.gnupg.org/
+.. _Red Hat "Enable Sysadmin" blog post: https://www.redhat.com/sysadmin/creating-gpg-keypairs
+
+
+The Project Directory
+=====================
+
+We will start with a simple Ansible project directory. The `Ansible
+documentation`_ goes into more sophisticated examples of project directory
+structures.
+
+In our sample project, we have a very simple structure. An ``inventory`` file,
+and two small playbooks under a ``playbooks`` directory.
+
+.. code-block:: shell
+   :caption: Our sample project
+
+   $ cd sample-project/
+   $ tree -a .
+   .
+   ├── inventory
+   └── playbooks
+       ├── get_uptime.yml
+       └── hello.yml
+
+   1 directory, 3 files
+
+.. note::
+
+   Future commands that we run will assume that your Working Directory is the
+   root of your project. ``ansible-sign project`` commands, as a rule, always
+   take the project root directory as their last argument, thus we will simply
+   use ``.`` to indicate the current Working Directory.
+
+Signing Content
+===============
+
+The way that ``ansible-sign`` protects content from tampering is by taking
+checksums (sha256) of all of the secured files in the project, compiling those
+into a checksum manifest file, and then finally signing that manifest file.
+
+Thus, the first step toward signing content is to create a file that tells
+``ansible-sign`` which files to protect. This file should be called
+``MANIFEST.in`` and live in the project root directory.
+
+Internally, ``ansible-sign`` makes use of the ``distlib.manifest`` module of
+Python's distlib_ library, and thus ``MANIFEST.in`` must follow the syntax that
+this library specifies. The Python Packaging User Guide has an `explanation of
+the MANIFEST.in file directives`_.
+
+For our sample project, we will include two directives. Our ``MANIFEST.in`` will
+look like this:
+
+.. code-block::
+   :caption: ``MANIFEST.in``
+
+   include inventory
+   recursive-include playbooks *.yml
+
+With this file in place, we can generate our checksum manifest file and sign
+it. These steps both happen in a single ``ansible-sign`` command.
+
+.. code-block::
+   :caption: Generating a checksum manifest file and signing it
+
+   $ ansible-sign project gpg-sign .
+   GPG signing successful!
+   Checksum manifest: ./.ansible-sign/sha256sum.txt
+   GPG summary: signature created
+
+Congratulations, you've now signed your first project!
+
+Notice that the ``gpg-sign`` subcommand lives under the ``project``
+subcommand. For signing project content, every command will start with
+``ansible-sign project``. As noted above, as a rule, every ``ansible-sign
+project`` command takes the project root directory as its final argument.
+
+.. hint::
+
+   As mentioned earlier, ``ansible-sign`` by default makes use of your default
+   keyring and looks for the first available secret key that it can find, to sign
+   your project. You can specify a specific secret key to use with the
+   ``--fingerprint`` option, or even a completely independent GPG home directory
+   with the ``--gnupg-home`` option.
+
+.. note::
+
+   If you are using a desktop environment, GnuPG will automatically pop up a
+   dialog asking for your secret key's passphrase. If this functionality does
+   not work, or you are working without a desktop environment (e.g., via SSH),
+   you can use the ``-p``/``--prompt-passphrase`` flag after ``gpg-sign`` in the
+   above command, which will cause ``ansible-sign`` to prompt for the password
+   instead.
+
+If we now look at the structure of the project directory, we'll notice that a
+new ``.ansible-sign`` directory has been created. This directory houses the
+checksum manifest and a detached GPG signature for it.
+
+.. code-block:: shell
+   :caption: Our sample project after signing
+
+   $ tree -a .
+   .
+   ├── .ansible-sign
+   │   ├── sha256sum.txt
+   │   └── sha256sum.txt.sig
+   ├── inventory
+   ├── MANIFEST.in
+   └── playbooks
+       ├── get_uptime.yml
+       └── hello.yml
+
+.. _Ansible documentation: https://docs.ansible.com/ansible/latest/user_guide/sample_setup.html
+.. _distlib: https://pypi.org/project/distlib/
+.. _explanation of the MANIFEST.in file directives: https://packaging.python.org/en/latest/guides/using-manifest-in/#manifest-in-commands
+
+
+Verifying Content
+=================
+
+If you come in contact with a signed Ansible project and want to verify that it
+has not been altered, you can use ``ansible-sign`` to check both that the
+signature is valid and that the checksums of the files match what the checksum
+manifest says they should be. In particular, the ``ansible-sign project
+gpg-verify`` command can be used to automatically verify both of these
+conditions.
+
+.. code-block:: shell
+   :caption: Verifying our sample project
+
+   $ ansible-sign project gpg-verify .
+   Signature validation SUCCEEDED!
+   Verification of checksum file succeeded.
+
+.. hint::
+
+   Once again, by default ``ansible-sign`` makes use of your default GPG
+   keyring to look for a matching public key. You can specify a keyring file
+   with the ``--keyring`` option, or a different GPG home with the
+   ``--gnugpg-home`` option.
+
+If verification fails for any reason, some information will be printed to help
+you debug the cause. More verbosity can be enabled by passing the global
+``--debug`` flag, immediately after ``ansible-sign`` in your commands.

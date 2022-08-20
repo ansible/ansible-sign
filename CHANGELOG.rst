@@ -5,4 +5,7 @@ Changelog
 Version 0.1
 ===========
 
-- Initial library
+- Initial library and CLI for ``ansible-sign``. See documentation for usage
+  examples. Only the CLI is officially supported, and the API can change over
+  time. We make no effort to provide backwards compatibility at the API level
+  at this time.
