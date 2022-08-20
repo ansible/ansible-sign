@@ -30,6 +30,12 @@ jobs:
           tox -e docs
           touch docs/_build/html/.nojekyll
 
+      - name: Some hacking so we can show code-coverage, too
+        run: |
+          sed -i 's/term-missing/html/' setup.cfg
+          tox
+          mv htmlcov docs/_build/html/coverage
+
       - name: "Deploy 'em 🚀"
         uses: JamesIves/github-pages-deploy-action@v4
         with:
