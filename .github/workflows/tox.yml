@@ -29,3 +29,11 @@ jobs:
 
       - name: Run tox
         run: tox
+
+      - name: Let's have some docs!
+        run: tox -e docs
+
+      - name: "Deploy 'em 🚀"
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs/_build/html
