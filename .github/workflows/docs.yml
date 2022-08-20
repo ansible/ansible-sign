@@ -1,7 +1,6 @@
-name: ansible-sign tests
+name: ansible-sign docs
 on:
   push:
-  pull_request:
 
 jobs:
   build:
@@ -11,9 +10,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - python: "3.8"
-          - python: "3.9"
           - python: "3.10"
+
     steps:
       - uses: actions/checkout@v2
         with:
@@ -27,5 +25,12 @@ jobs:
       - name: Install tox
         run: pip install tox
 
-      - name: Run tox
-        run: tox
+      - name: Let's have some docs!
+        run: |
+          tox -e docs
+          touch docs/_build/html/.nojekyll
+
+      - name: "Deploy 'em 🚀"
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs/_build/html
