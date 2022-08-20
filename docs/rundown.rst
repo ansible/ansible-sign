@@ -14,10 +14,10 @@ Though in the future other means of signing and validating might be supported,
 GPG is the only current supported means of signing and validation. As such, the
 rest of this tutorial assumes the use of GPG.
 
-The process of creating a GPG public key for signing content is well documented
-online, such as in this `Red Hat "Enable Sysadmin" blog post`_. As such, we will
-assume that you have a valid GPG keypair already available and in your default
-GnuPG keyring.
+The process of creating a GPG public/private keypair for signing content is well
+documented online, such as in this `Red Hat "Enable Sysadmin" blog post`_. As
+such, we will assume that you have a valid GPG keypair already available and in
+your default GnuPG keyring.
 
 You can verify that you have a keypair with the following command:
 
