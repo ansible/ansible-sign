@@ -31,7 +31,9 @@ jobs:
         run: tox
 
       - name: Let's have some docs!
-        run: tox -e docs
+        run: |
+          tox -e docs
+          touch docs/_build/html/.nojekyll
 
       - name: "Deploy 'em 🚀"
         uses: JamesIves/github-pages-deploy-action@v4
