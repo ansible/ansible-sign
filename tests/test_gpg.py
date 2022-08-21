@@ -2,7 +2,7 @@ import gnupg
 import os
 import pytest
 
-from ansible_sign.signing import *
+from ansible_sign.signing import GPGSigner, GPGVerifier
 
 __author__ = "Rick Elrod"
 __copyright__ = "(c) 2022 Red Hat, Inc."
@@ -27,12 +27,8 @@ def test_gpg_simple_verify(tmp_path, directory, expected):
     pubkey = open(os.path.join(FIXTURES_DIR, "gpgkeys", "hao_pubkey.txt"), "r").read()
     gpg.import_keys(pubkey)
 
-    manifest_path = os.path.join(
-        FIXTURES_DIR, "gpg", directory, ".ansible-sign", "sha256sum.txt"
-    )
-    signature_path = os.path.join(
-        FIXTURES_DIR, "gpg", directory, ".ansible-sign", "sha256sum.txt.sig"
-    )
+    manifest_path = os.path.join(FIXTURES_DIR, "gpg", directory, ".ansible-sign", "sha256sum.txt")
+    signature_path = os.path.join(FIXTURES_DIR, "gpg", directory, ".ansible-sign", "sha256sum.txt.sig")
 
     verifier = GPGVerifier(
         manifest_path=manifest_path,
@@ -49,12 +45,8 @@ def test_gpg_simple_sign(
     gpg_home_with_secret_key,
     unsigned_project_with_checksum_manifest,
 ):
-    out = (
-        unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt.sig"
-    )
-    manifest_path = (
-        unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt"
-    )
+    out = unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt.sig"
+    manifest_path = unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt"
     signer = GPGSigner(
         manifest_path=manifest_path,
         output_path=out,

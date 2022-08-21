@@ -11,5 +11,6 @@ All verification methods contain two modules:
    leaving it to each subclass to implement sign() as it sees fit.
 """
 
-from .gpg import *
-from .base import *
+from .gpg import GPGSigner, GPGVerifier  # noqa
+
+# from .base import *

@@ -7,7 +7,7 @@ import os
 import pytest
 import shutil
 
-from ansible_sign.signing import *
+from ansible_sign.signing import GPGSigner
 
 
 @pytest.fixture
@@ -57,12 +57,8 @@ def signed_project_and_gpg(
     gpg_home_with_secret_key,
     unsigned_project_with_checksum_manifest,
 ):
-    out = (
-        unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt.sig"
-    )
-    manifest_path = (
-        unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt"
-    )
+    out = unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt.sig"
+    manifest_path = unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt"
     signer = GPGSigner(
         manifest_path=manifest_path,
         output_path=out,

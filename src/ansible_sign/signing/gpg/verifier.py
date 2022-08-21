@@ -3,13 +3,9 @@ This module handles GPG signature verification for Ansible content. It makes use
 of python-gnupg (which ultimately shells out to GPG).
 """
 
-import argparse
 import gnupg
 import os
-import sys
-import tempfile
 
-from ansible_sign import __version__
 from ansible_sign.signing.base import (
     SignatureVerifier,
     SignatureVerificationResult,
@@ -21,9 +17,7 @@ __license__ = "MIT"
 
 
 class GPGVerifier(SignatureVerifier):
-    def __init__(
-        self, manifest_path, detached_signature_path, gpg_home=None, keyring=None
-    ):
+    def __init__(self, manifest_path, detached_signature_path, gpg_home=None, keyring=None):
         super(GPGVerifier, self).__init__()
 
         if manifest_path is None:

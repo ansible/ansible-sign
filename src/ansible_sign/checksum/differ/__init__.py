@@ -1,1 +1,1 @@
-from .distlib_manifest import DistlibManifestChecksumFileExistenceDiffer
+from .distlib_manifest import DistlibManifestChecksumFileExistenceDiffer  # noqa
