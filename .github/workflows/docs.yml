@@ -3,7 +3,8 @@ on:
   push:
 
 jobs:
-  build:
+  docs:
+    name: Python ${{ matrix.python }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:

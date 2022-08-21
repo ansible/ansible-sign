@@ -4,7 +4,8 @@ on:
   pull_request:
 
 jobs:
-  build:
+  python-tests:
+    name: Python ${{ matrix.python }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
