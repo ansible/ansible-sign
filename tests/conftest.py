@@ -18,7 +18,9 @@ def gpg_home_with_secret_key(tmp_path):
 
     Returns the path to the GPG home.
     """
-    gpg = gnupg.GPG(gnupghome=tmp_path)
+    home = tmp_path / "gpg-home"
+    home.mkdir()
+    gpg = gnupg.GPG(gnupghome=home)
     key_params = gpg.gen_key_input(
         key_length=2048,
         name_real="TEMPORARY ansible-sign TEST key",
@@ -27,7 +29,7 @@ def gpg_home_with_secret_key(tmp_path):
         passphrase="doYouEvenPassphrase",
     )
     gpg.gen_key(key_params)
-    yield tmp_path
+    yield home
 
 
 @pytest.fixture
@@ -38,7 +40,7 @@ def unsigned_project_with_checksum_manifest(tmp_path):
 
     Uses the 'manifest-success' checksum fixture directory as its base.
     """
-
+    project = tmp_path / "project_root"
     shutil.copytree(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
@@ -46,10 +48,10 @@ def unsigned_project_with_checksum_manifest(tmp_path):
             "checksum",
             "manifest-success",
         ),
-        tmp_path,
+        project,
         dirs_exist_ok=True,
     )
-    yield tmp_path
+    yield project
 
 
 @pytest.fixture
