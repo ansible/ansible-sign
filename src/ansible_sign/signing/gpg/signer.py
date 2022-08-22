@@ -3,13 +3,8 @@ This module handles GPG signature generation for Ansible content. It makes use
 of python-gnupg (which ultimately shells out to GPG).
 """
 
-import argparse
 import gnupg
-import os
-import sys
-import tempfile
 
-from ansible_sign import __version__
 from ansible_sign.signing.base import (
     SignatureSigner,
     SignatureSigningResult,

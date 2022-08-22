@@ -1,8 +1,7 @@
 import os
 import pytest
 
-from ansible_sign.cli import *
-from ansible_sign.checksum.differ import *
+from ansible_sign.cli import main
 
 __author__ = "Rick Elrod"
 __copyright__ = "(c) 2022 Red Hat, Inc."
@@ -82,7 +81,7 @@ def test_validate_checksum_via_main_success(capsys):
     args = [
         "project",
         "validate-checksum",
-        f"tests/fixtures/checksum/manifest-success",
+        "tests/fixtures/checksum/manifest-success",
     ]
     rc = main(args)
     captured = capsys.readouterr()
@@ -103,7 +102,7 @@ def test_validate_checksum_via_main_failure(capsys):
     args = [
         "project",
         "validate-checksum",
-        f"tests/fixtures/checksum/manifest-files-changed",
+        "tests/fixtures/checksum/manifest-files-changed",
     ]
     rc = main(args)
     captured = capsys.readouterr()

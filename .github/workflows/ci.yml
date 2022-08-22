@@ -1,10 +1,12 @@
+---
 name: ansible-sign tests
-on:
+on:  # yamllint disable-line rule:truthy
   push:
   pull_request:
 
 jobs:
-  build:
+  python-tests:
+    name: Python ${{ matrix.python }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
@@ -27,5 +29,16 @@ jobs:
       - name: Install tox
         run: pip install tox
 
-      - name: Run tox
-        run: tox
+      - name: Run tests
+        run: tox -e py3
+  linters:
+    name: Linters
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install tox
+        run: pip install tox
+
+      - name: Run linters
+        run: tox -e lint
