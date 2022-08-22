@@ -36,8 +36,8 @@ jobs:
         run: |
           sed -i 's/term-missing/html/' setup.cfg
           tox
-
-      - run: ls -lR && mv -v htmlcov docs/_build/html/coverage && ls -lR
+          mv -v htmlcov docs/_build/html/coverage
+          rm -v docs/_build/html/coverage/.gitignore
 
       - name: "Deploy 'em 🚀"
         uses: JamesIves/github-pages-deploy-action@v4
