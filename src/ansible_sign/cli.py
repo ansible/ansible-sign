@@ -139,30 +139,6 @@ def parse_args(args):
     )
     cmd_gpg_sign.set_defaults(func=gpg_sign)
     cmd_gpg_sign.add_argument(
-        "--signature-output",
-        help=("An optional filename to which to write the resulting detached signature. (default: %(default)s)"),
-        required=False,
-        metavar="SIGNATURE",
-        dest="signature_output",
-        default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt.sig"),
-    )
-    cmd_gpg_sign.add_argument(
-        "--manifest-output",
-        help=("An optional filename to which to write the resulting checksum manifest. (default: %(default)s)"),
-        required=False,
-        metavar="MANIFEST",
-        dest="manifest_output",
-        default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt"),
-    )
-    cmd_gpg_sign.add_argument(
-        "--manifest",
-        help=("A manifest to use as input instead of generating one. (default: %(default)s)"),
-        required=False,
-        metavar="MANIFEST_INPUT",
-        dest="manifest_input",
-        default=None,
-    )
-    cmd_gpg_sign.add_argument(
         "--fingerprint",
         help=("The GPG private key fingerprint to sign with. (default: First usable key in the user's keyring)"),
         required=False,
@@ -330,27 +306,11 @@ def _write_file_or_print(dest, contents):
 
 def gpg_sign(args):
     # Step 1: Manifest
-    # If --manifest is given, then use that file as the input manifest to sign.
-    # Otherwise, generate the manifest from scratch.
-    if args.manifest_input is None:
-        # It was NOT given, so we need to generate it. But we can't if the user
-        # is trying to pass "-" to _generate_checksum_manifest().
-        if args.manifest_output == "-":
-            print("Cannot output checksum manifest to stdout, because then we couldn't sign it!")
-            return 1
-
-        manifest_output = os.path.join(args.project_root, args.manifest_output)
-        checksum_file_contents = _generate_checksum_manifest(args.project_root)
-        if checksum_file_contents is False:
-            return 1
-        _write_file_or_print(manifest_output, checksum_file_contents)
-        manifest_path = manifest_output
-    else:
-        manifest_input = os.path.join(args.project_root, args.manifest_input)
-        if not os.path.exists(manifest_input):
-            print(f"Checksum manifest file does not exist: {manifest_input}")
-            return 1
-        manifest_path = manifest_input
+    manifest_path = os.path.join(args.project_root, ".ansible-sign", "sha256sum.txt")
+    checksum_file_contents = _generate_checksum_manifest(args.project_root)
+    if checksum_file_contents is False:
+        return 1
+    _write_file_or_print(manifest_path, checksum_file_contents)
 
     # Step 2: Signing
     # Do they need a passphrase?
@@ -358,9 +318,10 @@ def gpg_sign(args):
     if args.prompt_passphrase:
         passphrase = getpass.getpass("GPG Key Passphrase: ")
 
+    signature_path = os.path.join(args.project_root, ".ansible-sign", "sha256sum.txt.sig")
     signer = GPGSigner(
         manifest_path=manifest_path,
-        output_path=args.signature_output,
+        output_path=signature_path,
         privkey=args.fingerprint,
         passphrase=passphrase,
         gpg_home=args.gnupg_home,
