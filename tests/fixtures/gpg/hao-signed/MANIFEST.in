@@ -1,0 +1,3 @@
+recursive-exclude .git *
+include README.md
+include hello_world.yml

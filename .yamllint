@@ -1,0 +1,10 @@
+---
+# vim: syn=yaml
+extends: default
+rules:
+  empty-lines:
+    ignore: |
+      tests/fixtures/gpg/hao-signed/hello_world.yml
+  document-start:
+    ignore: |
+      tests/fixtures/gpg/hao-signed/hello_world.yml
