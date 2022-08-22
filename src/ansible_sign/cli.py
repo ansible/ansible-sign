@@ -57,59 +57,12 @@ def parse_args(args):
     )
     project_commands = project.add_subparsers(required=True, dest="command")
 
-    # command: validate-checksum
-    cmd_validate_checksum = project_commands.add_parser(
-        "validate-checksum",
-        help="Perform checksum file validation (NOT including signature signing)",
-    )
-    cmd_validate_checksum.set_defaults(func=validate_checksum)
-    cmd_validate_checksum.add_argument(
-        "--checksum-file",
-        help="The checksum file to use (default: %(default)s)",
-        required=False,
-        metavar="CHECKSUM_FILE",
-        dest="checksum_file",
-        default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt"),
-    )
-    cmd_validate_checksum.add_argument(
-        "--ignore-file-list-differences",
-        help=(
-            "Do not fail validation even if files have been added or removed, "
-            "and the current manifest is out of date. Only check those files "
-            "listed in the manifest. (default: %(default)s)"
-        ),
-        default=False,
-        action="store_true",
-        dest="ignore_file_list_differences",
-    )
-    cmd_validate_checksum.add_argument(
-        "project_root",
-        help="The directory containing the files being validated and verified",
-        metavar="PROJECT_ROOT",
-    )
-
     # command: gpg-verify
     cmd_gpg_verify = project_commands.add_parser(
         "gpg-verify",
         help=("Perform signature validation AND checksum verification on the checksum manifest"),
     )
     cmd_gpg_verify.set_defaults(func=gpg_verify)
-    cmd_gpg_verify.add_argument(
-        "--signature-file",
-        help=("An optional detached signature file, relative to the project root. (default: %(default)s)"),
-        required=False,
-        metavar="SIGNATURE_FILE",
-        dest="signature_file",
-        default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt.sig"),
-    )
-    cmd_gpg_verify.add_argument(
-        "--manifest-file",
-        help=("The signed checksum manifest file, relative to the project root. (default: %(default)s)"),
-        required=False,
-        metavar="MANIFEST_FILE",
-        dest="manifest_file",
-        default=os.path.join(ANSIBLE_SIGN_DIR, "sha256sum.txt"),
-    )
     cmd_gpg_verify.add_argument(
         "--keyring",
         help=("The GPG keyring file to use to find the matching public key. (default: the user's default keyring)"),
@@ -168,26 +121,6 @@ def parse_args(args):
         help="The directory containing the files being validated and verified",
         metavar="PROJECT_ROOT",
     )
-
-    # command: checksum-manifest
-    cmd_checksum_manifest = project_commands.add_parser(
-        "checksum-manifest",
-        help="Generate a checksum manifest file for the project",
-    )
-    cmd_checksum_manifest.set_defaults(func=checksum_manifest)
-    cmd_checksum_manifest.add_argument(
-        "--output",
-        help="An optional filename to which to write the resulting manifest. (default: %(default)s)",
-        required=False,
-        metavar="OUTPUT",
-        dest="output",
-        default="-",
-    )
-    cmd_checksum_manifest.add_argument(
-        "project_root",
-        help="The directory containing the files being validated and verified",
-        metavar="PROJECT_ROOT",
-    )
     return parser.parse_args(args)
 
 
@@ -221,16 +154,16 @@ def _generate_checksum_manifest(project_root):
     return manifest
 
 
-def validate_checksum(args):
+def validate_checksum(project_root):
     differ = DistlibManifestChecksumFileExistenceDiffer
-    checksum = ChecksumFile(args.project_root, differ=differ)
-    checksum_file = os.path.join(args.project_root, args.checksum_file)
+    checksum = ChecksumFile(project_root, differ=differ)
+    checksum_path = os.path.join(project_root, ".ansible-sign", "sha256sum.txt")
 
-    if not os.path.exists(checksum_file):
-        print(f"Checksum file does not exist: {checksum_file}")
+    if not os.path.exists(checksum_path):
+        print(f"Checksum file does not exist: {checksum_path}")
         return 1
 
-    checksum_file_contents = open(checksum_file, "r").read()
+    checksum_file_contents = open(checksum_path, "r").read()
 
     try:
         manifest = checksum.parse(checksum_file_contents)
@@ -239,18 +172,19 @@ def validate_checksum(args):
         return 1
 
     try:
-        checksum.verify(manifest, diff=not args.ignore_file_list_differences)
+        checksum.verify(manifest, diff=True)
     except ChecksumMismatch as e:
         print("Checksum validation FAILED!")
         print(str(e))
         return 2
 
     print("Checksum validation SUCCEEDED!")
+    return 0
 
 
 def gpg_verify(args):
-    signature_file = os.path.join(args.project_root, args.signature_file)
-    manifest_file = os.path.join(args.project_root, args.manifest_file)
+    signature_file = os.path.join(args.project_root, ".ansible-sign", "sha256sum.txt.sig")
+    manifest_file = os.path.join(args.project_root, ".ansible-sign", "sha256sum.txt")
 
     if not os.path.exists(signature_file):
         print(f"Signature file does not exist: {signature_file}")
@@ -277,15 +211,18 @@ def gpg_verify(args):
 
     result = verifier.verify()
 
-    if result.success is True:
-        print("Signature validation SUCCEEDED!")
+    if result.success is not True:
+        print("Signature validation FAILED!")
         print(result.summary)
-        return 0
+        print(result.extra_information)
+        return 3
 
-    print("Signature validation FAILED!")
+    print("Signature validation SUCCEEDED!")
     print(result.summary)
-    print(result.extra_information)
-    return 3
+
+    # GPG verification is done and we are still here, so return based on
+    # checksum validation now.
+    return validate_checksum(args.project_root)
 
 
 def _write_file_or_print(dest, contents):
