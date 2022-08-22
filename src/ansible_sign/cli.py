@@ -263,7 +263,15 @@ def setup_logging(loglevel):
 def _generate_checksum_manifest(project_root):
     differ = DistlibManifestChecksumFileExistenceDiffer
     checksum = ChecksumFile(project_root, differ=differ)
-    manifest = checksum.generate_gnu_style()
+    try:
+        manifest = checksum.generate_gnu_style()
+    except FileNotFoundError as e:
+        if str(e).endswith("/MANIFEST.in"):
+            print("Could not find a MANIFEST.in file in the specified project.")
+            print("If you are attempting to sign a project, please create this file.")
+            print("See the ansible-sign documentation for more information.")
+            return False
+        raise e
     _logger.debug(
         "Full calculated checksum manifest (%s):\n%s",
         project_root,
@@ -371,6 +379,8 @@ def gpg_sign(args):
 
         manifest_output = os.path.join(args.project_root, args.manifest_output)
         checksum_file_contents = _generate_checksum_manifest(args.project_root)
+        if checksum_file_contents is False:
+            return 1
         _write_file_or_print(manifest_output, checksum_file_contents)
         manifest_path = manifest_output
     else:
