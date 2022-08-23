@@ -56,3 +56,48 @@ def test_gpg_validate_manifest_with_keyring(capsys, signed_project_and_gpg):
     captured = capsys.readouterr()
     assert "Signature validation SUCCEEDED!" in captured.out
     assert rc in (None, 0)
+
+
+@pytest.mark.parametrize(
+    "use_passphrase",
+    [True, False],
+    ids=[
+        "GPG signing with key that requires passphrase",
+        "GPG signing with key that does NOT require passphrase",
+    ],
+)
+def test_gpg_sign_with_gnupg_home(capsys, mocker, request, unsigned_project_with_checksum_manifest, use_passphrase):
+    if use_passphrase:
+        gpg_home = request.getfixturevalue("gpg_home_with_secret_key")
+    else:
+        gpg_home = request.getfixturevalue("gpg_home_with_secret_key_no_pass")
+
+    project_root = unsigned_project_with_checksum_manifest
+    args = [
+        "project",
+        "gpg-sign",
+        f"--gnupg-home={gpg_home}",
+    ]
+
+    # If testing with pass-phrase use built in passphrase prompt.
+    # We'll mock this return value below.
+    if use_passphrase:
+        args.append("--prompt-passphrase")
+
+    # Final argument, the project root.
+    args.append(str(project_root))
+
+    # We mock getpass() even if we don't use --prompt-passphrase, this lets us
+    # assert that we don't call it when we don't mean to.
+    m = mocker.patch("getpass.getpass", return_value="doYouEvenPassphrase")
+
+    rc = main(args)
+    captured = capsys.readouterr()
+    assert "GPG signing successful!" in captured.out
+    assert "GPG summary: signature created" in captured.out
+    assert rc in (None, 0)
+
+    if use_passphrase:
+        m.assert_called_once()
+    else:
+        m.assert_not_called()
