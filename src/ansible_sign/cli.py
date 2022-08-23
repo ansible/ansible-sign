@@ -177,6 +177,12 @@ def validate_checksum(project_root):
         print("Checksum validation FAILED!")
         print(str(e))
         return 2
+    except FileNotFoundError as e:
+        if str(e).endswith("/MANIFEST.in"):
+            print("Could not find a MANIFEST.in file in the specified project.")
+            print("If you are attempting to verify a signed project, please ensure that the project directory includes this file after signing.")
+            print("See the ansible-sign documentation for more information.")
+            return 1
 
     print("Checksum validation SUCCEEDED!")
     return 0
@@ -212,12 +218,10 @@ def gpg_verify(args):
     result = verifier.verify()
 
     if result.success is not True:
-        print("Signature validation FAILED!")
         print(result.summary)
         print(result.extra_information)
         return 3
 
-    print("Signature validation SUCCEEDED!")
     print(result.summary)
 
     # GPG verification is done and we are still here, so return based on
@@ -278,15 +282,6 @@ def gpg_sign(args):
 
 
 def main(args):
-    """Wrapper allowing :func:`fib` to be called with string arguments in a CLI fashion
-
-    Instead of returning the value from :func:`fib`, it prints the result to the
-    ``stdout`` in a nicely formatted message.
-
-    Args:
-      args (List[str]): command line parameters as list of strings
-          (for example  ``["--verbose", "42"]``).
-    """
     args = parse_args(args)
     setup_logging(args.loglevel)
     _logger.debug("Starting crazy calculations...")

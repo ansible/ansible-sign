@@ -49,7 +49,7 @@ class GPGVerifier(SignatureVerifier):
             extra["stderr"] = verified.stderr
             return SignatureVerificationResult(
                 success=False,
-                summary="Signature verification of checksum file failed.",
+                summary="GPG signature verification failed.",
                 extra_information=extra,
             )
 
@@ -61,6 +61,6 @@ class GPGVerifier(SignatureVerifier):
 
         return SignatureVerificationResult(
             success=True,
-            summary="Verification of checksum file succeeded.",
+            summary="GPG signature verification succeeded.",
             extra_information=extra,
         )

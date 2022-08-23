@@ -24,7 +24,27 @@ FIXTURES_DIR = os.path.join(
                 "gpg-sign",
                 "tests/fixtures/checksum/missing-manifest",
             ],
-            "Could not find a MANIFEST.in file in the specified project.",
+            "If you are attempting to sign a project, please create this file",
+            "",
+            1,
+        ),
+        (
+            [
+                "project",
+                "gpg-verify",
+                "tests/fixtures/gpg/hao-signed-missing-manifest",
+            ],
+            "ensure that the project directory includes this file after",
+            "",
+            1,
+        ),
+        (
+            [
+                "project",
+                "gpg-verify",
+                "tests/fixtures/checksum/manifest-success",
+            ],
+            "Signature file does not exist",
             "",
             1,
         ),
@@ -54,7 +74,7 @@ def test_gpg_validate_manifest_with_keyring(capsys, signed_project_and_gpg):
     ]
     rc = main(args)
     captured = capsys.readouterr()
-    assert "Signature validation SUCCEEDED!" in captured.out
+    assert "GPG signature verification succeeded" in captured.out
     assert rc in (None, 0)
 
 
