@@ -38,6 +38,17 @@ FIXTURES_DIR = os.path.join(
             "",
             1,
         ),
+        (
+            [
+                "project",
+                "gpg-verify",
+                "--gnupg-home=/dir/that/does/not/exist/321",
+                "tests/fixtures/gpg/hao-signed",
+            ],
+            "Specified GnuPG home is not a directory:",
+            "",
+            1,
+        ),
     ],
 )
 def test_main(capsys, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
@@ -100,9 +111,25 @@ def test_main_with_pubkey_in_keyring(capsys, gpg_home_with_hao_pubkey, args, exp
     assert rc == exp_rc
 
 
-def test_gpg_validate_manifest_with_keyring(capsys, signed_project_and_gpg):
-    project_root = signed_project_and_gpg[0]
-    gpg_home = signed_project_and_gpg[1]
+@pytest.mark.parametrize(
+    "project_fixture, exp_stdout_substr, exp_stderr_substr, exp_rc",
+    [
+        ("signed_project_and_gpg", "GPG signature verification succeeded", "", 0),
+        ("signed_project_broken_manifest", "Invalid line encountered in checksum manifest", "", 1),
+        ("signed_project_missing_manifest", "Checksum manifest file does not exist:", "", 1),
+    ],
+    ids=[
+        "valid checksum file and signature",
+        "valid signature but broken checksum file",
+        "missing checksum file entirely",
+    ],
+)
+def test_gpg_verify_manifest_scenario(capsys, request, project_fixture, exp_stdout_substr, exp_stderr_substr, exp_rc):
+    """
+    Test `ansible-sign project gpg-verify` given different project directory
+    scenarios (fixtures).
+    """
+    (project_root, gpg_home) = request.getfixturevalue(project_fixture)
     keyring = os.path.join(gpg_home, "pubring.kbx")
     args = [
         "project",
@@ -112,24 +139,13 @@ def test_gpg_validate_manifest_with_keyring(capsys, signed_project_and_gpg):
     ]
     rc = main(args)
     captured = capsys.readouterr()
-    assert "GPG signature verification succeeded" in captured.out
-    assert rc in (None, 0)
+    assert exp_stdout_substr in captured.out
+    assert exp_stderr_substr in captured.err
 
+    if rc is None:
+        rc = 0
 
-def test_gpg_validate_broken_manifest(capsys, signed_project_broken_manifest):
-    project_root = signed_project_broken_manifest[0]
-    gpg_home = signed_project_broken_manifest[1]
-    keyring = os.path.join(gpg_home, "pubring.kbx")
-    args = [
-        "project",
-        "gpg-verify",
-        f"--keyring={keyring}",
-        str(project_root),
-    ]
-    rc = main(args)
-    captured = capsys.readouterr()
-    assert "Invalid line encountered in checksum manifest" in captured.out
-    assert rc == 1
+    assert rc == exp_rc
 
 
 @pytest.mark.parametrize(

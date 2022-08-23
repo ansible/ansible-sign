@@ -136,3 +136,17 @@ def signed_project_broken_manifest(
     Sign a project that has a broken manifest.
     """
     yield _sign_project(gpg_home_with_secret_key, unsigned_project_with_broken_checksum_manifest)
+
+
+@pytest.fixture
+def signed_project_missing_manifest(
+    gpg_home_with_secret_key,
+    unsigned_project_with_checksum_manifest,
+):
+    """
+    Sign a project that has a broken manifest.
+    """
+    (project, gpghome) = _sign_project(gpg_home_with_secret_key, unsigned_project_with_checksum_manifest)
+    manifest = project / ".ansible-sign" / "sha256sum.txt"
+    os.remove(manifest)
+    yield (project, gpghome)
