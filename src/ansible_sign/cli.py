@@ -277,11 +277,6 @@ def gpg_sign(args):
     return retcode
 
 
-def checksum_manifest(args):
-    checksum_file_contents = _generate_checksum_manifest(args.project_root)
-    _write_file_or_print(args.output, checksum_file_contents)
-
-
 def main(args):
     """Wrapper allowing :func:`fib` to be called with string arguments in a CLI fashion
 
