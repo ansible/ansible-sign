@@ -95,6 +95,27 @@ def unsigned_project_with_broken_checksum_manifest(unsigned_project_with_checksu
     yield unsigned_project_with_checksum_manifest
 
 
+@pytest.fixture
+def unsigned_project_with_modified_checksum_manifest(unsigned_project_with_checksum_manifest):
+    """
+    Creates a project directory (at a temporary location) with a changed
+    checksum file that contains wrong hashes.
+
+    Uses the 'manifest-success' checksum fixture directory as its base and
+    modifies the checksum manifest after copying.
+    """
+    manifest = unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt"
+    with fileinput.input(files=manifest, inplace=True) as f:
+        for idx, line in enumerate(f):
+            line = line.strip()
+            if idx % 2 == 0:
+                # Change some of the checksum lines.
+                print(line.replace("2", "3").replace("a", "b").replace("7", "a").replace("c", "2"))
+            else:
+                print(line)
+    yield unsigned_project_with_checksum_manifest
+
+
 def _sign_project(gpg_home_with_secret_key, unsigned_project_with_checksum_manifest):
     """
     GPG-sign a project. Usually the arguments are temp directories produced by
@@ -136,6 +157,17 @@ def signed_project_broken_manifest(
     Sign a project that has a broken manifest.
     """
     yield _sign_project(gpg_home_with_secret_key, unsigned_project_with_broken_checksum_manifest)
+
+
+@pytest.fixture
+def signed_project_modified_manifest(
+    gpg_home_with_secret_key,
+    unsigned_project_with_modified_checksum_manifest,
+):
+    """
+    Sign a project that has a modified manifest.
+    """
+    yield _sign_project(gpg_home_with_secret_key, unsigned_project_with_modified_checksum_manifest)
 
 
 @pytest.fixture
