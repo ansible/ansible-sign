@@ -2,6 +2,7 @@
 Fixtures for ansible-sign tests
 """
 
+import fileinput
 import gnupg
 import os
 import pytest
@@ -75,10 +76,30 @@ def unsigned_project_with_checksum_manifest(tmp_path):
 
 
 @pytest.fixture
-def signed_project_and_gpg(
-    gpg_home_with_secret_key,
-    unsigned_project_with_checksum_manifest,
-):
+def unsigned_project_with_broken_checksum_manifest(unsigned_project_with_checksum_manifest):
+    """
+    Creates a project directory (at a temporary location) with a broken
+    (syntactically invalid) checksum file.
+
+    Uses the 'manifest-success' checksum fixture directory as its base and
+    modifies the checksum manifest after copying.
+    """
+    manifest = unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt"
+    with fileinput.input(files=manifest, inplace=True) as f:
+        for idx, line in enumerate(f):
+            line = line.strip()
+            if idx == 0:
+                print(line.replace("  ", ""))
+            else:
+                print(line)
+    yield unsigned_project_with_checksum_manifest
+
+
+def _sign_project(gpg_home_with_secret_key, unsigned_project_with_checksum_manifest):
+    """
+    GPG-sign a project. Usually the arguments are temp directories produced by
+    other fixtures above.
+    """
     out = unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt.sig"
     manifest_path = unsigned_project_with_checksum_manifest / ".ansible-sign" / "sha256sum.txt"
     signer = GPGSigner(
@@ -92,4 +113,26 @@ def signed_project_and_gpg(
     assert os.path.exists(out)
 
     # now signed
-    yield (unsigned_project_with_checksum_manifest, gpg_home_with_secret_key)
+    return (unsigned_project_with_checksum_manifest, gpg_home_with_secret_key)
+
+
+@pytest.fixture
+def signed_project_and_gpg(
+    gpg_home_with_secret_key,
+    unsigned_project_with_checksum_manifest,
+):
+    """
+    Sign a project that has a valid manifest.
+    """
+    yield _sign_project(gpg_home_with_secret_key, unsigned_project_with_checksum_manifest)
+
+
+@pytest.fixture
+def signed_project_broken_manifest(
+    gpg_home_with_secret_key,
+    unsigned_project_with_broken_checksum_manifest,
+):
+    """
+    Sign a project that has a broken manifest.
+    """
+    yield _sign_project(gpg_home_with_secret_key, unsigned_project_with_broken_checksum_manifest)
