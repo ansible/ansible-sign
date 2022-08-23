@@ -116,6 +116,22 @@ def test_gpg_validate_manifest_with_keyring(capsys, signed_project_and_gpg):
     assert rc in (None, 0)
 
 
+def test_gpg_validate_broken_manifest(capsys, signed_project_broken_manifest):
+    project_root = signed_project_broken_manifest[0]
+    gpg_home = signed_project_broken_manifest[1]
+    keyring = os.path.join(gpg_home, "pubring.kbx")
+    args = [
+        "project",
+        "gpg-verify",
+        f"--keyring={keyring}",
+        str(project_root),
+    ]
+    rc = main(args)
+    captured = capsys.readouterr()
+    assert "Invalid line encountered in checksum manifest" in captured.out
+    assert rc == 1
+
+
 @pytest.mark.parametrize(
     "use_passphrase",
     [True, False],
