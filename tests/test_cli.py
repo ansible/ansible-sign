@@ -32,6 +32,38 @@ FIXTURES_DIR = os.path.join(
             [
                 "project",
                 "gpg-verify",
+                "tests/fixtures/checksum/manifest-success",
+            ],
+            "Signature file does not exist",
+            "",
+            1,
+        ),
+    ],
+)
+def test_main(capsys, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
+    """
+    Test the CLI, making no assumptions about the environment, such as having a
+    GPG keypair, or even a GPG home directory."
+    """
+    rc = main(args)
+    captured = capsys.readouterr()
+    assert exp_stdout_substr in captured.out
+    assert exp_stderr_substr in captured.err
+
+    if rc is None:
+        rc = 0
+
+    assert rc == exp_rc
+
+
+@pytest.mark.parametrize(
+    "args, exp_stdout_substr, exp_stderr_substr, exp_rc",
+    [
+        (
+            [
+                "project",
+                "gpg-verify",
+                "--keyring={gpghome}/pubring.kbx",
                 "tests/fixtures/gpg/hao-signed-missing-manifest",
             ],
             "ensure that the project directory includes this file after",
@@ -42,16 +74,22 @@ FIXTURES_DIR = os.path.join(
             [
                 "project",
                 "gpg-verify",
-                "tests/fixtures/checksum/manifest-success",
+                "--gnupg-home={gpghome}",
+                "tests/fixtures/gpg/hao-signed-missing-manifest",
             ],
-            "Signature file does not exist",
+            "ensure that the project directory includes this file after",
             "",
             1,
         ),
     ],
 )
-def test_main(capsys, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
-    rc = main(args)
+def test_main_with_pubkey_in_keyring(capsys, gpg_home_with_hao_pubkey, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
+    """
+    Test the CLI assuming that there is (only) a public key in the keyring.
+    """
+    interpolation = {"gpghome": gpg_home_with_hao_pubkey}
+    interpolated_args = [arg.format(**interpolation) for arg in args]
+    rc = main(interpolated_args)
     captured = capsys.readouterr()
     assert exp_stdout_substr in captured.out
     assert exp_stderr_substr in captured.err
