@@ -130,12 +130,14 @@ def test_main_with_pubkey_in_keyring(capsys, gpg_home_with_hao_pubkey, args, exp
         ("signed_project_broken_manifest", "Invalid line encountered in checksum manifest", "", 1),
         ("signed_project_missing_manifest", "Checksum manifest file does not exist:", "", 1),
         ("signed_project_modified_manifest", "Checksum validation failed.", "", 2),
+        ("signed_project_with_different_gpg_home", "Re-run with the global --debug flag", "", 3),
     ],
     ids=[
         "valid checksum file and signature",
         "valid signature but broken checksum file",
         "missing checksum file entirely",
         "checksum file with wrong hashes",
+        "matching pubkey does not exist in gpg home",
     ],
 )
 def test_gpg_verify_manifest_scenario(capsys, request, project_fixture, exp_stdout_substr, exp_stderr_substr, exp_rc):
