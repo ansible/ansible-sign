@@ -167,13 +167,18 @@ def _note(msg):
 
 
 def validate_checksum(project_root):
+    """
+    Validate a checksum manifest file. Print a pretty message and return an
+    appropriate exit code.
+
+    NOTE that this function does not actually check the path for existence, it
+    leaves that to the caller (which in nearly all cases would need to do so
+    anyway). This function will throw FileNotFoundError if the manifest does not
+    exist.
+    """
     differ = DistlibManifestChecksumFileExistenceDiffer
     checksum = ChecksumFile(project_root, differ=differ)
     checksum_path = os.path.join(project_root, ".ansible-sign", "sha256sum.txt")
-
-    if not os.path.exists(checksum_path):
-        _error(f"Checksum file does not exist: {checksum_path}")
-        return 1
 
     checksum_file_contents = open(checksum_path, "r").read()
 
