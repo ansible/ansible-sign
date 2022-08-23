@@ -73,7 +73,7 @@ def parse_args(args):
     )
     cmd_gpg_verify.add_argument(
         "--gnupg-home",
-        help=("A valid GNUPG home directory. (default: the GNUPG default, usually ~/.gnupg)"),
+        help=("A valid GnuPG home directory. (default: the GnuPG default, usually ~/.gnupg)"),
         required=False,
         metavar="GNUPG_HOME",
         dest="gnupg_home",
@@ -110,7 +110,7 @@ def parse_args(args):
     )
     cmd_gpg_sign.add_argument(
         "--gnupg-home",
-        help=("A valid GNUPG home directory. (default: the GNUPG default, usually ~/.gnupg)"),
+        help=("A valid GnuPG home directory. (default: the GnuPG default, usually ~/.gnupg)"),
         required=False,
         metavar="GNUPG_HOME",
         dest="gnupg_home",
@@ -217,7 +217,7 @@ def gpg_verify(args):
         return 1
 
     if args.gnupg_home is not None and not os.path.isdir(args.gnupg_home):
-        _error(f"Specified GNUPG home is not a directory: {args.gnupg_home}")
+        _error(f"Specified GnuPG home is not a directory: {args.gnupg_home}")
         return 1
 
     verifier = GPGVerifier(
