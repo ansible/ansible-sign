@@ -43,6 +43,16 @@ def gpg_home_with_secret_key_no_pass(tmp_path):
 
 
 @pytest.fixture
+def gpg_home_with_hao_pubkey(tmp_path):
+    home = tmp_path / "gpg-home-with-hao-pubkey"
+    home.mkdir()
+    gpg = gnupg.GPG(gnupghome=home)
+    pubkey = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures", "gpgkeys", "hao_pubkey.txt"), "r").read()
+    gpg.import_keys(pubkey)
+    yield home
+
+
+@pytest.fixture
 def unsigned_project_with_checksum_manifest(tmp_path):
     """
     Creates a project directory (at a temporary location) with a generated, but
