@@ -154,13 +154,25 @@ def _generate_checksum_manifest(project_root):
     return manifest
 
 
+def _error(msg):
+    print(f"[\033[91mERROR\033[0m] {msg}")
+
+
+def _ok(msg):
+    print(f"[\033[92mOK   \033[0m] {msg}")
+
+
+def _note(msg):
+    print(f"[\033[94mNOTE \033[0m] {msg}")
+
+
 def validate_checksum(project_root):
     differ = DistlibManifestChecksumFileExistenceDiffer
     checksum = ChecksumFile(project_root, differ=differ)
     checksum_path = os.path.join(project_root, ".ansible-sign", "sha256sum.txt")
 
     if not os.path.exists(checksum_path):
-        print(f"Checksum file does not exist: {checksum_path}")
+        _error(f"Checksum file does not exist: {checksum_path}")
         return 1
 
     checksum_file_contents = open(checksum_path, "r").read()
@@ -168,23 +180,23 @@ def validate_checksum(project_root):
     try:
         manifest = checksum.parse(checksum_file_contents)
     except InvalidChecksumLine as e:
-        print(f"Invalid line encountered in checksum manifest: {e}")
+        _error(f"Invalid line encountered in checksum manifest: {e}")
         return 1
 
     try:
         checksum.verify(manifest, diff=True)
     except ChecksumMismatch as e:
-        print("Checksum validation FAILED!")
-        print(str(e))
+        _error("Checksum validation failed.")
+        _error(str(e))
         return 2
     except FileNotFoundError as e:
         if str(e).endswith("/MANIFEST.in"):
-            print("Could not find a MANIFEST.in file in the specified project.")
-            print("If you are attempting to verify a signed project, please ensure that the project directory includes this file after signing.")
-            print("See the ansible-sign documentation for more information.")
+            _error("Could not find a MANIFEST.in file in the specified project.")
+            _note("If you are attempting to verify a signed project, please ensure that the project directory includes this file after signing.")
+            _note("See the ansible-sign documentation for more information.")
             return 1
 
-    print("Checksum validation SUCCEEDED!")
+    _ok("Checksum validation succeeded.")
     return 0
 
 
@@ -193,19 +205,19 @@ def gpg_verify(args):
     manifest_file = os.path.join(args.project_root, ".ansible-sign", "sha256sum.txt")
 
     if not os.path.exists(signature_file):
-        print(f"Signature file does not exist: {signature_file}")
+        _error(f"Signature file does not exist: {signature_file}")
         return 1
 
     if not os.path.exists(manifest_file):
-        print(f"Checksum manifest file does not exist: {manifest_file}")
+        _error(f"Checksum manifest file does not exist: {manifest_file}")
         return 1
 
     if args.keyring is not None and not os.path.exists(args.keyring):
-        print(f"Specified keyring file not found: {args.keyring}")
+        _error(f"Specified keyring file not found: {args.keyring}")
         return 1
 
     if args.gnupg_home is not None and not os.path.isdir(args.gnupg_home):
-        print(f"Specified GNUPG home is not a directory: {args.gnupg_home}")
+        _error(f"Specified GNUPG home is not a directory: {args.gnupg_home}")
         return 1
 
     verifier = GPGVerifier(
@@ -218,11 +230,12 @@ def gpg_verify(args):
     result = verifier.verify()
 
     if result.success is not True:
-        print(result.summary)
-        print(result.extra_information)
+        _error(result.summary)
+        _note("Re-run with the global --debug flag for more information.")
+        _logger.debug(result.extra_information)
         return 3
 
-    print(result.summary)
+    _ok(result.summary)
 
     # GPG verification is done and we are still here, so return based on
     # checksum validation now.
@@ -269,15 +282,16 @@ def gpg_sign(args):
     )
     result = signer.sign()
     if result.success:
-        print("GPG signing successful!")
+        _ok("GPG signing successful!")
         retcode = 0
     else:
-        print("GPG signing FAILED!")
+        _error("GPG signing FAILED!")
+        _note("Re-run with the global --debug flag for more information.")
         retcode = 4
 
-    print(f"Checksum manifest: {manifest_path}")
-    print(f"GPG summary: {result.summary}")
-    print(f"GPG Details: {result.extra_information}")
+    _note(f"Checksum manifest: {manifest_path}")
+    _note(f"GPG summary: {result.summary}")
+    _logger.debug(f"GPG Details: {result.extra_information}")
     return retcode
 
 
