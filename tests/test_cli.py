@@ -92,6 +92,18 @@ def test_main(capsys, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
             "",
             1,
         ),
+        (
+            [
+                "project",
+                "gpg-verify",
+                "--gnupg-home={gpghome}",
+                "--keyring=/file/does/not/exist",
+                "tests/fixtures/gpg/hao-signed-missing-manifest",
+            ],
+            "Specified keyring file not found:",
+            "",
+            1,
+        ),
     ],
 )
 def test_main_with_pubkey_in_keyring(capsys, gpg_home_with_hao_pubkey, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
