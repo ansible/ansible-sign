@@ -182,3 +182,17 @@ def signed_project_missing_manifest(
     manifest = project / ".ansible-sign" / "sha256sum.txt"
     os.remove(manifest)
     yield (project, gpghome)
+
+
+@pytest.fixture
+def signed_project_with_different_gpg_home(
+    gpg_home_with_secret_key,
+    gpg_home_with_hao_pubkey,
+    unsigned_project_with_checksum_manifest,
+):
+    """
+    Sign a project but 'lose' the key it was signed with by returning an
+    unrelated gnupg home directory.
+    """
+    (project, gpghome) = _sign_project(gpg_home_with_secret_key, unsigned_project_with_checksum_manifest)
+    yield (project, gpg_home_with_hao_pubkey)
