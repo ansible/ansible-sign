@@ -175,3 +175,49 @@ conditions.
 If verification fails for any reason, some information will be printed to help
 you debug the cause. More verbosity can be enabled by passing the global
 ``--debug`` flag, immediately after ``ansible-sign`` in your commands.
+
+Notes About Automation
+======================
+
+In environments with highly-trusted CI environments, it is possible to automate
+the signing process. For example, one might store their GPG private key in a
+GitHub Actions secret, and import that into GnuPG in the CI environment. One
+could then run through the signing workflow above within the normal CI
+workflow/container/environment.
+
+``ansible-sign`` will return with a different exit-code depending on the
+scenario at hand, both during signing and verification.
+
+These codes are used fairly consistently within the code, and can be considered
+stable:
+
+.. list-table:: Status codes that ``ansible-sign`` can exit with
+   :widths: 15 35 50
+   :header-rows: 1
+
+   * - Exit code
+     - Approximate meaning
+     - Example scenarios
+   * - 0
+     - Success
+     - * Signing was sucessful
+       * Verification was successful
+   * - 1
+     - General failure
+     - * The checksum manifest file contained a syntax error during verification
+       * The signature file did not exist during verification
+       * ``MANIFEST.in`` did not exist during signing
+   * - 2
+     - Checksum verification failure
+     - * The checksum hashes calculated during verification differed from what
+         was in the signed checksum manifest. (That is, a project file was
+         changed but the signing process was not recompleted.)
+   * - 3
+     - Signature verification failure
+     - * The signer's public key was not in the user's GPG keyring
+       * The wrong GnuPG home directory or keyring file was specified
+       * The signed checksum manifest file was modified in some way
+   * - 4
+     - Signing process failure
+     - * The signer's private key was not found in the GPG keyring
+       * The wrong GnuPG home directory or keyring file was specified
