@@ -8,13 +8,6 @@ __copyright__ = "(c) 2022 Red Hat, Inc."
 __license__ = "MIT"
 
 
-FIXTURES_DIR = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "fixtures",
-    "checksum",
-)
-
-
 @pytest.mark.parametrize(
     "args, exp_stdout_substr, exp_stderr_substr, exp_rc",
     [
@@ -207,3 +200,62 @@ def test_gpg_sign_with_gnupg_home(capsys, mocker, request, unsigned_project_with
         m.assert_called_once()
     else:
         m.assert_not_called()
+
+
+def test_main_color(capsys, signed_project_and_gpg):
+    """
+    Test the CLI's handling of disabling color output:
+    1) via global --nocolor flag
+    2) via NO_COLOR env-var
+    """
+
+    (project_root, gpg_home) = signed_project_and_gpg
+    args = ["project", "gpg-verify", f"--gnupg-home={gpg_home}", str(project_root)]
+    args_nocolor = ["--nocolor", "project", "gpg-verify", f"--gnupg-home={gpg_home}", str(project_root)]
+
+    no_color_expected = "[OK   ]"
+    color_expected = "[\033[92mOK   \033[0m]"
+
+    # normal -- we should have color here
+    rc = main(args)
+    captured = capsys.readouterr()
+    assert color_expected in captured.out
+    assert rc in (0, None)
+
+    # --nocolor -- should disable color
+    rc = main(args_nocolor)
+    captured = capsys.readouterr()
+    assert no_color_expected in captured.out
+    assert rc in (0, None)
+
+    # env var with --nocolor -- should *really* disable color
+    os.environ["NO_COLOR"] = "foo"
+    rc = main(args_nocolor)
+    captured = capsys.readouterr()
+    assert no_color_expected in captured.out
+    assert rc in (0, None)
+
+    # env var without --nocolor -- should still disable color
+    # and it should not matter what $NO_COLOR is set to
+    no_color_values = (
+        "foo",
+        "0",
+        "False",
+        "false",
+        "true",
+        "1",
+        "_",
+        "$",
+    )
+    for value in no_color_values:
+        os.environ["NO_COLOR"] = value
+        rc = main(args)
+        captured = capsys.readouterr()
+        assert no_color_expected in captured.out
+
+    # but if it's empty, ignore it
+    os.environ["NO_COLOR"] = ""
+    rc = main(args)
+    captured = capsys.readouterr()
+    assert rc in (0, None)
+    assert color_expected in captured.out
