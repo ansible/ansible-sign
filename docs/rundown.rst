@@ -186,7 +186,10 @@ could then run through the signing workflow above within the normal CI
 workflow/container/environment.
 
 ``ansible-sign`` will return with a different exit-code depending on the
-scenario at hand, both during signing and verification.
+scenario at hand, both during signing and verification. This can also be useful
+in the context of CI and automation, as a CI environment can act differently
+based on the failure (for example, sending alerts for some errors but silently
+failng for others).
 
 These codes are used fairly consistently within the code, and can be considered
 stable:
