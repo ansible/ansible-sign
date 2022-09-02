@@ -194,12 +194,27 @@ def test_gpg_sign_with_gnupg_home(capsys, mocker, request, unsigned_project_with
     captured = capsys.readouterr()
     assert "GPG signing successful!" in captured.out
     assert "GPG summary: signature created" in captured.out
+    assert "Found (and ignored) broken symlink:" not in captured.out
     assert rc in (None, 0)
 
     if use_passphrase:
         m.assert_called_once()
     else:
         m.assert_not_called()
+
+
+def test_gpg_sign_with_broken_symlink(capsys, unsigned_project_with_broken_symlink, gpg_home_with_secret_key_no_pass):
+    """
+    Test that we show a warning when there's a broken symlink in the project
+    directory. This works around a distlib.manifest bug, but tests our handling
+    of it.
+    """
+    project_root = str(unsigned_project_with_broken_symlink)
+    args = ["project", "gpg-sign", f"--gnupg-home={gpg_home_with_secret_key_no_pass}", project_root]
+    rc = main(args)
+    captured = capsys.readouterr()
+    assert "Found (and ignored) broken symlink:" in captured.out
+    assert rc in (0, None)
 
 
 def test_main_color(capsys, signed_project_and_gpg):

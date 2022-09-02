@@ -31,7 +31,16 @@ class DistlibManifestChecksumFileExistenceDiffer(ChecksumFileExistenceDiffer):
             lines = ["global-include *"] + lines
 
         for line in lines:
-            manifest.process_directive(line)
+            try:
+                manifest.process_directive(line)
+            except FileNotFoundError as e:
+                if os.path.islink(e.filename):
+                    self.warnings.add(f"Found (and ignored) broken symlink: {e.filename}")
+                else:
+                    # If we didn't get here due to broken symlink, then there's
+                    # something else weird going on. Re-raise the exception and
+                    # bail.
+                    raise e
 
         for path in manifest.files:
             files_set.add(os.path.relpath(path, start=self.root))
