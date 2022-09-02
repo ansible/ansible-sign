@@ -2,6 +2,8 @@
 name: ansible-sign docs
 on:  # yamllint disable-line rule:truthy
   push:
+    branches:
+      - main
 
 jobs:
   docs:
