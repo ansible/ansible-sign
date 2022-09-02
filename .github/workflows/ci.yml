@@ -31,6 +31,9 @@ jobs:
 
       - name: Run tests
         run: tox -e py3
+
+      - name: Ensure docs build
+        run: tox -e docs
   linters:
     name: Linters
     runs-on: ubuntu-latest
