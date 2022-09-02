@@ -296,7 +296,11 @@ class AnsibleSignCLI:
         # Do they need a passphrase?
         passphrase = None
         if self.args.prompt_passphrase:
+            self.logger.debug("Prompting for GPG key passphrase")
             passphrase = getpass.getpass("GPG Key Passphrase: ")
+        elif "ANSIBLE_SIGN_GPG_PASSPHRASE" in os.environ:
+            self.logger.debug("Taking GPG key passphrase from ANSIBLE_SIGN_GPG_PASSPHRASE env var")
+            passphrase = os.environ["ANSIBLE_SIGN_GPG_PASSPHRASE"]
 
         signature_path = os.path.join(self.args.project_root, ".ansible-sign", "sha256sum.txt.sig")
         signer = GPGSigner(

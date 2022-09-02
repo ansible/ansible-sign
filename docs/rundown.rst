@@ -185,6 +185,10 @@ GitHub Actions secret, and import that into GnuPG in the CI environment. One
 could then run through the signing workflow above within the normal CI
 workflow/container/environment.
 
+When signing a project using GPG, the environment variable
+``ANSIBLE_SIGN_GPG_PASSPHRASE`` can be set to the passphrase of the signing
+key. This can be injected (and masked/secured) in a CI pipeline.
+
 ``ansible-sign`` will return with a different exit-code depending on the
 scenario at hand, both during signing and verification. This can also be useful
 in the context of CI and automation, as a CI environment can act differently
