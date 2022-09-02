@@ -44,10 +44,17 @@ dc920c7f31a4869fb9f94519a4a77f6c7c43c6c3e66b0e57a5bcda52e9b02ce3  dir/hello2
 """.strip()
 
 
-def test_simple_gnu_generate():
+@pytest.mark.parametrize(
+    "fixture",
+    [
+        "manifest-success",
+        "manifest-with-blank-lines-and-comments",
+    ],
+)
+def test_simple_gnu_generate(fixture):
     root = os.path.join(
         FIXTURES_DIR,
-        "manifest-success",
+        fixture,
     )
     checksum = ChecksumFile(
         root,
