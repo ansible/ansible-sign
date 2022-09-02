@@ -30,6 +30,10 @@ class ChecksumFileExistenceDiffer:
     # explicitly found by gather_files()
     always_added_files = set()
 
+    # When gathering files, any warnings we encounter can be propagated up.
+    # This is a place to store them.
+    warnings = set()
+
     def __init__(self, root):
         self.root = root
 
