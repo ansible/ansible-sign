@@ -47,6 +47,14 @@ def parse_args(args):
         dest="loglevel",
         const=logging.DEBUG,
     )
+    parser.add_argument(
+        "--nocolor",
+        help="Disable color output",
+        required=False,
+        dest="nocolor",
+        default=True if len(os.environ.get("NO_COLOR", "")) else False,
+        action="store_true",
+    )
 
     # Future-proofing for future content types.
     content_type_parser = parser.add_subparsers(required=True, dest="content_type")
@@ -154,19 +162,28 @@ def _generate_checksum_manifest(project_root):
     return manifest
 
 
-def _error(msg):
-    print(f"[\033[91mERROR\033[0m] {msg}")
+def _error(nocolor, msg):
+    if nocolor:
+        print(f"[ERROR] {msg}")
+    else:
+        print(f"[\033[91mERROR\033[0m] {msg}")
 
 
-def _ok(msg):
-    print(f"[\033[92mOK   \033[0m] {msg}")
+def _ok(nocolor, msg):
+    if nocolor:
+        print(f"[OK   ] {msg}")
+    else:
+        print(f"[\033[92mOK   \033[0m] {msg}")
 
 
-def _note(msg):
-    print(f"[\033[94mNOTE \033[0m] {msg}")
+def _note(nocolor, msg):
+    if nocolor:
+        print(f"[NOTE ] {msg}")
+    else:
+        print(f"[\033[94mNOTE \033[0m] {msg}")
 
 
-def validate_checksum(project_root):
+def validate_checksum(args):
     """
     Validate a checksum manifest file. Print a pretty message and return an
     appropriate exit code.
@@ -177,31 +194,31 @@ def validate_checksum(project_root):
     exist.
     """
     differ = DistlibManifestChecksumFileExistenceDiffer
-    checksum = ChecksumFile(project_root, differ=differ)
-    checksum_path = os.path.join(project_root, ".ansible-sign", "sha256sum.txt")
+    checksum = ChecksumFile(args.project_root, differ=differ)
+    checksum_path = os.path.join(args.project_root, ".ansible-sign", "sha256sum.txt")
 
     checksum_file_contents = open(checksum_path, "r").read()
 
     try:
         manifest = checksum.parse(checksum_file_contents)
     except InvalidChecksumLine as e:
-        _error(f"Invalid line encountered in checksum manifest: {e}")
+        _error(args.nocolor, f"Invalid line encountered in checksum manifest: {e}")
         return 1
 
     try:
         checksum.verify(manifest, diff=True)
     except ChecksumMismatch as e:
-        _error("Checksum validation failed.")
-        _error(str(e))
+        _error(args.nocolor, "Checksum validation failed.")
+        _error(args.nocolor, str(e))
         return 2
     except FileNotFoundError as e:
         if str(e).endswith("/MANIFEST.in"):
-            _error("Could not find a MANIFEST.in file in the specified project.")
-            _note("If you are attempting to verify a signed project, please ensure that the project directory includes this file after signing.")
-            _note("See the ansible-sign documentation for more information.")
+            _error(args.nocolor, "Could not find a MANIFEST.in file in the specified project.")
+            _note(args.nocolor, "If you are attempting to verify a signed project, please ensure that the project directory includes this file after signing.")
+            _note(args.nocolor, "See the ansible-sign documentation for more information.")
             return 1
 
-    _ok("Checksum validation succeeded.")
+    _ok(args.nocolor, "Checksum validation succeeded.")
     return 0
 
 
@@ -210,19 +227,19 @@ def gpg_verify(args):
     manifest_file = os.path.join(args.project_root, ".ansible-sign", "sha256sum.txt")
 
     if not os.path.exists(signature_file):
-        _error(f"Signature file does not exist: {signature_file}")
+        _error(args.nocolor, f"Signature file does not exist: {signature_file}")
         return 1
 
     if not os.path.exists(manifest_file):
-        _error(f"Checksum manifest file does not exist: {manifest_file}")
+        _error(args.nocolor, f"Checksum manifest file does not exist: {manifest_file}")
         return 1
 
     if args.keyring is not None and not os.path.exists(args.keyring):
-        _error(f"Specified keyring file not found: {args.keyring}")
+        _error(args.nocolor, f"Specified keyring file not found: {args.keyring}")
         return 1
 
     if args.gnupg_home is not None and not os.path.isdir(args.gnupg_home):
-        _error(f"Specified GnuPG home is not a directory: {args.gnupg_home}")
+        _error(args.nocolor, f"Specified GnuPG home is not a directory: {args.gnupg_home}")
         return 1
 
     verifier = GPGVerifier(
@@ -235,16 +252,16 @@ def gpg_verify(args):
     result = verifier.verify()
 
     if result.success is not True:
-        _error(result.summary)
-        _note("Re-run with the global --debug flag for more information.")
+        _error(args.nocolor, result.summary)
+        _note(args.nocolor, "Re-run with the global --debug flag for more information.")
         _logger.debug(result.extra_information)
         return 3
 
-    _ok(result.summary)
+    _ok(args.nocolor, result.summary)
 
     # GPG verification is done and we are still here, so return based on
     # checksum validation now.
-    return validate_checksum(args.project_root)
+    return validate_checksum(args)
 
 
 def _write_file_or_print(dest, contents):
@@ -287,15 +304,15 @@ def gpg_sign(args):
     )
     result = signer.sign()
     if result.success:
-        _ok("GPG signing successful!")
+        _ok(args.nocolor, "GPG signing successful!")
         retcode = 0
     else:
-        _error("GPG signing FAILED!")
-        _note("Re-run with the global --debug flag for more information.")
+        _error(args.nocolor, "GPG signing FAILED!")
+        _note(args.nocolor, "Re-run with the global --debug flag for more information.")
         retcode = 4
 
-    _note(f"Checksum manifest: {manifest_path}")
-    _note(f"GPG summary: {result.summary}")
+    _note(args.nocolor, f"Checksum manifest: {manifest_path}")
+    _note(args.nocolor, f"GPG summary: {result.summary}")
     _logger.debug(f"GPG Details: {result.extra_information}")
     return retcode
 
