@@ -33,6 +33,25 @@ class ChecksumFile:
 
             self.differ = DistlibManifestChecksumFileExistenceDiffer(root=self.root)
 
+    @property
+    def differ_warnings(self):
+        """
+        A differ can store a set of warnings (as strings) in the_differ.warnings
+        which we can propagate up here. This allows calling code to display any
+        warnings found during diffing time.
+        """
+
+        return self.differ.warnings
+
+    @property
+    def warnings(self):
+        """
+        Right now this is just the same as differ_warnings. In the future it
+        might include warnings that we differ in methods in this class as well.
+        """
+
+        return self.differ_warnings
+
     def _parse_gnu_style(self, line):
         """
         Attempt to parse a GNU style line checksum line, returning False if

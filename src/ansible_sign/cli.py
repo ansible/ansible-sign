@@ -159,12 +159,18 @@ class AnsibleSignCLI:
         try:
             manifest = checksum.generate_gnu_style()
         except FileNotFoundError as e:
-            if str(e).endswith("/MANIFEST.in"):
-                print("Could not find a MANIFEST.in file in the specified project.")
-                print("If you are attempting to sign a project, please create this file.")
-                print("See the ansible-sign documentation for more information.")
+            if os.path.islink(e.filename):
+                self._error(f"Broken symlink found at {e.filename} -- this is not supported. Aborting.")
+                return False
+
+            if e.filename.endswith("/MANIFEST.in"):
+                self._error("Could not find a MANIFEST.in file in the specified project.")
+                self._note("If you are attempting to sign a project, please create this file.")
+                self._note("See the ansible-sign documentation for more information.")
                 return False
             raise e
+        for warning in checksum.warnings:
+            self._warn(warning)
         self.logger.debug(
             "Full calculated checksum manifest (%s):\n%s",
             self.args.project_root,
@@ -190,6 +196,12 @@ class AnsibleSignCLI:
         else:
             print(f"[\033[94mNOTE \033[0m] {msg}")
 
+    def _warn(self, msg):
+        if self.args.nocolor:
+            print(f"[WARN ] {msg}")
+        else:
+            print(f"[\033[93mWARN \033[0m] {msg}")
+
     def validate_checksum(self):
         """
         Validate a checksum manifest file. Print a pretty message and return an
@@ -203,7 +215,6 @@ class AnsibleSignCLI:
         differ = DistlibManifestChecksumFileExistenceDiffer
         checksum = ChecksumFile(self.args.project_root, differ=differ)
         checksum_path = os.path.join(self.args.project_root, ".ansible-sign", "sha256sum.txt")
-
         checksum_file_contents = open(checksum_path, "r").read()
 
         try:
@@ -219,11 +230,18 @@ class AnsibleSignCLI:
             self._error(str(e))
             return 2
         except FileNotFoundError as e:
-            if str(e).endswith("/MANIFEST.in"):
+            if os.path.islink(e.filename):
+                self._error(f"Broken symlink found at {e.filename} -- this is not supported. Aborting.")
+                return 1
+
+            if e.filename.endswith("MANIFEST.in"):
                 self._error("Could not find a MANIFEST.in file in the specified project.")
                 self._note("If you are attempting to verify a signed project, please ensure that the project directory includes this file after signing.")
                 self._note("See the ansible-sign documentation for more information.")
                 return 1
+
+        for warning in checksum.warnings:
+            self._warn(warning)
 
         self._ok("Checksum validation succeeded.")
         return 0

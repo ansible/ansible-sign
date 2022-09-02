@@ -5,6 +5,7 @@ Fixtures for ansible-sign tests
 import fileinput
 import gnupg
 import os
+from pathlib import Path
 import pytest
 import shutil
 
@@ -92,6 +93,18 @@ def unsigned_project_with_broken_checksum_manifest(unsigned_project_with_checksu
                 print(line.replace("  ", ""))
             else:
                 print(line)
+    yield unsigned_project_with_checksum_manifest
+
+
+@pytest.fixture
+def unsigned_project_with_broken_symlink(unsigned_project_with_checksum_manifest):
+    """
+    Creates a project directory (at a temporary location) with a broken
+    symlink in the project root. This triggers a distlib.manifest bug and
+    allows us to test our handling of it.
+    """
+    symlink = unsigned_project_with_checksum_manifest / "broken-symlink.txt"
+    symlink.symlink_to(Path("/does/not/exist/and/never/will"))
     yield unsigned_project_with_checksum_manifest
 
 
