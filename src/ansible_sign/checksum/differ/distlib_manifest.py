@@ -32,6 +32,13 @@ class DistlibManifestChecksumFileExistenceDiffer(ChecksumFileExistenceDiffer):
             lines = ["global-include *"] + lines
 
         for line in lines:
+            line = line.strip()
+
+            # distlib.manifest bombs on empty lines.
+            # It also doesn't appear to allow comments, so let's hack those in.
+            if not line or line[0] == "#":
+                continue
+
             manifest.process_directive(line)
 
         for path in manifest.files:

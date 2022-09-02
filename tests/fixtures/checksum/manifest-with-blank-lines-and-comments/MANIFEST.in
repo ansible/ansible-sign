@@ -1,0 +1,6 @@
+include hello1
+
+# This is a comment
+#
+# but the next line isn't
+include dir/**
