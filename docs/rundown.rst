@@ -134,7 +134,7 @@ Copy  everything from:
 to 
 ``-----END PGP PUBLIC KEY BLOCK-----``
 
-In the Ansible UI, click “Credentials."
+In AWX/Automation Controller, click “Credentials."
 From there, click “Add”.
 For “Name” name your credential something you will recognize.
 For “Credential Type” select  “GitHub Personal Access Token."
