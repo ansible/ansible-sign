@@ -122,7 +122,7 @@ Once all of that is verified, enter your user ID information. This should be you
 
 Congratulations! You’re ready to add your key to the Ansible UI.
 
-How to add GPG key to Ansible UI:
+Adding a GPG key to AWX or Ansible Automation Controller:
 ================================
 
 In the command line, run the following commands:
