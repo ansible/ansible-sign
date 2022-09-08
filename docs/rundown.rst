@@ -7,11 +7,11 @@ primary and supported way of using **ansible-sign** is through the command-line
 interface that comes with it.
 
 The command-line interface aims to make it easy to use cryptographic technology
-like GPG_ to validate that specified files within a project have not been
+like GPG to validate that specified files within a project have not been
 tampered with in any way.
 
 Though in the future other means of signing and validating might be supported,
-GPG is the only current supported means of signing and validation. As such, the
+GPG is the only currently supported means of signing and validation. As such, the
 rest of this tutorial assumes the use of GPG.
 
 The process of creating a GPG public/private keypair for signing content is well
@@ -28,11 +28,63 @@ You can verify that you have a keypair with the following command:
 
 If the above command produces no output, or one line of output that says that a
 "trustdb" was created, then you do not have a secret key in your default
-keyring. If it produces output other than that, then you have a valid secret key
-and are ready to move on!
+keyring. In this case, refer to the aforementioned blog post to learn how to create a new keypair.
 
-.. _GPG: https://www.gnupg.org/
+If it produces output other than that, then you have a valid secret key
+and are ready to move on to
+:ref:`using ansible-sign<ansible-sign-install>`.
+
+Adding a GPG key to AWX or Ansible Automation Controller
+========================================================
+
+In the command line, run the following commands:
+
+.. code-block:: shell
+
+    $ gpg --list-keys
+    $ gpg --export --armour <key fingerprint> > my_public_key.asc
+
+#. In AWX/Automation Controller, click “Credentials" then the "Add" button
+#. Give the new credential a meaningful name (for example, "infrastructure team public GPG key")
+#. For "Credential Type" select "GPG Public Key"
+#. Click "Browse" to navigate to and select the file that you created earlier (``my_public_key.asc``)
+#. Finally, click the "Save" button to finish
+
+This credential can now be selected in "Project" settings. Once selected, content verification will automatically take place on future project syncs.
+
+Vist `the GnuPG documentation`_ for more information regarding GPG keys.
+For more information regarding generating a GPG keypair, visit the `Red Hat "Enable Sysadmin" blog post`_.
+
+.. _the GnuPG documentation: https://www.gnupg.org/documentation/index.html
 .. _Red Hat "Enable Sysadmin" blog post: https://www.redhat.com/sysadmin/creating-gpg-keypairs
+
+.. _ansible-sign-install:
+
+How to Access the ``ansible-sign`` CLI Utility
+==============================================
+
+Run the following command to install ``ansible-sign``:
+
+.. code-block:: shell
+   :caption: Installing ``ansible-sign``
+
+   $ pip install ansible-sign
+
+Once it’s installed, run:
+
+.. code-block:: shell
+   :caption: Verify that ``ansible-sign`` was successfully installed.
+
+   $ ansible-sign --version
+
+You should see output similar to the following (possibly with a different version number):
+
+.. code-block:: shell
+   :caption: The output of ``ansible-sign --version``
+
+   ansible-sign 0.1
+
+Congratulations! You have successfully installed ``ansible-sign``!
 
 
 The Project Directory
@@ -97,9 +149,10 @@ it. These steps both happen in a single ``ansible-sign`` command.
    :caption: Generating a checksum manifest file and signing it
 
    $ ansible-sign project gpg-sign .
-   GPG signing successful!
-   Checksum manifest: ./.ansible-sign/sha256sum.txt
-   GPG summary: signature created
+   [OK   ] GPG signing successful!
+   [NOTE ] Checksum manifest: ./.ansible-sign/sha256sum.txt
+   [NOTE ] GPG summary: signature created
+
 
 Congratulations, you've now signed your first project!
 
@@ -162,8 +215,9 @@ conditions.
    :caption: Verifying our sample project
 
    $ ansible-sign project gpg-verify .
-   Signature validation SUCCEEDED!
-   Verification of checksum file succeeded.
+   [OK   ] GPG signature verification succeeded.
+   [OK   ] Checksum validation succeeded.
+
 
 .. hint::
 
@@ -193,7 +247,7 @@ key. This can be injected (and masked/secured) in a CI pipeline.
 scenario at hand, both during signing and verification. This can also be useful
 in the context of CI and automation, as a CI environment can act differently
 based on the failure (for example, sending alerts for some errors but silently
-failng for others).
+failing for others).
 
 These codes are used fairly consistently within the code, and can be considered
 stable:
@@ -207,7 +261,7 @@ stable:
      - Example scenarios
    * - 0
      - Success
-     - * Signing was sucessful
+     - * Signing was successful
        * Verification was successful
    * - 1
      - General failure
