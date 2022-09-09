@@ -36,39 +36,34 @@ and are ready to move on!
 
 How to Access the Ansible Sign CLI Utility:
 ===========================================
-Clone ansible-sign as an entirely new repo (This is typically placed within an existing AWX repo).
 
-``$ git clone git@github.com:ansible/ansible-sign``
+In the directory in which you would like Ansible Sign to be installed, run:
+``$ pip install ansible-sign .``
 
-There are certainly alternative methods for closing a repo, absolutely use whichever method you prefer. (You might use github's https cloning instead of the git@ syntax, which is SSH.)
+Once it’s installed, run:
+``$ ansible-sign --help`` 
 
-Then once you have that cloned, you can:
-``$ cd ansible-sign``
+You should see the following output:
 
-Then:
-``$ pip install -e .``
-
-That command will install it. Once it’s installed, run:
-``$ ansible-sign --help``
-
-You should see the following output: 
 .. code-block:: shell
-usage: ansible-sign [-h] [--version] [--debug] {project} ...
+   :caption: The output of $ ansible-sign --help
 
-Signing and validation for Ansible content
+   ansible-sign [-h] [--version] [--debug] {project} ...
 
-positional arguments:
-  {project}
-    project   Act on an Ansible project directory
+   Signing and validation for Ansible content
 
-options:
-  -h, --help  show this help message and exit
-  --version   show program's version number and exit
-  --debug     Print a bunch of debug info
-  --nocolor   Disable color output
+   positional arguments:
+   {project}
+   project   Act on an Ansible project directory
+
+   options:
+   -h, --help  show this help message and exit
+   --version   show program's version number and exit
+   --debug     Print a bunch of debug info
+   --nocolor   Disable color output
 
 
-Congratulations! You are ready to start using  Ansible-Sign!
+Congratulations! You have successfully installed Ansible-Sign!
 
 
 
@@ -102,44 +97,21 @@ and two small playbooks under a ``playbooks`` directory.
    root of your project. ``ansible-sign project`` commands, as a rule, always
    take the project root directory as their last argument, thus we will simply
    use ``.`` to indicate the current Working Directory.
-Generating a GPG Key
-===================
-
-Full documentation:
-https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key
-
-Follow the link above to download the GPG Command Line Tools.
-
-Once you have the GPG Command line tools, follow these steps to generate your key.
-
-``$ gpg --full-generate-key`` is the command to begin the key generation process.
-
-For most cases, just press enter to accept the default settings. 
-For the expiration date, no expiration date is the default. 
-Once all of that is verified, enter your user ID information. This should be your GitHub email for the email address.
-
-``$ gpg --list-secret-keys --keyid-format=long`` will list the key that has just been created in long form. 
-
-Congratulations! You’re ready to add your key to the Ansible UI.
 
 Adding a GPG key to AWX or Ansible Automation Controller:
-================================
+=========================================================
 
 In the command line, run the following commands:
 ``$ gpg --list-keys``
-``$ gpg --export --armour <key fingerprint>``
+``$ gpg --export --armour <key fingerprint> > my_public_key.asc``
 
-Copy  everything from:
-``-----BEGIN PGP PUBLIC KEY BLOCK-----``
-to 
-``-----END PGP PUBLIC KEY BLOCK-----``
 
 In AWX/Automation Controller, click “Credentials."
 From there, click “Add”.
 For “Name” name your credential something you will recognize.
 For “Credential Type” select  “GPG Public Key."
 
-Paste what you copied from your command line earlier into the “Type Details” box. Great work! You're ready to start verifying signed project content. 
+Click "Browse" to navigate to and select the file that you created earlier. Great work! You're ready to start verifying signed project content. 
 
 
 
@@ -175,9 +147,9 @@ it. These steps both happen in a single ``ansible-sign`` command.
    :caption: Generating a checksum manifest file and signing it
 
    $ ansible-sign project gpg-sign .
-[OK   ] GPG signing successful!
-[NOTE ] Checksum manifest: ./.ansible-sign/sha256sum.txt
-[NOTE ] GPG summary: signature created
+   [OK   ] GPG signing successful!
+   [NOTE ] Checksum manifest: ./.ansible-sign/sha256sum.txt
+   [NOTE ] GPG summary: signature created
 
 
 
@@ -308,16 +280,5 @@ stable:
      - * The signer's private key was not found in the GPG keyring
        * The wrong GnuPG home directory or keyring file was specified
 
-Other Helpful Commands:
-======================
-``$ time ansible-sign project gpg-sign .``
-This command shows how long validation took.
 
-
-
-Additional Resources:
-====================
-
-.. _AWX project sync via action plugin: https://www.youtube.com/watch?v=srajyQpzkmI 
-.. _Ansible-sign CLI: https://www.youtube.com/watch?v=fyb0OxejYnk
 
