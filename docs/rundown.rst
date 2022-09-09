@@ -137,7 +137,7 @@ to
 In AWX/Automation Controller, click “Credentials."
 From there, click “Add”.
 For “Name” name your credential something you will recognize.
-For “Credential Type” select  “GitHub Personal Access Token."
+For “Credential Type” select  “GPG Public Key."
 
 Paste what you copied from your command line earlier into the “Type Details” box. Great work! You're ready to start signing content. 
 
