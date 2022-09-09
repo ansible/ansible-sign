@@ -139,7 +139,7 @@ From there, click “Add”.
 For “Name” name your credential something you will recognize.
 For “Credential Type” select  “GPG Public Key."
 
-Paste what you copied from your command line earlier into the “Type Details” box. Great work! You're ready to start signing content. 
+Paste what you copied from your command line earlier into the “Type Details” box. Great work! You're ready to start verifying signed project content. 
 
 
 
