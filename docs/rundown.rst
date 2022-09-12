@@ -28,8 +28,27 @@ You can verify that you have a keypair with the following command:
 
 If the above command produces no output, or one line of output that says that a
 "trustdb" was created, then you do not have a secret key in your default
-keyring. If it produces output other than that, then you have a valid secret key
-and are ready to move on!
+keyring.Please see the section below titled "Adding a GPG key to AWX or Ansible Automation Controller."
+
+If it produces output other than that, then you have a valid secret key
+and are ready to move on to "ow to Access the Ansible Sign CLI Utility."
+
+Adding a GPG key to AWX or Ansible Automation Controller:
+=========================================================
+
+In the command line, run the following commands:
+``$ gpg --list-keys``
+``$ gpg --export --armour <key fingerprint> > my_public_key.asc``
+
+
+In AWX/Automation Controller, click “Credentials."
+From there, click “Add”.
+For “Name” name your credential something you will recognize.
+For “Credential Type” select  “GPG Public Key."
+
+Click "Browse" to navigate to and select the file that you created earlier. Great work! You're ready to start verifying signed project content. 
+
+Additional documentation:
 
 .. _GPG: https://www.gnupg.org/
 .. _Red Hat "Enable Sysadmin" blog post: https://www.redhat.com/sysadmin/creating-gpg-keypairs
@@ -97,23 +116,6 @@ and two small playbooks under a ``playbooks`` directory.
    root of your project. ``ansible-sign project`` commands, as a rule, always
    take the project root directory as their last argument, thus we will simply
    use ``.`` to indicate the current Working Directory.
-
-Adding a GPG key to AWX or Ansible Automation Controller:
-=========================================================
-
-In the command line, run the following commands:
-``$ gpg --list-keys``
-``$ gpg --export --armour <key fingerprint> > my_public_key.asc``
-
-
-In AWX/Automation Controller, click “Credentials."
-From there, click “Add”.
-For “Name” name your credential something you will recognize.
-For “Credential Type” select  “GPG Public Key."
-
-Click "Browse" to navigate to and select the file that you created earlier. Great work! You're ready to start verifying signed project content. 
-
-
 
 Signing Content
 ===============
