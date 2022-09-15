@@ -46,7 +46,9 @@ From there, click "Add."
 For “Name” name your credential something you will recognize.
 For “Credential Type” select  “GPG Public Key."
 
-Click "Browse" to navigate to and select the file that you created earlier. Great work! You're ready to start verifying signed project content. 
+Click "Browse" to navigate to and select the file that you created earlier. Finally, click the "Save" button to finish.
+
+This credential can now be selected in "Project" settings. Once selected, content verification will automatically take place on future project syncs.
 
 Vist `GPG`_ for more information regarding GPG keys.
 For more information regarding generating a GPG key pair, visit the `Red Hat "Enable Sysadmin" blog post`_.
