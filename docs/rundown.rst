@@ -11,7 +11,7 @@ like GPG_ to validate that specified files within a project have not been
 tampered with in any way.
 
 Though in the future other means of signing and validating might be supported,
-GPG is the only current supported means of signing and validation. As such, the
+GPG is the only currently supported means of signing and validation. As such, the
 rest of this tutorial assumes the use of GPG.
 
 The process of creating a GPG public/private keypair for signing content is well
@@ -28,10 +28,10 @@ You can verify that you have a keypair with the following command:
 
 If the above command produces no output, or one line of output that says that a
 "trustdb" was created, then you do not have a secret key in your default
-keyring.Please see the section below titled "Adding a GPG key to AWX or Ansible Automation Controller."
+keyring. Please see the section below titled "Adding a GPG key to AWX or Ansible Automation Controller."
 
 If it produces output other than that, then you have a valid secret key
-and are ready to move on to "ow to Access the Ansible Sign CLI Utility."
+and are ready to move on to "How to Access the Ansible Sign CLI Utility."
 
 Adding a GPG key to AWX or Ansible Automation Controller:
 =========================================================
@@ -42,13 +42,14 @@ In the command line, run the following commands:
 
 
 In AWX/Automation Controller, click “Credentials."
-From there, click “Add”.
+From there, click "Add."
 For “Name” name your credential something you will recognize.
 For “Credential Type” select  “GPG Public Key."
 
 Click "Browse" to navigate to and select the file that you created earlier. Great work! You're ready to start verifying signed project content. 
 
-Additional documentation:
+Vist `GPG`_ for more information regarding GPG keys.
+For more information regarding generating a GPG key pair, visit the `Red Hat "Enable Sysadmin" blog post`_.
 
 .. _GPG: https://www.gnupg.org/
 .. _Red Hat "Enable Sysadmin" blog post: https://www.redhat.com/sysadmin/creating-gpg-keypairs
@@ -217,6 +218,8 @@ conditions.
 
    $ ansible-sign project gpg-verify .
    [OK   ] GPG signature verification succeeded.
+   [OK   ] Checksum validation succeeded.
+
 
 .. hint::
 
@@ -246,7 +249,7 @@ key. This can be injected (and masked/secured) in a CI pipeline.
 scenario at hand, both during signing and verification. This can also be useful
 in the context of CI and automation, as a CI environment can act differently
 based on the failure (for example, sending alerts for some errors but silently
-failng for others).
+failing for others).
 
 These codes are used fairly consistently within the code, and can be considered
 stable:
@@ -260,7 +263,7 @@ stable:
      - Example scenarios
    * - 0
      - Success
-     - * Signing was sucessful
+     - * Signing was successful
        * Verification was successful
    * - 1
      - General failure
