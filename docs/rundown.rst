@@ -41,12 +41,11 @@ In the command line, run the following commands:
 ``$ gpg --export --armour <key fingerprint> > my_public_key.asc``
 
 
-In AWX/Automation Controller, click “Credentials."
-From there, click "Add."
-For “Name” name your credential something you will recognize.
-For “Credential Type” select  “GPG Public Key."
-
-Click "Browse" to navigate to and select the file that you created earlier. Finally, click the "Save" button to finish.
+#. In AWX/Automation Controller, click “Credentials" then the "Add" button
+#. Give the new credential a meaningful name (for example, "infrastructure team public GPG key")
+#. For "Credential Type" select "GPG Public Key"
+#. Click "Browse" to navigate to and select the file that you created earlier (``my_public_key.asc``)
+#. Finally, click the "Save" button to finish
 
 This credential can now be selected in "Project" settings. Once selected, content verification will automatically take place on future project syncs.
 
