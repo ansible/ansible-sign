@@ -53,7 +53,7 @@ This credential can now be selected in "Project" settings. Once selected, conten
 Vist `GPG`_ for more information regarding GPG keys.
 For more information regarding generating a GPG key pair, visit the `Red Hat "Enable Sysadmin" blog post`_.
 
-.. _GPG: https://www.gnupg.org/
+.. _GPG: https://www.gnupg.org/documentation/index.html
 .. _Red Hat "Enable Sysadmin" blog post: https://www.redhat.com/sysadmin/creating-gpg-keypairs
 
 How to Access the Ansible Sign CLI Utility
