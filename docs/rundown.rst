@@ -58,7 +58,7 @@ For more information regarding generating a GPG key pair, visit the `Red Hat "En
 How to Access the Ansible Sign CLI Utility:
 ===========================================
 
-Run the following command to install Ansible-Sign:
+Run the following command to install ``ansible-sign``:
 ``$ pip install ansible-sign ``
 
 Once it’s installed, run:
