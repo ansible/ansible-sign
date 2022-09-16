@@ -28,12 +28,12 @@ You can verify that you have a keypair with the following command:
 
 If the above command produces no output, or one line of output that says that a
 "trustdb" was created, then you do not have a secret key in your default
-keyring. Please see the section below titled "Adding a GPG key to AWX or Ansible Automation Controller."
+keyring. In this case, refer to the aforementioned blog post to learn how to create a new keypair.
 
 If it produces output other than that, then you have a valid secret key
 and are ready to move on to "How to Access the Ansible Sign CLI Utility."
 
-Adding a GPG key to AWX or Ansible Automation Controller:
+Adding a GPG key to AWX or Ansible Automation Controller
 =========================================================
 
 In the command line, run the following commands:
@@ -55,38 +55,32 @@ For more information regarding generating a GPG key pair, visit the `Red Hat "En
 .. _GPG: https://www.gnupg.org/
 .. _Red Hat "Enable Sysadmin" blog post: https://www.redhat.com/sysadmin/creating-gpg-keypairs
 
-How to Access the Ansible Sign CLI Utility:
+How to Access the Ansible Sign CLI Utility
 ===========================================
 
-Run the following command to install ``ansible-sign``:
-``$ pip install ansible-sign ``
+Run the following command to install Ansible-Sign:
+
+.. code-block:: shell
+   :caption: Installing `ansible-sign`
+   
+   $ pip install ansible-sign
 
 Once it’s installed, run:
-``$ ansible-sign --help`` 
+
+.. code-block:: shell
+   :caption: Verify that `ansible-sign` was successfully installed. 
+   
+   $ ansible-sign --version
 
 You should see the following output:
 
 .. code-block:: shell
-   :caption: The output of $ ansible-sign --help
+   :caption: The output of $ ansible-sign --version
 
-   ansible-sign [-h] [--version] [--debug] {project} ...
-
-   Signing and validation for Ansible content
-
-   positional arguments:
-   {project}
-   project   Act on an Ansible project directory
-
-   options:
-   -h, --help  show this help message and exit
-   --version   show program's version number and exit
-   --debug     Print a bunch of debug info
-   --nocolor   Disable color output
+   ansible-sign <version number>
 
 
 Congratulations! You have successfully installed ``ansible-sign``!
-
-
 
 
 The Project Directory
