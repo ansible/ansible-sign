@@ -31,7 +31,8 @@ If the above command produces no output, or one line of output that says that a
 keyring. In this case, refer to the aforementioned blog post to learn how to create a new keypair.
 
 If it produces output other than that, then you have a valid secret key
-and are ready to move on to "How to Access the Ansible Sign CLI Utility."
+and are ready to move on to
+:ref:`using ansible-sign<How to Access the ansible-sign CLI Utility>`.
 
 Adding a GPG key to AWX or Ansible Automation Controller
 =========================================================
