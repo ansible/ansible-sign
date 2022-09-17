@@ -62,7 +62,7 @@ How to Access the Ansible Sign CLI Utility
 Run the following command to install Ansible-Sign:
 
 .. code-block:: shell
-   :caption: Installing `ansible-sign`
+   :caption: Installing ``ansible-sign``
    
    $ pip install ansible-sign
 
