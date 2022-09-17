@@ -69,7 +69,7 @@ Run the following command to install Ansible-Sign:
 Once it’s installed, run:
 
 .. code-block:: shell
-   :caption: Verify that `ansible-sign` was successfully installed. 
+   :caption: Verify that ``ansible-sign`` was successfully installed. 
    
    $ ansible-sign --version
 
