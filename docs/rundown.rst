@@ -59,7 +59,7 @@ For more information regarding generating a GPG key pair, visit the `Red Hat "En
 How to Access the Ansible Sign CLI Utility
 ===========================================
 
-Run the following command to install Ansible-Sign:
+Run the following command to install ``ansible-sign``:
 
 .. code-block:: shell
    :caption: Installing ``ansible-sign``
