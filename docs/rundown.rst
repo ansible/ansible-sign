@@ -76,7 +76,7 @@ Once it’s installed, run:
 You should see the following output:
 
 .. code-block:: shell
-   :caption: The output of $ ansible-sign --version
+   :caption: The output of ``ansible-sign --version``
 
    ansible-sign <version number>
 
