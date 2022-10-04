@@ -1,3 +1,4 @@
+libtmux
 pytest
 pytest-mock
 flake8
