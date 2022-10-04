@@ -319,6 +319,8 @@ class AnsibleSignCLI:
         elif "ANSIBLE_SIGN_GPG_PASSPHRASE" in os.environ:
             self.logger.debug("Taking GPG key passphrase from ANSIBLE_SIGN_GPG_PASSPHRASE env var")
             passphrase = os.environ["ANSIBLE_SIGN_GPG_PASSPHRASE"]
+        else:
+            os.environ["GPG_TTY"] = os.ttyname(sys.stdin.fileno())
 
         signature_path = os.path.join(self.args.project_root, ".ansible-sign", "sha256sum.txt.sig")
         signer = GPGSigner(

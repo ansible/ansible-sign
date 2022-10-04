@@ -4,12 +4,26 @@ Fixtures for ansible-sign tests
 
 import fileinput
 import gnupg
+import libtmux
 import os
 from pathlib import Path
 import pytest
 import shutil
 
 from ansible_sign.signing import GPGSigner
+
+
+@pytest.fixture
+def tmux_session(request):
+    """
+    Create a tmux session for testing
+    """
+    session = libtmux.Server().new_session(
+        session_name=f"ansible-sign_{request.node.name}",
+        kill_session=True,
+    )
+    yield session
+    session.kill_session()
 
 
 def _gpg_home_with_secret_key(tmp_path, no_protection=False):
