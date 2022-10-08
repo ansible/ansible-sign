@@ -237,13 +237,13 @@ class AnsibleSignCLI:
             self._error("Checksum validation failed.")
             if e.differences:
                 differences = (
-                    ('added', 'added'),
-                    ('removed', 'removed'),
-                    ('changes', 'changed'),
+                    ("added", "added"),
+                    ("removed", "removed"),
+                    ("changes", "changed"),
                 )
                 for key, verb in differences:
                     if key in e.differences and e.differences[key]:
-                        self._note(f'Files {verb}:')
+                        self._note(f"Files {verb}:")
                         num_changes = len(e.differences[key])
                         if self.args.no_truncate:
                             truncate_at = num_changes
@@ -252,9 +252,9 @@ class AnsibleSignCLI:
                             truncate_at = 6
                             truncated = num_changes > truncate_at
                         for path in e.differences[key][0:(truncate_at)]:
-                            self._note(f'  - {path}')
+                            self._note(f"  - {path}")
                         if truncated:
-                            self._note(f'  [{num_changes - truncate_at} lines omitted, use --no-truncate to see all...]')
+                            self._note(f"  [{num_changes - truncate_at} lines omitted, use --no-truncate to see all...]")
             return 2
         except FileNotFoundError as e:
             if os.path.islink(e.filename):

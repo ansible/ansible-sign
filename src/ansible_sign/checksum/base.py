@@ -22,15 +22,15 @@ class ChecksumMismatch(Exception):
         action plugin on project sync when validation fails.
         """
         out = self.msg
-        extra_info = ''
-        if 'changes' in self.differences and self.differences['changes']:
+        extra_info = ""
+        if "changes" in self.differences and self.differences["changes"]:
             extra_info += f"Files changed: {', '.join(self.differences['changes'])}"
 
-        if 'added' in self.differences and self.differences['added']:
+        if "added" in self.differences and self.differences["added"]:
             sep = "; " if extra_info else ""
             extra_info += f"{sep}Files added: {', '.join(self.differences['added'])}"
 
-        if 'removed' in self.differences and self.differences['removed']:
+        if "removed" in self.differences and self.differences["removed"]:
             sep = "; " if extra_info else ""
             extra_info += f"{sep}Files removed: {', '.join(self.differences['removed'])}"
 
@@ -200,7 +200,7 @@ class ChecksumFile:
             if recalculated[parsed_path] != parsed_checksum:
                 mismatches.add(parsed_path)
         if mismatches:
-            differences = {'changes': list(mismatches)}
+            differences = {"changes": list(mismatches)}
             raise ChecksumMismatch("Checksum mismatch", differences)
 
         return True
