@@ -79,7 +79,7 @@ class AnsibleSignCLI:
         )
 
         # Future-proofing for future content types.
-        content_type_parser = parser.add_subparsers(required=True, dest="content_type")
+        content_type_parser = parser.add_subparsers(required=True, dest="content_type", metavar="CONTENT_TYPE")
 
         project = content_type_parser.add_parser(
             "project",
