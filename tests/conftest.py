@@ -203,7 +203,7 @@ def signed_project_missing_manifest(
     unsigned_project_with_checksum_manifest,
 ):
     """
-    Sign a project that has a broken manifest.
+    Sign a project that has a missing manifest.
     """
     (project, gpghome) = _sign_project(gpg_home_with_secret_key, unsigned_project_with_checksum_manifest)
     manifest = project / ".ansible-sign" / "sha256sum.txt"
@@ -223,3 +223,18 @@ def signed_project_with_different_gpg_home(
     """
     (project, gpghome) = _sign_project(gpg_home_with_secret_key, unsigned_project_with_checksum_manifest)
     yield (project, gpg_home_with_hao_pubkey)
+
+
+@pytest.fixture
+def signed_project_broken_manifest_in(
+    gpg_home_with_secret_key,
+    unsigned_project_with_checksum_manifest,
+):
+    """
+    Sign a project but then break its MANIFEST.in.
+    """
+    (project, gpghome) = _sign_project(gpg_home_with_secret_key, unsigned_project_with_checksum_manifest)
+    manifest_in = project / "MANIFEST.in"
+    with open(manifest_in, "w") as f:
+        f.write("invalid-directive foo bar\n")
+    yield (project, gpghome)
