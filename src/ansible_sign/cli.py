@@ -1,4 +1,5 @@
 import argparse
+from distlib.manifest import DistlibException
 import getpass
 import logging
 import os
@@ -169,6 +170,12 @@ class AnsibleSignCLI:
                 self._note("See the ansible-sign documentation for more information.")
                 return False
             raise e
+        except DistlibException as e:
+            self._error(f"An error was encountered while parsing MANIFEST.in: {e}")
+            if self.args.loglevel != logging.DEBUG:
+                self._note("You can use the --debug global flag to view the full traceback.")
+            self.logger.debug(e, exc_info=e)
+            return False
         for warning in checksum.warnings:
             self._warn(warning)
         self.logger.debug(
@@ -239,6 +246,12 @@ class AnsibleSignCLI:
                 self._note("If you are attempting to verify a signed project, please ensure that the project directory includes this file after signing.")
                 self._note("See the ansible-sign documentation for more information.")
                 return 1
+        except DistlibException as e:
+            self._error(f"An error was encountered while parsing MANIFEST.in: {e}")
+            if self.args.loglevel != logging.DEBUG:
+                self._note("You can use the --debug global flag to view the full traceback.")
+            self.logger.debug(e, exc_info=e)
+            return 1
 
         for warning in checksum.warnings:
             self._warn(warning)

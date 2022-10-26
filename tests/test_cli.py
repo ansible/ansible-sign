@@ -24,6 +24,16 @@ __license__ = "MIT"
         (
             [
                 "project",
+                "gpg-sign",
+                "tests/fixtures/checksum/manifest-syntax-error",
+            ],
+            "An error was encountered while parsing MANIFEST.in: unknown action 'invalid-directive'",
+            "",
+            1,
+        ),
+        (
+            [
+                "project",
                 "gpg-verify",
                 "tests/fixtures/checksum/manifest-success",
             ],
@@ -124,6 +134,7 @@ def test_main_with_pubkey_in_keyring(capsys, gpg_home_with_hao_pubkey, args, exp
         ("signed_project_missing_manifest", "Checksum manifest file does not exist:", "", 1),
         ("signed_project_modified_manifest", "Checksum validation failed.", "", 2),
         ("signed_project_with_different_gpg_home", "Re-run with the global --debug flag", "", 3),
+        ("signed_project_broken_manifest_in", "An error was encountered while parsing MANIFEST.in: unknown action 'invalid-directive'", "", 1),
     ],
     ids=[
         "valid checksum file and signature",
@@ -131,6 +142,7 @@ def test_main_with_pubkey_in_keyring(capsys, gpg_home_with_hao_pubkey, args, exp
         "missing checksum file entirely",
         "checksum file with wrong hashes",
         "matching pubkey does not exist in gpg home",
+        "broken MANIFEST.in after signing",
     ],
 )
 def test_gpg_verify_manifest_scenario(capsys, request, project_fixture, exp_stdout_substr, exp_stderr_substr, exp_rc):
