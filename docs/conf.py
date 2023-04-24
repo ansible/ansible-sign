@@ -154,7 +154,7 @@ todo_emit_warnings = True
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinx_ansible_theme'
+html_theme = "sphinx_ansible_theme"
 html_title = "Ansible Sign Documentation"
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -162,9 +162,9 @@ html_title = "Ansible Sign Documentation"
 # documentation.
 
 html_theme_options = {
-    'display_version': False,
-    'titles_only': False,
-    'documentation_home_url': 'https://ansible.github.io/ansible-sign/',
+    "display_version": False,
+    "titles_only": False,
+    "documentation_home_url": "https://ansible.github.io/ansible-sign/",
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
