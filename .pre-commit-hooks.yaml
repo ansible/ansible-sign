@@ -7,7 +7,5 @@
   description: This hook runs ansible-sign.
   entry: ansible-sign project gpg-sign .
   language: python
-  # do not pass files to ansible-lint, see:
-  # https://github.com/ansible/ansible-lint/issues/611
   pass_filenames: false
   always_run: true
