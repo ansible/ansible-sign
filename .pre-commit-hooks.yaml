@@ -2,10 +2,10 @@
 # For use with pre-commit.
 # See usage instructions at http://pre-commit.com
 
-- id: ansible-lint
-  name: Ansible-lint
-  description: This hook runs ansible-lint.
-  entry: python3 -m ansible_sign.cli project gpg-sign .
+- id: ansible-sign
+  name: Ansible-sign
+  description: This hook runs ansible-sign.
+  entry: ansible-sign project gpg-sign .
   language: python
   # do not pass files to ansible-lint, see:
   # https://github.com/ansible/ansible-lint/issues/611
