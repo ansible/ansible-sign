@@ -333,7 +333,7 @@ class AnsibleSignCLI:
             self.logger.debug("Taking GPG key passphrase from ANSIBLE_SIGN_GPG_PASSPHRASE env var")
             passphrase = os.environ["ANSIBLE_SIGN_GPG_PASSPHRASE"]
         elif "GPG_TTY" in os.environ:
-            return None
+            self.logger.debug("GPG_TTY is set, taking passphrase from GPG agent")
         else:
             os.environ["GPG_TTY"] = os.ttyname(sys.stdin.fileno())
 
