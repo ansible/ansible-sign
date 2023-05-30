@@ -3,11 +3,10 @@
 # See usage instructions at http://pre-commit.com
 
 - id: ansible-sign
-  name: Ansible-sign
+  name: Verify Ansible-sign signature
   description: This hook runs ansible-sign.
-  entry: ansible-sign project gpg-sign .
+  entry: ansible-sign project gpg-verify .
   language: python
-  # do not pass files to ansible-lint, see:
-  # https://github.com/ansible/ansible-lint/issues/611
+  # do not pass files as we need to scan the directory with the MANIFEST.in
   pass_filenames: false
   always_run: true
