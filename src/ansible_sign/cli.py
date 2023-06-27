@@ -48,7 +48,6 @@ from ansible_sign.checksum.differ import DistlibManifestChecksumFileExistenceDif
 from ansible_sign.signing import GPGSigner
 from ansible_sign.signing import GPGVerifier
 from ansible_sign.signing import SigstoreVerifier
-from ansible_sign.signing import SigstoreSigner
 
 
 __author__ = "Rick Elrod"

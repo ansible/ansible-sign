@@ -13,7 +13,6 @@ All verification methods contain two modules:
 
 from .gpg import GPGSigner  # noqa: F401
 from .gpg import GPGVerifier  # noqa: F401
-from .sigstore import SigstoreSigner  # noqa: F401
 from .sigstore import SigstoreVerifier  # noqa: F401
 
 # from .base import *
