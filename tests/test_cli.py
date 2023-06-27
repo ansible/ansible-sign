@@ -52,6 +52,56 @@ __license__ = "MIT"
             "",
             1,
         ),
+        (
+            [
+                "project",
+                "sigstore-sign",
+                "tests/fixtures/checksum/missing-manifest/",
+            ],
+            "If you are attempting to sign a project, please create this file",
+            "",
+            1,
+        ),
+        (
+            [
+                "project",
+                "sigstore-verify",
+                "identity",
+                "--cert-identity=mcostant@redhat.com",
+                "--cert-oidc-issuer=https://accounts.google.com",
+                "tests/fixtures/sigstore/signed-valid/",
+            ],
+            "OK: tests/fixtures/sigstore/signed-valid/.ansible-sign/sha256sum.txt",
+            "",
+            0,
+        ),
+        (
+            [
+                "project",
+                "sigstore-verify",
+                "identity",
+                "--cert-identity=mcostant@redhat.com",
+                "--cert-oidc-issuer=https://accounts.google.com",
+                "--signature=tests/fixtures/sigstore/signed-invalid-sig/sha256sum.txt.sig",
+                "tests/fixtures/sigstore/signed-invalid-sig/",
+            ],
+            "Missing verification materials for tests/fixtures/sigstore/signed-invalid-sig/.ansible-sign/sha256sum.txt",
+            "",
+            1,
+        ),
+        (
+            [
+                "project",
+                "sigstore-verify",
+                "identity",
+                "--cert-identity=mcostant@redhat.com",
+                "--cert-oidc-issuer=https://accounts.google.com",
+                "tests/fixtures/sigstore/signed-missing-materials/",
+            ],
+            "Missing verification materials for tests/fixtures/sigstore/signed-missing-materials/.ansible-sign/sha256sum.txt",
+            "",
+            1,
+        ),
     ],
 )
 def test_main(capsys, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
