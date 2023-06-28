@@ -925,14 +925,15 @@ class AnsibleSignCLI:
         policy_ = policy.AllOf(inner_policies)
 
         verifier, files_with_materials = self._collect_verification_state(self.args)
-        for file, materials in files_with_materials:
-            result = verifier.verify(materials=materials, policy=policy_)
+        file, materials = files_with_materials
+        
+        result = verifier.verify(materials=materials, policy=policy_)
 
-            if result:
-                print(f"OK: {file}")
-            else:
-                print(f"FAIL: {file}")
-                raise SigstoreVerificationError(cast(VerificationFailure, result))
+        if result:
+            print(f"OK: {file}")
+        else:
+            print(f"FAIL: {file}")
+            raise SigstoreVerificationError(cast(VerificationFailure, result))
 
 
     def sigstore_get_identity_token(self):
