@@ -15,4 +15,10 @@ from .gpg import GPGSigner  # noqa: F401
 from .gpg import GPGVerifier  # noqa: F401
 from .sigstore import SigstoreVerifier  # noqa: F401
 
+__all__ = [
+   "GPGSigner",
+   "GPGVerifier",
+   "SigstoreVerifier",
+]
+
 # from .base import *
