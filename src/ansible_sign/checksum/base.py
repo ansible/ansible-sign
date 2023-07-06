@@ -11,7 +11,33 @@ class NoDifferException(Exception):
 
 
 class ChecksumMismatch(Exception):
-    pass
+    def __init__(self, msg, differences={}):
+        super().__init__(msg)
+        self.msg = msg
+        self.differences = differences
+
+    def __str__(self):
+        """
+        This *must* be something human-readable, it is currently used in the AWX
+        action plugin on project sync when validation fails.
+        """
+        out = self.msg
+        extra_info = ""
+        if "changes" in self.differences and self.differences["changes"]:
+            extra_info += f"Files changed: {', '.join(self.differences['changes'])}"
+
+        if "added" in self.differences and self.differences["added"]:
+            sep = "; " if extra_info else ""
+            extra_info += f"{sep}Files added: {', '.join(self.differences['added'])}"
+
+        if "removed" in self.differences and self.differences["removed"]:
+            sep = "; " if extra_info else ""
+            extra_info += f"{sep}Files removed: {', '.join(self.differences['removed'])}"
+
+        if extra_info:
+            return f"{out}. {extra_info}"
+
+        return out
 
 
 class ChecksumFile:
@@ -166,7 +192,7 @@ class ChecksumFile:
             # If there are any differences in existing paths, fail the check...
             differences = self.diff(parsed_manifest_dct.keys())
             if differences["added"] or differences["removed"]:
-                raise ChecksumMismatch(differences)
+                raise ChecksumMismatch("Files were added or removed", differences)
 
         recalculated = self.calculate_checksums_from_root(verifying=True)
         mismatches = set()
@@ -174,6 +200,7 @@ class ChecksumFile:
             if recalculated[parsed_path] != parsed_checksum:
                 mismatches.add(parsed_path)
         if mismatches:
-            raise ChecksumMismatch(f"Checksum mismatch: {', '.join(mismatches)}")
+            differences = {"changes": list(mismatches)}
+            raise ChecksumMismatch("Checksum mismatch", differences)
 
         return True

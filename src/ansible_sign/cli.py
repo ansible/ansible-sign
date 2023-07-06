@@ -111,6 +111,14 @@ class AnsibleSignCLI:
             default=None,
         )
         cmd_gpg_verify.add_argument(
+            "--no-truncate",
+            help="Disable truncation of file listings when enumerating file differences",
+            required=False,
+            dest="no_truncate",
+            default=False,
+            action="store_true",
+        )
+        cmd_gpg_verify.add_argument(
             "project_root",
             help="The directory containing the files being validated and verified",
             metavar="PROJECT_ROOT",
@@ -234,7 +242,26 @@ class AnsibleSignCLI:
             checksum.verify(manifest, diff=True)
         except ChecksumMismatch as e:
             self._error("Checksum validation failed.")
-            self._error(str(e))
+            if e.differences:
+                differences = (
+                    ("added", "added"),
+                    ("removed", "removed"),
+                    ("changes", "changed"),
+                )
+                for key, verb in differences:
+                    if key in e.differences and e.differences[key]:
+                        self._note(f"Files {verb}:")
+                        num_changes = len(e.differences[key])
+                        if self.args.no_truncate:
+                            truncate_at = num_changes
+                            truncated = False
+                        else:
+                            truncate_at = 6
+                            truncated = num_changes > truncate_at
+                        for path in e.differences[key][0:(truncate_at)]:
+                            self._note(f"  - {path}")
+                        if truncated:
+                            self._note(f"  [{num_changes - truncate_at} lines omitted, use --no-truncate to see all...]")
             return 2
         except FileNotFoundError as e:
             if os.path.islink(e.filename):
