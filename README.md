@@ -1,6 +1,6 @@
 # `ansible-sign`
 
-This is a library and auxillary CLI tool for dealing with Ansible content
+This is a library and auxiliary CLI tool for dealing with Ansible content
 verification.
 
 It does the following:
