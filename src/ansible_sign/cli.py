@@ -924,7 +924,7 @@ class AnsibleSignCLI:
 
         policy_ = policy.AllOf(inner_policies)
 
-        verifier, files_with_materials = self._collect_verification_state(self.args)
+        verifier, files_with_materials = self._collect_verification_state()
         file, materials = files_with_materials
         
         result = verifier.verify(materials=materials, policy=policy_)
