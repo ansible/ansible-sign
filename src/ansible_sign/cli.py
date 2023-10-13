@@ -812,7 +812,7 @@ class AnsibleSignCLI:
 
             if not self.args.no_bundle:
                 with open(bundle, "w") as io:
-                    print(result._to_bundle().to_json(), file=io)
+                    print(result.to_bundle().to_json(), file=io)
                 print(f"Sigstore bundle written to {bundle}")
 
     def _collect_verification_state(self):
