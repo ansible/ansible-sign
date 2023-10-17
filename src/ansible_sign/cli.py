@@ -848,17 +848,17 @@ class AnsibleSignCLI:
                 return 1, 1
 
             if self.args.rekor_root_pubkey is not None:
-                rekor_key = self.args.rekor_root_pubkey.read()
+                rekor_keys = [self.args.rekor_root_pubkey.read()]
             else:
                 updater = TrustUpdater.production()
-                rekor_key = updater.get_rekor_key()
+                rekor_keys = updater.get_rekor_keys()
 
             verifier = SigstoreVerifier(
                 rekor=RekorClient(
                     url=self.args.rekor_url,
-                    pubkey=rekor_key,
+                    rekor_keyring=RekorKeyring(Keyring(rekor_keys)),
                     # We don't use the CT keyring in verification so we can supply an empty keyring
-                    ct_keyring=CTKeyring(),
+                    ct_keyring=CTKeyring(Keyring()),
                 ),
                 fulcio_certificate_chain=certificate_chain,
             )
