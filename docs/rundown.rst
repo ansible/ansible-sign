@@ -258,8 +258,8 @@ General documentation about Sigstore can be found on `docs.sigstore.dev <https:/
 Tutorial: signing and verifying content with `ansible-sign` and Sigstore
 ------------------------------------------------------------------------
 
-The Sigstore signing utility is available under the `ansible-sign sigstore-sign` subcommands.
-For more information about the different command line arguments available, use ansible-sign sigstore-sign --help`.
+The Sigstore signing utility is available under the `ansible-sign project sigstore-sign` subcommands.
+For more information about the different command line arguments available, use ansible-sign project sigstore-sign --help`.
 
 By default, ``ansible-sign`` will use the Sigstore public good instances of Fulcio, Rekor and of the OpenID Connect issuer.
 If you wish to connect to private instances of Sigstore, specify the corresponding URLs with the ``--rekor-url``, ``--fulcio-url`` and ``--oidc-issuer`` options.
@@ -310,9 +310,9 @@ Let's now take a look at the different ways to verify a project signed with Sigs
 ``ansible-sign`` will assume that the project signing materials are always located under ``.ansible-sign/``;
 this is why the command should specify the path of the project root when verifying a signature.
 
-The Sigstore verify options are available under the ``ansible-sign sigstore-verify`` subcommand, either using ``ansible-sign sigstore-verify identity``
+The Sigstore verify options are available under the ``ansible-sign project sigstore-verify`` subcommand, either using ``ansible-sign project sigstore-verify identity``
 for projects signed by authentifying through an OIDC provider
-``or ansible-sign sigstore-verify github`` for projects signed by a GitHub workflow.
+``or ansible-sign project sigstore-verify github`` for projects signed by a GitHub workflow.
 
 Verifying a project signature requires to pass the expected OIDC issuer and signer OIDC signer identity Sigstore expects to find on the signing certificate,
 respectively via the ``--cert-oidc-issuer`` and ``--cert-identity`` options.
