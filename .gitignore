@@ -57,5 +57,3 @@ MANIFEST
 .ansible-sign/*
 MANIFEST.in
 
-# sigstore bundle
-*.sigstore
