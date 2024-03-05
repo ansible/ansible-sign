@@ -54,6 +54,5 @@ MANIFEST
 .python-version
 
 # ansible-sign files and directories
-.ansible-sign/*
-MANIFEST.in
-
+/.ansible-sign/*
+/MANIFEST.in
