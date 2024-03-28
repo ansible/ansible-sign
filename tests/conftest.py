@@ -13,6 +13,11 @@ import shutil
 from ansible_sign.signing import GPGSigner
 
 
+if gnupg.__version__ >= "1.0":
+    # https://stackoverflow.com/q/35028852/99834
+    pytest.exit("Unsupported gnupg library found, repair it with: pip3 uninstall -y gnupg && pip3 install python-gnupg")
+
+
 @pytest.fixture
 def tmux_session(request):
     """
