@@ -70,6 +70,17 @@ Run the following command to install ``ansible-sign``:
 
    $ pip install ansible-sign
 
+.. note::
+
+   An **alternative** approach to install ``ansible-sign`` is using the ``ansible-dev-tools`` package.
+   `Ansible Development Tools (ADT) <https://ansible.readthedocs.io/projects/dev-tools/>`_ is a single Python package that includes all necessary tools to
+   set up a development environment, generate new collections, build and test the content consistently, resulting in robust automation.
+
+   .. code-block:: shell
+
+      # This also installs ansible-core if it is not already installed
+      $ pip3 install ansible-dev-tools
+
 Once it’s installed, run:
 
 .. code-block:: shell
