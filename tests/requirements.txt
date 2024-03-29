@@ -3,4 +3,4 @@ pytest
 pytest-mock
 flake8
 yamllint
-black
+black>=24.3.0
