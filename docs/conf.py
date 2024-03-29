@@ -164,7 +164,7 @@ html_title = "Ansible Sign Documentation"
 html_theme_options = {
     "display_version": False,
     "titles_only": False,
-    "documentation_home_url": "https://ansible.github.io/ansible-sign/",
+    "documentation_home_url": "https://ansible.readthedocs.io/projects/sign/en/latest/",
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
