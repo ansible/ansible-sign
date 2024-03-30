@@ -52,3 +52,7 @@ MANIFEST
 .venv*/
 .conda*/
 .python-version
+
+# ansible-sign files and directories
+/.ansible-sign/*
+/MANIFEST.in

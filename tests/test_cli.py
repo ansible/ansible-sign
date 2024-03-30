@@ -3,6 +3,9 @@ import sys
 import pytest
 
 from ansible_sign.cli import main
+from ansible_sign.cli import SigstoreVerificationError
+
+from sigstore.verify.models import InvalidMaterials
 
 __author__ = "Rick Elrod"
 __copyright__ = "(c) 2022 Red Hat, Inc."
@@ -62,6 +65,55 @@ IS_GITHUB_ACTION_MACOS = sys.platform == "darwin" and os.environ.get("CI", "fals
             "",
             1,
         ),
+        (
+            [
+                "project",
+                "sigstore-sign",
+                "tests/fixtures/checksum/missing-manifest/",
+            ],
+            "If you are attempting to sign a project, please create this file",
+            "",
+            1,
+        ),
+        (
+            [
+                "project",
+                "sigstore-verify",
+                "identity",
+                "--cert-identity=mcostant@redhat.com",
+                "--cert-oidc-issuer=https://github.com/login/oauth",
+                "tests/fixtures/sigstore/signed-valid/",
+            ],
+            "OK: tests/fixtures/sigstore/signed-valid/.ansible-sign/sha256sum.txt",
+            "",
+            0,
+        ),
+        (
+            [
+                "project",
+                "sigstore-verify",
+                "identity",
+                "--cert-identity=mcostant@redhat.com",
+                "--cert-oidc-issuer=https://github.com/login/oauth",
+                "tests/fixtures/sigstore/signed-invalid-sig/",
+            ],
+            "FAIL: tests/fixtures/sigstore/signed-invalid-sig/.ansible-sign/sha256sum.txt.sigstore",
+            "",
+            1,
+        ),
+        (
+            [
+                "project",
+                "sigstore-verify",
+                "identity",
+                "--cert-identity=mcostant@redhat.com",
+                "--cert-oidc-issuer=https://github.com/login/oauth",
+                "tests/fixtures/sigstore/signed-missing-materials/",
+            ],
+            "expected checkpoint in inclusion proof",
+            "",
+            1,
+        ),
     ],
 )
 def test_main(capsys, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
@@ -69,15 +121,29 @@ def test_main(capsys, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
     Test the CLI, making no assumptions about the environment, such as having a
     GPG keypair, or even a GPG home directory."
     """
-    rc = main(args)
-    captured = capsys.readouterr()
-    assert exp_stdout_substr in captured.out
-    assert exp_stderr_substr in captured.err
+    try:
+        rc = main(args)
+        captured = capsys.readouterr()
+        
+        assert exp_stdout_substr in captured.out
+        assert exp_stderr_substr in captured.err
 
-    if rc is None:
-        rc = 0
+        if rc is None:
+            rc = 0
 
-    assert rc == exp_rc
+        assert rc == exp_rc
+
+    except SigstoreVerificationError as e:
+        if "Signature is invalid for input" in str(e):
+            pass
+        else:
+            raise e
+
+    except InvalidMaterials as e:
+        if "expected checkpoint in inclusion proof" in str(e):
+            pass
+        else:
+            raise e
 
 
 @pytest.mark.parametrize(

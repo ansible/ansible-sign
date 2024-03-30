@@ -11,6 +11,14 @@ All verification methods contain two modules:
    leaving it to each subclass to implement sign() as it sees fit.
 """
 
-from .gpg import GPGSigner, GPGVerifier  # noqa
+from .gpg import GPGSigner  # noqa: F401
+from .gpg import GPGVerifier  # noqa: F401
+from .sigstore import SigstoreVerifier  # noqa: F401
+
+__all__ = [
+   "GPGSigner",
+   "GPGVerifier",
+   "SigstoreVerifier",
+]
 
 # from .base import *
