@@ -20,4 +20,4 @@ explaining how to use the CLI for basic project signing and verification.
 
 ## Community
 
-Need help or want to discuss the project? See our [Community guide](https://ansible.readthedocs.io/projects/sign/en/latest/community.html) to learn how to join the conversation.
+Need help or want to discuss the project? See our [Community guide](https://ansible.readthedocs.io/projects/sign/en/latest/community.html) join the conversation.
