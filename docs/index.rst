@@ -7,7 +7,7 @@ verifying Ansible content.
 
 .. note::
 
-  Need help or want to discuss the project? See the :ref:`Community guide<community>` to join the conversation!
+   Need help or want to discuss the project? See the :ref:`Community guide<community>` to join the conversation!
 
 Contents
 ========
