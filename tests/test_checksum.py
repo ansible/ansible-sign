@@ -116,19 +116,19 @@ def test_parse_manifest_empty():
     [
         (
             "files-added",
-            "{'added': ['hello2', 'hello3'], 'removed': []}",
+            "Files were added or removed. Files added: hello2, hello3",
         ),
         (
             "files-added-removed",
-            "{'added': ['hello2', 'hello3'], 'removed': ['hello1']}",
+            "Files were added or removed. Files added: hello2, hello3; Files removed: hello1",
         ),
         (
             "files-removed",
-            "{'added': [], 'removed': ['hello1']}",
+            "Files were added or removed. Files removed: hello1",
         ),
         (
             "files-changed",
-            "Checksum mismatch: hello1",
+            "Checksum mismatch. Files changed: hello1",
         ),
         (
             "success",
@@ -136,7 +136,7 @@ def test_parse_manifest_empty():
         ),
     ],
 )
-def test_directory_diff(
+def test_directory_diff_human_readable_exc(
     fixture,
     diff_output,
 ):
