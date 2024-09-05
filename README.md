@@ -17,3 +17,7 @@ Documentation can be found on [ansible-sign.readthedocs.io](https://ansible.read
 including a
 [rundown/tutorial](https://ansible.readthedocs.io/projects/sign/en/latest/rundown.html)
 explaining how to use the CLI for basic project signing and verification.
+
+## Community
+
+Need help or want to discuss the project? See our [Community guide](https://ansible.readthedocs.io/projects/sign/en/latest/community.html) join the conversation.
