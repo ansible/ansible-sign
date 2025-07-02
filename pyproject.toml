@@ -1,3 +1,28 @@
+# Keep this default because xml/report do not know to use load it from config file:
+# data_file = ".coverage"
+
+[tool.coverage.paths]
+source = ["src", ".tox/*/site-packages"]
+
+[tool.coverage.report]
+exclude_also = ["pragma: no cover", "if TYPE_CHECKING:"]
+# Increase it just so it would pass on any single-python run
+fail_under = 93
+# During development we might remove code (files) with coverage data, and we dont want to fail:
+ignore_errors = true
+omit = ["tests/*"]
+partial_branches = ["pragma: no cover", "if TYPE_CHECKING:"]
+show_missing = true
+skip_covered = true
+skip_empty = true
+
+[tool.coverage.run]
+# branch is more reliable than lines, protects against false positives
+branch = true
+concurrency = ["multiprocessing", "thread"]
+parallel = true
+source = ["src"]
+
 [tool.ruff]
 # Same as Black.
 line-length = 88
