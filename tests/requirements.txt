@@ -1,6 +1,6 @@
 libtmux
 pytest
 pytest-mock
-flake8
 yamllint
-black>=24.3.0
+pre-commit
+pre-commit-uv

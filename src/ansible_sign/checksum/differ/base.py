@@ -19,12 +19,10 @@ class ChecksumFileExistenceDiffer:
 
     # These are tuples of path elements, compared to the path's parts (as
     # presented by pathlib).
-    ignored_paths = set(
-        [
-            ".ansible-sign",
-            ".ansible-sign/**",
-        ]
-    )
+    ignored_paths = set([
+        ".ansible-sign",
+        ".ansible-sign/**",
+    ])
 
     # Files that get added to the manifest in list_files() even if not
     # explicitly found by gather_files()

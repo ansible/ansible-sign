@@ -88,11 +88,15 @@ class ChecksumFile:
             # if parsed is False:
             parsed = self._parse_gnu_style(line)
             if parsed is False:
-                raise InvalidChecksumLine(f"Unparsable checksum, line {idx + 1}: {line}")
+                raise InvalidChecksumLine(
+                    f"Unparsable checksum, line {idx + 1}: {line}"
+                )
             path = parsed[0]
             shasum = parsed[1]
             if path in checksums:
-                raise InvalidChecksumLine(f"Duplicate path in checksum, line {idx + 1}: {line}")
+                raise InvalidChecksumLine(
+                    f"Duplicate path in checksum, line {idx + 1}: {line}"
+                )
             checksums[path] = shasum
         return checksums
 

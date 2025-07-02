@@ -8,8 +8,12 @@ __license__ = "MIT"
 
 
 # On MacOS the is a dialog popup asking for password, not a console prompt.
-@pytest.mark.skipif(sys.platform == "darwin", reason="Interactive test not working on MacOS")
-def test_pinentry_simple(tmux_session, gpg_home_with_secret_key, unsigned_project_with_checksum_manifest):
+@pytest.mark.skipif(
+    sys.platform == "darwin", reason="Interactive test not working on MacOS"
+)
+def test_pinentry_simple(
+    tmux_session, gpg_home_with_secret_key, unsigned_project_with_checksum_manifest
+):
     """Test that we can sign a file with a pinentry program."""
     home = gpg_home_with_secret_key
     window = tmux_session.new_window(window_name="test_pinentry_simple")
