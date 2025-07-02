@@ -17,7 +17,9 @@ __license__ = "MIT"
 
 
 class GPGVerifier(SignatureVerifier):
-    def __init__(self, manifest_path, detached_signature_path, gpg_home=None, keyring=None):
+    def __init__(
+        self, manifest_path, detached_signature_path, gpg_home=None, keyring=None
+    ):
         super(GPGVerifier, self).__init__()
 
         if manifest_path is None:

@@ -20,7 +20,9 @@ class DistlibManifestChecksumFileExistenceDiffer(ChecksumFileExistenceDiffer):
 
         if not os.path.exists(manifest_path):
             # open() would do this, but let us be explicit, the file must exist.
-            raise FileNotFoundError(manifest_path, os.strerror(errno.ENOENT), manifest_path)
+            raise FileNotFoundError(
+                manifest_path, os.strerror(errno.ENOENT), manifest_path
+            )
 
         with open(manifest_path, "r") as f:
             manifest_in = f.read()

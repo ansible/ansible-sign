@@ -14,3 +14,7 @@ rules:
   truthy:
     ignore: |
       .github
+
+ignore: |
+  .tox
+strict: true

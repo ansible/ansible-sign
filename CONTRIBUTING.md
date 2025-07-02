@@ -32,7 +32,7 @@ $ workon ansible-sign
 
 ## Linting and Unit Tests
 
-`tox` is used to run linters (`black`, `flake8` and `yamllint`) and tests.
+`tox` is used to run linters and tests.
 
 ```
 $ pip install tox
