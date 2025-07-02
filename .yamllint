@@ -8,3 +8,9 @@ rules:
   document-start:
     ignore: |
       tests/fixtures/gpg/hao-*/hello_world.yml
+  line-length:
+    ignore: |
+      .github
+  truthy:
+    ignore: |
+      .github
