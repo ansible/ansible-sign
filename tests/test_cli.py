@@ -1,4 +1,5 @@
 import os
+import sys
 import pytest
 
 from ansible_sign.cli import main
@@ -6,6 +7,9 @@ from ansible_sign.cli import main
 __author__ = "Rick Elrod"
 __copyright__ = "(c) 2022 Red Hat, Inc."
 __license__ = "MIT"
+IS_GITHUB_ACTION_MACOS = (
+    sys.platform == "darwin" and os.environ.get("CI", "false") == "true"
+)
 
 
 @pytest.mark.parametrize(
@@ -13,6 +17,8 @@ __license__ = "MIT"
     [
         (
             [
+                "--debug",
+                "--nocolor",
                 "project",
                 "gpg-sign",
                 "tests/fixtures/checksum/missing-manifest",
@@ -23,6 +29,8 @@ __license__ = "MIT"
         ),
         (
             [
+                "--debug",
+                "--nocolor",
                 "project",
                 "gpg-sign",
                 "tests/fixtures/checksum/manifest-syntax-error",
@@ -33,6 +41,8 @@ __license__ = "MIT"
         ),
         (
             [
+                "--debug",
+                "--nocolor",
                 "project",
                 "gpg-verify",
                 "tests/fixtures/checksum/manifest-success",
@@ -43,6 +53,8 @@ __license__ = "MIT"
         ),
         (
             [
+                "--debug",
+                "--nocolor",
                 "project",
                 "gpg-verify",
                 "--gnupg-home=/dir/that/does/not/exist/321",
@@ -75,6 +87,8 @@ def test_main(capsys, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
     [
         (
             [
+                "--debug",
+                "--nocolor",
                 "project",
                 "gpg-verify",
                 "--keyring={gpghome}/pubring.kbx",
@@ -86,6 +100,8 @@ def test_main(capsys, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
         ),
         (
             [
+                "--debug",
+                "--nocolor",
                 "project",
                 "gpg-verify",
                 "--gnupg-home={gpghome}",
@@ -97,6 +113,8 @@ def test_main(capsys, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
         ),
         (
             [
+                "--debug",
+                "--nocolor",
                 "project",
                 "gpg-verify",
                 "--gnupg-home={gpghome}",
@@ -109,7 +127,9 @@ def test_main(capsys, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
         ),
     ],
 )
-def test_main_with_pubkey_in_keyring(capsys, gpg_home_with_hao_pubkey, args, exp_stdout_substr, exp_stderr_substr, exp_rc):
+def test_main_with_pubkey_in_keyring(
+    capsys, gpg_home_with_hao_pubkey, args, exp_stdout_substr, exp_stderr_substr, exp_rc
+):
     """
     Test the CLI assuming that there is (only) a public key in the keyring.
     """
@@ -129,23 +149,69 @@ def test_main_with_pubkey_in_keyring(capsys, gpg_home_with_hao_pubkey, args, exp
 @pytest.mark.parametrize(
     "project_fixture, exp_stdout_substr, exp_stderr_substr, exp_rc",
     [
-        ("signed_project_and_gpg", "GPG signature verification succeeded", "", 0),
-        ("signed_project_broken_manifest", "Invalid line encountered in checksum manifest", "", 1),
-        ("signed_project_missing_manifest", "Checksum manifest file does not exist:", "", 1),
-        ("signed_project_modified_manifest", "Checksum validation failed.", "", 2),
-        ("signed_project_with_different_gpg_home", "Re-run with the global --debug flag", "", 3),
-        ("signed_project_broken_manifest_in", "An error was encountered while parsing MANIFEST.in: unknown action 'invalid-directive'", "", 1),
-    ],
-    ids=[
-        "valid checksum file and signature",
-        "valid signature but broken checksum file",
-        "missing checksum file entirely",
-        "checksum file with wrong hashes",
-        "matching pubkey does not exist in gpg home",
-        "broken MANIFEST.in after signing",
+        pytest.param(
+            "signed_project_and_gpg",
+            "GPG signature verification succeeded",
+            "",
+            0,
+            id="valid checksum file and signature",
+            marks=pytest.mark.xfail(
+                IS_GITHUB_ACTION_MACOS,
+                reason="https://github.com/ansible/ansible-sign/issues/51",
+            ),
+        ),
+        pytest.param(
+            "signed_project_broken_manifest",
+            "Invalid line encountered in checksum manifest",
+            "",
+            1,
+            id="valid signature but broken checksum file",
+            marks=pytest.mark.xfail(
+                IS_GITHUB_ACTION_MACOS,
+                reason="https://github.com/ansible/ansible-sign/issues/51",
+            ),
+        ),
+        pytest.param(
+            "signed_project_missing_manifest",
+            "Checksum manifest file does not exist:",
+            "",
+            1,
+            id="missing checksum file entirely",
+        ),
+        pytest.param(
+            "signed_project_modified_manifest",
+            "Checksum validation failed.",
+            "",
+            2,
+            id="checksum file with wrong hashes",
+            marks=pytest.mark.xfail(
+                IS_GITHUB_ACTION_MACOS,
+                reason="https://github.com/ansible/ansible-sign/issues/51",
+            ),
+        ),
+        pytest.param(
+            "signed_project_with_different_gpg_home",
+            "Re-run with the global --debug flag",
+            "",
+            3,
+            id="matching pubkey does not exist in gpg home",
+        ),
+        pytest.param(
+            "signed_project_broken_manifest_in",
+            "An error was encountered while parsing MANIFEST.in: unknown action 'invalid-directive'",
+            "",
+            1,
+            id="broken MANIFEST.in after signing",
+            marks=pytest.mark.xfail(
+                IS_GITHUB_ACTION_MACOS,
+                reason="https://github.com/ansible/ansible-sign/issues/51",
+            ),
+        ),
     ],
 )
-def test_gpg_verify_manifest_scenario(capsys, request, project_fixture, exp_stdout_substr, exp_stderr_substr, exp_rc):
+def test_gpg_verify_manifest_scenario(
+    capsys, request, project_fixture, exp_stdout_substr, exp_stderr_substr, exp_rc
+):
     """
     Test `ansible-sign project gpg-verify` given different project directory
     scenarios (fixtures).
@@ -153,6 +219,8 @@ def test_gpg_verify_manifest_scenario(capsys, request, project_fixture, exp_stdo
     (project_root, gpg_home) = request.getfixturevalue(project_fixture)
     keyring = os.path.join(gpg_home, "pubring.kbx")
     args = [
+        "--debug",
+        "--nocolor",
         "project",
         "gpg-verify",
         f"--keyring={keyring}",
@@ -178,7 +246,9 @@ def test_gpg_verify_manifest_scenario(capsys, request, project_fixture, exp_stdo
         "GPG signing with key that does NOT require passphrase",
     ],
 )
-def test_gpg_sign_with_gnupg_home(capsys, mocker, request, unsigned_project_with_checksum_manifest, use_passphrase):
+def test_gpg_sign_with_gnupg_home(
+    capsys, mocker, request, unsigned_project_with_checksum_manifest, use_passphrase
+):
     if use_passphrase:
         gpg_home = request.getfixturevalue("gpg_home_with_secret_key")
     else:
@@ -220,14 +290,21 @@ def test_gpg_sign_with_gnupg_home(capsys, mocker, request, unsigned_project_with
         m.assert_not_called()
 
 
-def test_gpg_sign_with_broken_symlink(capsys, unsigned_project_with_broken_symlink, gpg_home_with_secret_key_no_pass):
+def test_gpg_sign_with_broken_symlink(
+    capsys, unsigned_project_with_broken_symlink, gpg_home_with_secret_key_no_pass
+):
     """
     Test that we show a warning when there's a broken symlink in the project
     directory. This works around a distlib.manifest bug, but tests our handling
     of it.
     """
     project_root = str(unsigned_project_with_broken_symlink)
-    args = ["project", "gpg-sign", f"--gnupg-home={gpg_home_with_secret_key_no_pass}", project_root]
+    args = [
+        "project",
+        "gpg-sign",
+        f"--gnupg-home={gpg_home_with_secret_key_no_pass}",
+        project_root,
+    ]
     rc = main(args)
     captured = capsys.readouterr()
     assert "Broken symlink found at" in captured.out
@@ -243,7 +320,13 @@ def test_main_color(capsys, signed_project_and_gpg):
 
     (project_root, gpg_home) = signed_project_and_gpg
     args = ["project", "gpg-verify", f"--gnupg-home={gpg_home}", str(project_root)]
-    args_nocolor = ["--nocolor", "project", "gpg-verify", f"--gnupg-home={gpg_home}", str(project_root)]
+    args_nocolor = [
+        "--nocolor",
+        "project",
+        "gpg-verify",
+        f"--gnupg-home={gpg_home}",
+        str(project_root),
+    ]
 
     no_color_expected = "[OK   ]"
     color_expected = "[\033[92mOK   \033[0m]"

@@ -1,13 +1,64 @@
-[build-system]
-# AVOID CHANGING REQUIRES: IT WILL BE UPDATED BY PYSCAFFOLD!
-requires = ["setuptools>=46.1.0", "setuptools_scm[toml]>=5"]
-build-backend = "setuptools.build_meta"
+[tool.ruff]
+# Same as Black.
+line-length = 88
+preview = true
+
+[tool.ruff.lint]
+extend-unsafe-fixes = ["E501"]
+fixable = ["ALL"]
+ignore = [
+  # temporary disabled during ruff adoption
+  "A",
+  "ANN",
+  "ARG",
+  "B",
+  "BLE",
+  "C",
+  "COM",
+  "CPY",
+  "D",
+  "DOC",
+  "EM",
+  "ERA",
+  "FBT",
+  "FIX",
+  "FURB",
+  "G",
+  "I001",
+  "INP",
+  "N",
+  "PGH",
+  "PLC",
+  "PLR",
+  "PLW",
+  "PT",
+  "PTH",
+  "RUF",
+  "SIM",
+  "T",
+  "TD",
+  "TRY",
+  "UP",
+  # disabled on purpose
+  "E501"
+]
+select = ["ALL"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["D", "S"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.setuptools_scm]
 # For smarter version schemes and other configuration options,
 # check out https://github.com/pypa/setuptools_scm
 version_scheme = "no-guess-dev"
 
-[tool.black]
-line-length = 160
-fast = true
+[tool.tomlsort]
+in_place = true
+sort_inline_tables = true
+sort_table_keys = true

@@ -1,7 +1,12 @@
 import os
 import pytest
 
-from ansible_sign.checksum import ChecksumFile, InvalidChecksumLine, ChecksumMismatch, DistlibManifestChecksumFileExistenceDiffer
+from ansible_sign.checksum import (
+    ChecksumFile,
+    InvalidChecksumLine,
+    ChecksumMismatch,
+    DistlibManifestChecksumFileExistenceDiffer,
+)
 
 __author__ = "Rick Elrod"
 __copyright__ = "(c) 2022 Red Hat, Inc."
@@ -91,9 +96,18 @@ def test_parse_manifest_with_blank_lines():
     checksum = ChecksumFile("/tmp", differ=None)
     parsed = checksum.parse(BLANK_LINES_FIXTURE)
     assert len(parsed) == 3
-    assert parsed["MANIFEST.in"] == "d2d1320f7f4fe3abafe92765732d2aa6c097e7adf05bbd53481777d4a1f0cdab"
-    assert parsed["dir/hello2"] == "dc920c7f31a4869fb9f94519a4a77f6c7c43c6c3e66b0e57a5bcda52e9b02ce3"
-    assert parsed["hello1"] == "2a1b1ab320215205675234744dc03f028b46da4d94657bbb7dca7b1a3a25e91e"
+    assert (
+        parsed["MANIFEST.in"]
+        == "d2d1320f7f4fe3abafe92765732d2aa6c097e7adf05bbd53481777d4a1f0cdab"
+    )
+    assert (
+        parsed["dir/hello2"]
+        == "dc920c7f31a4869fb9f94519a4a77f6c7c43c6c3e66b0e57a5bcda52e9b02ce3"
+    )
+    assert (
+        parsed["hello1"]
+        == "2a1b1ab320215205675234744dc03f028b46da4d94657bbb7dca7b1a3a25e91e"
+    )
 
 
 def test_parse_manifest_with_only_blank_lines():

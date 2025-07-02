@@ -13,11 +13,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - python: "3.8"
-            os: ubuntu-latest
           - python: "3.9"
             os: ubuntu-latest
           - python: "3.10"
+            os: ubuntu-latest
+          - python: "3.11"
+            os: ubuntu-latest
+          - python: "3.12"
             os: ubuntu-latest
           - python: "3.10"
             os: macos-latest
@@ -31,7 +33,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
-      - name: Install system packages
+      - name: Install system packages (linux)
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update && \
@@ -39,12 +41,15 @@ jobs:
             tmux \
             ;
 
-      - name: Install system packages
+      - name: Install system packages (macos)
         if: matrix.os == 'macos-latest'
         run: |
           brew install \
             tmux \
+            gpg \
             ;
+          which -a gpg
+          gpg --version
 
       - name: Install tox
         run: pip install tox
@@ -60,10 +65,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python 3.8
+      - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
-          python-version: "3.8"
+          python-version: "3.9"
 
       - name: Install tox
         run: pip install tox

@@ -28,7 +28,12 @@ class AnsibleSignCLI:
         self.logger.debug("Parsing args: %s", str(args))
         self.args = self.parse_args(args)
         logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
-        logging.basicConfig(level=self.args.loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S")
+        logging.basicConfig(
+            level=self.args.loglevel,
+            stream=sys.stdout,
+            format=logformat,
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
 
     def run_command(self):
         """
@@ -57,7 +62,9 @@ class AnsibleSignCLI:
           :obj:`argparse.Namespace`: command line parameters namespace
         """
 
-        parser = argparse.ArgumentParser(description="Signing and validation for Ansible content")
+        parser = argparse.ArgumentParser(
+            description="Signing and validation for Ansible content"
+        )
         parser.add_argument(
             "--version",
             action="version",
@@ -80,7 +87,9 @@ class AnsibleSignCLI:
         )
 
         # Future-proofing for future content types.
-        content_type_parser = parser.add_subparsers(required=True, dest="content_type", metavar="CONTENT_TYPE")
+        content_type_parser = parser.add_subparsers(
+            required=True, dest="content_type", metavar="CONTENT_TYPE"
+        )
 
         project = content_type_parser.add_parser(
             "project",
@@ -91,12 +100,16 @@ class AnsibleSignCLI:
         # command: gpg-verify
         cmd_gpg_verify = project_commands.add_parser(
             "gpg-verify",
-            help=("Perform signature validation AND checksum verification on the checksum manifest"),
+            help=(
+                "Perform signature validation AND checksum verification on the checksum manifest"
+            ),
         )
         cmd_gpg_verify.set_defaults(func=self.gpg_verify)
         cmd_gpg_verify.add_argument(
             "--keyring",
-            help=("The GPG keyring file to use to find the matching public key. (default: the user's default keyring)"),
+            help=(
+                "The GPG keyring file to use to find the matching public key. (default: the user's default keyring)"
+            ),
             required=False,
             metavar="KEYRING",
             dest="keyring",
@@ -104,7 +117,9 @@ class AnsibleSignCLI:
         )
         cmd_gpg_verify.add_argument(
             "--gnupg-home",
-            help=("A valid GnuPG home directory. (default: the GnuPG default, usually ~/.gnupg)"),
+            help=(
+                "A valid GnuPG home directory. (default: the GnuPG default, usually ~/.gnupg)"
+            ),
             required=False,
             metavar="GNUPG_HOME",
             dest="gnupg_home",
@@ -124,7 +139,9 @@ class AnsibleSignCLI:
         cmd_gpg_sign.set_defaults(func=self.gpg_sign)
         cmd_gpg_sign.add_argument(
             "--fingerprint",
-            help=("The GPG private key fingerprint to sign with. (default: First usable key in the user's keyring)"),
+            help=(
+                "The GPG private key fingerprint to sign with. (default: First usable key in the user's keyring)"
+            ),
             required=False,
             metavar="PRIVATE_KEY",
             dest="fingerprint",
@@ -141,7 +158,9 @@ class AnsibleSignCLI:
         )
         cmd_gpg_sign.add_argument(
             "--gnupg-home",
-            help=("A valid GnuPG home directory. (default: the GnuPG default, usually ~/.gnupg)"),
+            help=(
+                "A valid GnuPG home directory. (default: the GnuPG default, usually ~/.gnupg)"
+            ),
             required=False,
             metavar="GNUPG_HOME",
             dest="gnupg_home",
@@ -161,19 +180,27 @@ class AnsibleSignCLI:
             manifest = checksum.generate_gnu_style()
         except FileNotFoundError as e:
             if os.path.islink(e.filename):
-                self._error(f"Broken symlink found at {e.filename} -- this is not supported. Aborting.")
+                self._error(
+                    f"Broken symlink found at {e.filename} -- this is not supported. Aborting."
+                )
                 return False
 
             if e.filename.endswith("/MANIFEST.in"):
-                self._error("Could not find a MANIFEST.in file in the specified project.")
-                self._note("If you are attempting to sign a project, please create this file.")
+                self._error(
+                    "Could not find a MANIFEST.in file in the specified project."
+                )
+                self._note(
+                    "If you are attempting to sign a project, please create this file."
+                )
                 self._note("See the ansible-sign documentation for more information.")
                 return False
             raise e
         except DistlibException as e:
             self._error(f"An error was encountered while parsing MANIFEST.in: {e}")
             if self.args.loglevel != logging.DEBUG:
-                self._note("You can use the --debug global flag to view the full traceback.")
+                self._note(
+                    "You can use the --debug global flag to view the full traceback."
+                )
             self.logger.debug(e, exc_info=e)
             return False
         for warning in checksum.warnings:
@@ -221,7 +248,9 @@ class AnsibleSignCLI:
         """
         differ = DistlibManifestChecksumFileExistenceDiffer
         checksum = ChecksumFile(self.args.project_root, differ=differ)
-        checksum_path = os.path.join(self.args.project_root, ".ansible-sign", "sha256sum.txt")
+        checksum_path = os.path.join(
+            self.args.project_root, ".ansible-sign", "sha256sum.txt"
+        )
         checksum_file_contents = open(checksum_path, "r").read()
 
         try:
@@ -238,18 +267,26 @@ class AnsibleSignCLI:
             return 2
         except FileNotFoundError as e:
             if os.path.islink(e.filename):
-                self._error(f"Broken symlink found at {e.filename} -- this is not supported. Aborting.")
+                self._error(
+                    f"Broken symlink found at {e.filename} -- this is not supported. Aborting."
+                )
                 return 1
 
             if e.filename.endswith("MANIFEST.in"):
-                self._error("Could not find a MANIFEST.in file in the specified project.")
-                self._note("If you are attempting to verify a signed project, please ensure that the project directory includes this file after signing.")
+                self._error(
+                    "Could not find a MANIFEST.in file in the specified project."
+                )
+                self._note(
+                    "If you are attempting to verify a signed project, please ensure that the project directory includes this file after signing."
+                )
                 self._note("See the ansible-sign documentation for more information.")
                 return 1
         except DistlibException as e:
             self._error(f"An error was encountered while parsing MANIFEST.in: {e}")
             if self.args.loglevel != logging.DEBUG:
-                self._note("You can use the --debug global flag to view the full traceback.")
+                self._note(
+                    "You can use the --debug global flag to view the full traceback."
+                )
             self.logger.debug(e, exc_info=e)
             return 1
 
@@ -260,8 +297,12 @@ class AnsibleSignCLI:
         return 0
 
     def gpg_verify(self):
-        signature_file = os.path.join(self.args.project_root, ".ansible-sign", "sha256sum.txt.sig")
-        manifest_file = os.path.join(self.args.project_root, ".ansible-sign", "sha256sum.txt")
+        signature_file = os.path.join(
+            self.args.project_root, ".ansible-sign", "sha256sum.txt.sig"
+        )
+        manifest_file = os.path.join(
+            self.args.project_root, ".ansible-sign", "sha256sum.txt"
+        )
 
         if not os.path.exists(signature_file):
             self._error(f"Signature file does not exist: {signature_file}")
@@ -276,7 +317,9 @@ class AnsibleSignCLI:
             return 1
 
         if self.args.gnupg_home is not None and not os.path.isdir(self.args.gnupg_home):
-            self._error(f"Specified GnuPG home is not a directory: {self.args.gnupg_home}")
+            self._error(
+                f"Specified GnuPG home is not a directory: {self.args.gnupg_home}"
+            )
             return 1
 
         verifier = GPGVerifier(
@@ -317,7 +360,9 @@ class AnsibleSignCLI:
 
     def gpg_sign(self):
         # Step 1: Manifest
-        manifest_path = os.path.join(self.args.project_root, ".ansible-sign", "sha256sum.txt")
+        manifest_path = os.path.join(
+            self.args.project_root, ".ansible-sign", "sha256sum.txt"
+        )
         checksum_file_contents = self._generate_checksum_manifest()
         if checksum_file_contents is False:
             return 1
@@ -330,14 +375,18 @@ class AnsibleSignCLI:
             self.logger.debug("Prompting for GPG key passphrase")
             passphrase = getpass.getpass("GPG Key Passphrase: ")
         elif "ANSIBLE_SIGN_GPG_PASSPHRASE" in os.environ:
-            self.logger.debug("Taking GPG key passphrase from ANSIBLE_SIGN_GPG_PASSPHRASE env var")
+            self.logger.debug(
+                "Taking GPG key passphrase from ANSIBLE_SIGN_GPG_PASSPHRASE env var"
+            )
             passphrase = os.environ["ANSIBLE_SIGN_GPG_PASSPHRASE"]
         elif "GPG_TTY" in os.environ:
             self.logger.debug("GPG_TTY is set, taking passphrase from GPG agent")
         else:
             os.environ["GPG_TTY"] = os.ttyname(sys.stdin.fileno())
 
-        signature_path = os.path.join(self.args.project_root, ".ansible-sign", "sha256sum.txt.sig")
+        signature_path = os.path.join(
+            self.args.project_root, ".ansible-sign", "sha256sum.txt.sig"
+        )
         signer = GPGSigner(
             manifest_path=manifest_path,
             output_path=signature_path,

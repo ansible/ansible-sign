@@ -29,19 +29,15 @@ jobs:
       - name: Install tox
         run: pip install tox
 
-      - name: Let's have some docs!
-        run: |
-          tox -e docs
-          touch docs/_build/html/.nojekyll
-
-      - name: Some hacking so we can show code-coverage, too
+      - name: Show code-coverage docs
         run: |
           sed -i 's/term-missing/html/' setup.cfg
           tox
+          mkdir -p docs/_build/html/coverage
+          rm -v htmlcov/.gitignore
           mv -v htmlcov docs/_build/html/coverage
-          rm -v docs/_build/html/coverage/.gitignore
 
       - name: "Deploy 'em 🚀"
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: docs/_build/html
+          folder: docs/_build/html/coverage/htmlcov
