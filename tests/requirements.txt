@@ -1,6 +1,8 @@
+coverage
 libtmux
-pytest
-pytest-mock
-yamllint
 pre-commit
 pre-commit-uv
+pytest
+pytest-mock
+pytest-sugar
+yamllint
