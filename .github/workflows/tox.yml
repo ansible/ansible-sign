@@ -1,0 +1,34 @@
+---
+name: tox
+
+on:
+  merge_group:
+  push:
+    branches:
+      - "main"
+      - "releases/**"
+      - "stable/**"
+  pull_request:
+    branches:
+      - "main"
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_call:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+env:
+  FORCE_COLOR: 1 # tox, pytest, ansible-lint
+  PY_COLORS: 1
+
+jobs:
+  tox:
+    uses: ansible/team-devtools/.github/workflows/tox.yml@main
+    with:
+      jobs_producing_coverage: 6
+      other_names: |
+        docs
+        lint
+        pkg

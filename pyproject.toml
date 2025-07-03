@@ -1,3 +1,73 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+  "setuptools >= 65.3.0", # required by pyproject+setuptools_scm integration and editable installs
+  "setuptools_scm[toml] >= 7.0.5" # required for "no-local-version" scheme
+]
+
+[project]
+authors = [{"email" = "relrod@redhat.com", "name" = "Rick Elrod"}]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "Intended Audience :: System Administrators",
+  "Operating System :: MacOS",
+  "Operating System :: POSIX",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python",
+  "Topic :: System :: Systems Administration",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Software Development :: Testing",
+  "Topic :: Utilities"
+]
+description = "Ansible content validation library and CLI"
+dynamic = ["version", "dependencies", "optional-dependencies"]
+keywords = ["ansible", "sign"]
+license = "MIT"
+name = "ansible-sign"
+readme = "README.md"
+# https://peps.python.org/pep-0621/#readme
+requires-python = ">=3.9"
+
+[project.scripts]
+ansible-sign = "ansible_sign.cli:run"
+
+[project.urls]
+changelog = "https://github.com/ansible/ansible-sign/releases"
+documentation = "https://ansible.readthedocs.io/projects/sign/"
+homepage = "https://github.com/ansible/ansible-sign"
+repository = "https://github.com/ansible/ansible-sign"
+
+[tool.coverage.paths]
+source = ["src", ".tox/*/site-packages"]
+
+[tool.coverage.report]
+exclude_also = ["pragma: no cover", "if TYPE_CHECKING:"]
+# Increase it just so it would pass on any single-python run
+fail_under = 93
+# During development we might remove code (files) with coverage data, and we dont want to fail:
+ignore_errors = true
+omit = ["tests/*"]
+partial_branches = ["pragma: no cover", "if TYPE_CHECKING:"]
+show_missing = true
+skip_covered = true
+skip_empty = true
+
+[tool.coverage.run]
+# branch is more reliable than lines, protects against false positives
+branch = true
+concurrency = ["multiprocessing", "thread"]
+parallel = true
+source = ["src"]
+
 [tool.ruff]
 # Same as Black.
 line-length = 88
@@ -53,10 +123,25 @@ known-first-party = ["src"]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
+[tool.setuptools.dynamic]
+dependencies = {file = [".config/requirements.in"]}
+optional-dependencies.docs = {file = [".config/requirements-docs.in"]}
+optional-dependencies.test = {file = [".config/requirements-test.in"]}
+
 [tool.setuptools_scm]
-# For smarter version schemes and other configuration options,
-# check out https://github.com/pypa/setuptools_scm
-version_scheme = "no-guess-dev"
+# To prevent accidental pick of mobile version tags such 'v6'
+git_describe_command = [
+  "git",
+  "describe",
+  "--dirty",
+  "--long",
+  "--tags",
+  "--match",
+  "v*.*"
+]
+local_scheme = "no-local-version"
+tag_regex = "^(?P<prefix>v)?(?P<version>\\d+[^\\+]*)(?P<suffix>.*)?$"
+write_to = "src/ansible_sign/_version.py"
 
 [tool.tomlsort]
 in_place = true
