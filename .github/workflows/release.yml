@@ -6,6 +6,7 @@ name: release
     types: [published]
   workflow_dispatch:
 
+jobs:
   pypi:
     name: Publish to PyPI registry
     environment: release
