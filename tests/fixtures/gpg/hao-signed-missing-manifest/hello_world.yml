@@ -4,4 +4,3 @@
     - name: Hello Message
       debug:
         msg: "Hello World from a signed project!!!!"
-
