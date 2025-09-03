@@ -17,12 +17,12 @@ jobs:
           - python: "3.10"
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
         with:
           submodules: recursive
 
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@e9aba2c848f5ebd159c070c61ea2c4e2b122355e # v2
         with:
           python-version: ${{ matrix.python }}
 
@@ -38,6 +38,6 @@ jobs:
           mv -v htmlcov docs/_build/html/coverage
 
       - name: "Deploy 'em 🚀"
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: JamesIves/github-pages-deploy-action@6c2d9db40f9296374acc17b90404b6e8864128c8 # v4
         with:
           folder: docs/_build/html/coverage/htmlcov
