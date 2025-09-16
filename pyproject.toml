@@ -5,6 +5,34 @@ requires = [
   "setuptools_scm[toml] >= 7.0.5" # required for "no-local-version" scheme
 ]
 
+[dependency-groups]
+dev = [
+  "coverage>=7.10.6",
+  "libtmux>=0.46.2",
+  "pre-commit>=4.3.0",
+  "pre-commit-uv>=4.1.5",
+  "pytest>=8.4.2",
+  "pytest-cov>=7.0.0",
+  "pytest-mock>=3.15.0",
+  "pytest-sugar>=1.1.1",
+  "setuptools>=80.9.0",
+  "yamllint>=1.37.1"
+]
+docs = [
+  "sphinx>=3.2.1",
+  "sphinx-ansible-theme>=0.10.1"
+]
+lint = [
+  "pre-commit>=4.3.0",
+  "pre-commit-uv>=4.1.5"
+]
+pkg = [
+  "build>=0.9",
+  "pip>=25.2",
+  "pipx>=1.7.1",
+  "twine>=4.0.1"
+]
+
 [project]
 authors = [{"email" = "relrod@redhat.com", "name" = "Rick Elrod"}]
 classifiers = [
@@ -28,8 +56,12 @@ classifiers = [
   "Topic :: Software Development :: Testing",
   "Topic :: Utilities"
 ]
+dependencies = [
+  "distlib>=0.4.0",
+  "python-gnupg>=0.5.5"
+]
 description = "Ansible content validation library and CLI"
-dynamic = ["version", "dependencies", "optional-dependencies"]
+dynamic = ["version"]
 keywords = ["ansible", "sign"]
 license = "MIT"
 name = "ansible-sign"
@@ -123,11 +155,6 @@ known-first-party = ["src"]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.setuptools.dynamic]
-dependencies = {file = [".config/requirements.in"]}
-optional-dependencies.docs = {file = [".config/requirements-docs.in"]}
-optional-dependencies.test = {file = [".config/requirements-test.in"]}
-
 [tool.setuptools_scm]
 # To prevent accidental pick of mobile version tags such 'v6'
 git_describe_command = [
@@ -141,9 +168,161 @@ git_describe_command = [
 ]
 local_scheme = "no-local-version"
 tag_regex = "^(?P<prefix>v)?(?P<version>\\d+[^\\+]*)(?P<suffix>.*)?$"
-write_to = "src/ansible_sign/_version.py"
+version_file = "src/ansible_sign/_version.py"
 
 [tool.tomlsort]
 in_place = true
 sort_inline_tables = true
 sort_table_keys = true
+
+[tool.tox]
+env_list = [
+  "py",
+  "lint",
+  "docs",
+  "pkg"
+]
+requires = [
+  "tox>=4.2",
+  "tox-extra",
+  "tox-uv"
+]
+
+[tool.tox.env.clean]
+change_dir = "{tox_root}"
+commands = [
+  ["python", "-c", "import shutil; [shutil.rmtree(p, True) for p in (\"build\", \"dist\", \"docs/_build\")]"],
+  ["python", "-c", "import pathlib, shutil; [shutil.rmtree(p, True) for p in pathlib.Path(\"src\").glob(\"*.egg-info\")]"]
+]
+description = "Remove old distribution files and temporary build artifacts (./build and ./dist)"
+skip_install = true
+
+[tool.tox.env.docs]
+base_python = ["python3.9"]
+commands = [
+  ["sphinx-build", "--color", "-b", "{env:BUILD}", "-d", "{env:READTHEDOCS_OUTPUT:docs/_build}/doctrees", "{env:DOCSDIR}", "{env:READTHEDOCS_OUTPUT:docs/_build}/{env:BUILD}", {default = [], extend = true, replace = "posargs"}]
+]
+dependency_groups = ["docs"]
+description = "Invoke sphinx-build to build the docs"
+pass_env = [
+  "READTHEDOCS_OUTPUT",
+  "SETUPTOOLS_*"
+]
+set_env.BUILD = "html"
+set_env.DOCSDIR = "{tox_root}/docs"
+set_env.READTHEDOCS_OUTPUT = "{env:READTHEDOCS_OUTPUT:docs/_build}"
+
+[tool.tox.env.doctests]
+commands = [
+  [
+    "sphinx-build",
+    "--color",
+    "-b",
+    "{env:BUILD}",
+    "-d",
+    "{env:READTHEDOCS_OUTPUT:docs/_build}/doctrees",
+    "{env:DOCSDIR}",
+    "{env:READTHEDOCS_OUTPUT:docs/_build}/{env:BUILD}",
+    {default = [], extend = true, replace = "posargs"}
+  ]
+]
+dependency_groups = ["docs"]
+description = "Invoke sphinx-build to run doctests"
+pass_env = [
+  "READTHEDOCS_OUTPUT",
+  "SETUPTOOLS_*"
+]
+set_env.BUILD = "doctest"
+set_env.DOCSDIR = "{tox_root}/docs"
+set_env.READTHEDOCS_OUTPUT = "{env:READTHEDOCS_OUTPUT:docs/_build}"
+
+[tool.tox.env.linkcheck]
+commands = [
+  ["sphinx-build", "--color", "-b", "{env:BUILD}", "-d", "{env:READTHEDOCS_OUTPUT:docs/_build}/doctrees", "{env:DOCSDIR}", "{env:READTHEDOCS_OUTPUT:docs/_build}/{env:BUILD}", {default = [], extend = true, replace = "posargs"}]
+]
+dependency_groups = ["docs"]
+description = "Check for broken links in the documentation"
+pass_env = [
+  "READTHEDOCS_OUTPUT",
+  "SETUPTOOLS_*"
+]
+set_env.BUILD = "linkcheck"
+set_env.DOCSDIR = "{tox_root}/docs"
+set_env.READTHEDOCS_OUTPUT = "{env:READTHEDOCS_OUTPUT:docs/_build}"
+
+[tool.tox.env.lint]
+commands = [
+  ["{env_python}", "-m", "pre_commit", "run", "--all-files", "--show-diff-on-failure", "{posargs:}"]
+]
+dependency_groups = ["lint"]
+description = "Run all linters"
+
+[tool.tox.env.pkg]
+commands = [
+  ["rm", "-rf", "{tox_root}/dist/"],
+  [
+    "python",
+    "-m",
+    "build",
+    "--outdir",
+    "{tox_root}/dist/",
+    "{tox_root}"
+  ],
+  ["sh", "-c", "python -m twine check --strict {tox_root}/dist/*"]
+]
+commands_post = []
+commands_pre = []
+dependency_groups = ["pkg"]
+description = "Build package, verify metadata, install package and assert behavior when ansible is missing."
+skip_install = true
+
+[tool.tox.env_run_base]
+allowlist_externals = [
+  "mkdir",
+  "rm",
+  "sh",
+  "{tox_root}/tools/report-coverage"
+]
+commands = [
+  ["rm", "-rf", "/tmp/ansible-sign-pytest"],
+  ["mkdir", "/tmp/ansible-sign-pytest"],
+  ["coverage", "run", "-m", "pytest", "--basetemp", "/tmp/ansible-sign-pytest", "--color=yes", "{posargs:--junitxml=./junit.xml}"],
+  ["{tox_root}/tools/report-coverage"]
+]
+commands_pre = [
+  ["sh", "-c", "rm -f {env_dir}/.coverage.* 2>/dev/null || true"]
+]
+description = """Run the tests: py{py_dot_ver}"""
+package = "editable"
+pass_env = [
+  "CI",
+  "CURL_CA_BUNDLE",
+  "FORCE_COLOR",
+  "GITHUB_*",
+  "HOME",
+  "LANG",
+  "LC_*",
+  "NO_COLOR",
+  "PRE_COMMIT_HOME",
+  "PYTEST_*",
+  "PYTHON*",
+  "PYTHONBREAKPOINT",
+  "PYTHONIOENCODING",
+  "PYTHONPYCACHEPREFIX",
+  "PY_COLORS",
+  "REQUESTS_CA_BUNDLE",
+  "RTD_TOKEN",
+  "SETUPTOOLS_*",
+  "SSH_AUTH_SOCK",
+  "SSL_CERT_FILE",
+  "UV_*"
+]
+runner = "uv-venv-lock-runner"
+
+[tool.tox.env_run_base.set_env]
+COVERAGE_FILE = "{env:COVERAGE_FILE:{env_dir}/.coverage.{env_name}}"
+COVERAGE_PROCESS_START = "{tox_root}/pyproject.toml"
+PRE_COMMIT_COLOR = "always"
+
+[tool.uv]
+package = true
