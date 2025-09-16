@@ -15,13 +15,13 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   Overview <readme>
    Community <community>
    Contributions & Help <contributing>
    License <license>
    Authors <authors>
    Changelog <changelog>
    Rundown (CLI Tutorial) <rundown>
+   API modules <api/modules>
 
 
 Indices and tables

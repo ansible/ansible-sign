@@ -209,7 +209,7 @@ checksum manifest and a detached GPG signature for it.
 
 .. _Ansible documentation: https://docs.ansible.com/ansible/latest/user_guide/sample_setup.html
 .. _distlib: https://pypi.org/project/distlib/
-.. _explanation of the MANIFEST.in file directives: https://packaging.python.org/en/latest/guides/using-manifest-in/#manifest-in-commands
+.. _explanation of the MANIFEST.in file directives: https://setuptools.pypa.io/en/latest/userguide/miscellaneous.html
 
 
 Verifying Content

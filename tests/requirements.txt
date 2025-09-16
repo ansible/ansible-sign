@@ -1,8 +1,0 @@
-coverage
-libtmux
-pre-commit
-pre-commit-uv
-pytest
-pytest-mock
-pytest-sugar
-yamllint
