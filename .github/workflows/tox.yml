@@ -26,6 +26,7 @@ env:
 jobs:
   tox:
     uses: ansible/team-devtools/.github/workflows/tox.yml@main
+    secrets: inherit
     with:
       jobs_producing_coverage: 6
       other_names: |
