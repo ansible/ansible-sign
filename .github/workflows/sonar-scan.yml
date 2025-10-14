@@ -1,0 +1,21 @@
+---
+name: SonarCloud
+on:
+  workflow_run: # This is triggered by CI being completed.
+    workflows:
+      - tox
+    types:
+      - completed
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+env:
+  FORCE_COLOR: 1  # tox, pytest, ansible-lint
+  PY_COLORS: 1
+
+jobs:
+  tox:
+    uses: ansible/team-devtools/.github/workflows/sonar-scan.yml@fix/sonarcloud-workflow
+    secrets: inherit
