@@ -25,7 +25,7 @@ env:
 
 jobs:
   tox:
-    uses: ansible/team-devtools/.github/workflows/tox.yml@main
+    uses: ansible/team-devtools/.github/workflows/tox.yml@fix/sonarcloud-workflow
     secrets: inherit
     with:
       jobs_producing_coverage: 6
