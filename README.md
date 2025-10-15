@@ -1,5 +1,7 @@
 # `ansible-sign`
 
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ansible_ansible-sign&metric=coverage)](https://sonarcloud.io/summary/new_code?id=ansible_ansible-sign)
+
 This is a library and auxiliary CLI tool for dealing with Ansible content
 verification.
 
