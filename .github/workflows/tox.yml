@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FORCE_COLOR: 1  # tox, pytest, ansible-lint
+  FORCE_COLOR: 1 # tox, pytest, ansible-lint
   PY_COLORS: 1
 
 jobs:
@@ -28,7 +28,8 @@ jobs:
     uses: ansible/team-devtools/.github/workflows/tox.yml@main
     secrets: inherit
     with:
-      jobs_producing_coverage: 6
+      jobs_producing_coverage: 5
+      min_python: "3.11"
       other_names: |
         docs
         lint

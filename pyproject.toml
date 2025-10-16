@@ -44,7 +44,6 @@ classifiers = [
   "Operating System :: MacOS",
   "Operating System :: POSIX",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -67,7 +66,7 @@ license = "MIT"
 name = "ansible-sign"
 readme = "README.md"
 # https://peps.python.org/pep-0621/#readme
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 
 [project.scripts]
 ansible-sign = "ansible_sign.cli:run"
@@ -199,7 +198,6 @@ description = "Remove old distribution files and temporary build artifacts (./bu
 skip_install = true
 
 [tool.tox.env.docs]
-base_python = ["python3.9"]
 commands = [
   ["sphinx-build", "--color", "-b", "{env:BUILD}", "-d", "{env:READTHEDOCS_OUTPUT:docs/_build}/doctrees", "{env:DOCSDIR}", "{env:READTHEDOCS_OUTPUT:docs/_build}/{env:BUILD}", {default = [], extend = true, replace = "posargs"}]
 ]
