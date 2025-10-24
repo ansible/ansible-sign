@@ -1,67 +1,36 @@
 ---
-name: ansible-sign tests
-on:  # yamllint disable-line rule:truthy
+name: tox
+
+on:
+  merge_group:
   push:
+    branches:
+      - "main"
+      - "releases/**"
+      - "stable/**"
   pull_request:
+    branches:
+      - "main"
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_call:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+env:
+  FORCE_COLOR: 1 # tox, pytest, ansible-lint
+  PY_COLORS: 1
 
 jobs:
-  python-tests:
-    name: Python ${{ matrix.python }} on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - python: "3.8"
-            os: ubuntu-latest
-          - python: "3.9"
-            os: ubuntu-latest
-          - python: "3.10"
-            os: ubuntu-latest
-          - python: "3.10"
-            os: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
-
-      - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python }}
-
-      - name: Install system packages
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update && \
-          sudo apt-get -y install \
-            tmux \
-            ;
-
-      - name: Install system packages
-        if: matrix.os == 'macos-latest'
-        run: |
-          brew install \
-            tmux \
-            ;
-
-      - name: Install tox
-        run: pip install tox
-
-      - name: Run tests
-        run: tox -e py3
-
-      - name: Ensure docs build
-        run: tox -e docs
-  linters:
-    name: Linters
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Install tox
-        run: pip install tox
-
-      - name: Run linters
-        run: tox -e lint
+  tox:
+    uses: ansible/team-devtools/.github/workflows/tox.yml@main
+    secrets: inherit
+    with:
+      jobs_producing_coverage: 5
+      min_python: "3.11"
+      other_names: |
+        docs
+        lint
+        pkg
