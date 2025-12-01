@@ -62,7 +62,7 @@ pkg = [
 [package.metadata]
 requires-dist = [
     { name = "distlib", specifier = ">=0.4.0" },
-    { name = "python-gnupg", specifier = ">=0.5.5" },
+    { name = "python-gnupg", specifier = ">=0.5.2" },
 ]
 
 [package.metadata.requires-dev]
