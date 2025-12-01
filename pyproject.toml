@@ -57,7 +57,7 @@ classifiers = [
 ]
 dependencies = [
   "distlib>=0.4.0",
-  "python-gnupg>=0.5.5"
+  "python-gnupg>=0.5.2" # Maximum version due to pulp constraints
 ]
 description = "Ansible content validation library and CLI"
 dynamic = ["version"]
