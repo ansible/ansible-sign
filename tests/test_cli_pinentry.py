@@ -17,8 +17,8 @@ def test_pinentry_simple(
     """Test that we can sign a file with a pinentry program."""
     home = gpg_home_with_secret_key
     window = tmux_session.new_window(window_name="test_pinentry_simple")
-    pane = window.attached_pane
-    pane.resize_pane(height=24, width=80)
+    pane = window.active_pane
+    pane.resize(height=24, width=80)
     pane.send_keys("unset HISTFILE")
     pane.send_keys("killall gpg-agent")
     pane.send_keys("unset ANSIBLE_SIGN_GPG_PASSPHRASE")

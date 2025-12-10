@@ -30,7 +30,7 @@ def tmux_session(request):
         kill_session=True,
     )
     yield session
-    session.kill_session()
+    session.kill()
 
 
 def _gpg_home_with_secret_key(tmp_path, no_protection=False):
