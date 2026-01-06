@@ -161,7 +161,8 @@ def unsigned_project_with_modified_checksum_manifest(
             if idx % 2 == 0:
                 # Change some of the checksum lines.
                 print(
-                    line.replace("2", "3")
+                    line
+                    .replace("2", "3")
                     .replace("a", "b")
                     .replace("7", "a")
                     .replace("c", "2")
