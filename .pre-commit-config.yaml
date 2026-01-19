@@ -23,7 +23,7 @@ repos:
     repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.36.0
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.37.1
+    rev: v1.38.0
     hooks:
       - id: yamllint
   - repo: https://github.com/pappasam/toml-sort
@@ -33,7 +33,7 @@ repos:
         alias: toml
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.11
+    rev: v0.14.13
     hooks:
       - id: ruff-format
         alias: ruff
