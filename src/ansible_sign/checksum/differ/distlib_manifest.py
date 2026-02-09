@@ -41,7 +41,14 @@ class DistlibManifestChecksumFileExistenceDiffer(ChecksumFileExistenceDiffer):
             if not line or line[0] == "#":
                 continue
 
-            manifest.process_directive(line)
+            try:
+                manifest.process_directive(line)
+            except OSError as e:
+                # Handle symlink loops (errno 40: too many levels of symbolic links)
+                if e.errno == errno.ELOOP:
+                    # Skip this directive if it encounters a symlink loop
+                    continue
+                raise
 
         for path in manifest.files:
             files_set.add(os.path.relpath(path, start=self.root))
