@@ -127,16 +127,16 @@ wheels = [
 
 [[package]]
 name = "build"
-version = "1.4.0"
+version = "1.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "os_name == 'nt'" },
     { name = "packaging" },
     { name = "pyproject-hooks" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/42/18/94eaffda7b329535d91f00fe605ab1f1e5cd68b2074d03f255c7d250687d/build-1.4.0.tar.gz", hash = "sha256:f1b91b925aa322be454f8330c6fb48b465da993d1e7e7e6fa35027ec49f3c936", size = 50054, upload-time = "2026-01-08T16:41:47.696Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6c/1d/ab15c8ac57f4ee8778d7633bc6685f808ab414437b8644f555389cdc875e/build-1.4.2.tar.gz", hash = "sha256:35b14e1ee329c186d3f08466003521ed7685ec15ecffc07e68d706090bf161d1", size = 83433, upload-time = "2026-03-25T14:20:27.659Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c5/0d/84a4380f930db0010168e0aa7b7a8fed9ba1835a8fbb1472bc6d0201d529/build-1.4.0-py3-none-any.whl", hash = "sha256:6a07c1b8eb6f2b311b96fcbdbce5dab5fe637ffda0fd83c9cac622e927501596", size = 24141, upload-time = "2026-01-08T16:41:46.453Z" },
+    { url = "https://files.pythonhosted.org/packages/4a/57/3b7d4dd193ade4641c865bc2b93aeeb71162e81fc348b8dad020215601ed/build-1.4.2-py3-none-any.whl", hash = "sha256:7a4d8651ea877cb2a89458b1b198f2e69f536c95e89129dbf5d448045d60db88", size = 24643, upload-time = "2026-03-25T14:20:26.568Z" },
 ]
 
 [[package]]
@@ -795,7 +795,7 @@ wheels = [
 
 [[package]]
 name = "pipx"
-version = "1.10.1"
+version = "1.11.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "argcomplete" },
@@ -804,9 +804,9 @@ dependencies = [
     { name = "platformdirs" },
     { name = "userpath" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/37/20/3f7f72992b4e608c8834add957f4bc841dd6b4f77540bff2444c30c24754/pipx-1.10.1.tar.gz", hash = "sha256:3c05159c1d861a9b5ef182dcb15a60acb07b3b4c16162099ec1c84a8011a48a8", size = 288959, upload-time = "2026-03-20T21:34:47.909Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5c/f6/a7af5727ecc6f390315471c95ed64eac03b33278d8bc92d9c81229a31f84/pipx-1.11.0.tar.gz", hash = "sha256:fa6ab8ab05084cd86bf38ed78e745c4c82ff5325b43ba73d836521b4815dab28", size = 289049, upload-time = "2026-03-23T18:55:14.035Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f3/c6/d0d9a85c035499c812acee78c4634173d04d05969ef0cb08c365ed47ebcb/pipx-1.10.1-py3-none-any.whl", hash = "sha256:edc9b5f4855200762591c2aea9bba6abaeac01764a4b579ee4ee832daeac8606", size = 75836, upload-time = "2026-03-20T21:34:46.674Z" },
+    { url = "https://files.pythonhosted.org/packages/61/a1/a4be024ba9aa1bbec5875552b2ddf665e9f56af8a52f16889d44823a2040/pipx-1.11.0-py3-none-any.whl", hash = "sha256:37b49e721e6a8a3b5fad3ebdf98f9cdb9d2a07ff2ce56f83e189f54633d3820b", size = 75913, upload-time = "2026-03-23T18:55:12.351Z" },
 ]
 
 [[package]]
