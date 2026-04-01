@@ -127,16 +127,16 @@ wheels = [
 
 [[package]]
 name = "build"
-version = "1.4.0"
+version = "1.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "os_name == 'nt'" },
     { name = "packaging" },
     { name = "pyproject-hooks" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/42/18/94eaffda7b329535d91f00fe605ab1f1e5cd68b2074d03f255c7d250687d/build-1.4.0.tar.gz", hash = "sha256:f1b91b925aa322be454f8330c6fb48b465da993d1e7e7e6fa35027ec49f3c936", size = 50054, upload-time = "2026-01-08T16:41:47.696Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6c/1d/ab15c8ac57f4ee8778d7633bc6685f808ab414437b8644f555389cdc875e/build-1.4.2.tar.gz", hash = "sha256:35b14e1ee329c186d3f08466003521ed7685ec15ecffc07e68d706090bf161d1", size = 83433, upload-time = "2026-03-25T14:20:27.659Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c5/0d/84a4380f930db0010168e0aa7b7a8fed9ba1835a8fbb1472bc6d0201d529/build-1.4.0-py3-none-any.whl", hash = "sha256:6a07c1b8eb6f2b311b96fcbdbce5dab5fe637ffda0fd83c9cac622e927501596", size = 24141, upload-time = "2026-01-08T16:41:46.453Z" },
+    { url = "https://files.pythonhosted.org/packages/4a/57/3b7d4dd193ade4641c865bc2b93aeeb71162e81fc348b8dad020215601ed/build-1.4.2-py3-none-any.whl", hash = "sha256:7a4d8651ea877cb2a89458b1b198f2e69f536c95e89129dbf5d448045d60db88", size = 24643, upload-time = "2026-03-25T14:20:26.568Z" },
 ]
 
 [[package]]
@@ -778,7 +778,7 @@ wheels = [
 
 [[package]]
 name = "pipx"
-version = "1.10.1"
+version = "1.11.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "argcomplete" },
@@ -787,9 +787,9 @@ dependencies = [
     { name = "platformdirs" },
     { name = "userpath" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/37/20/3f7f72992b4e608c8834add957f4bc841dd6b4f77540bff2444c30c24754/pipx-1.10.1.tar.gz", hash = "sha256:3c05159c1d861a9b5ef182dcb15a60acb07b3b4c16162099ec1c84a8011a48a8", size = 288959, upload-time = "2026-03-20T21:34:47.909Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5c/f6/a7af5727ecc6f390315471c95ed64eac03b33278d8bc92d9c81229a31f84/pipx-1.11.0.tar.gz", hash = "sha256:fa6ab8ab05084cd86bf38ed78e745c4c82ff5325b43ba73d836521b4815dab28", size = 289049, upload-time = "2026-03-23T18:55:14.035Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f3/c6/d0d9a85c035499c812acee78c4634173d04d05969ef0cb08c365ed47ebcb/pipx-1.10.1-py3-none-any.whl", hash = "sha256:edc9b5f4855200762591c2aea9bba6abaeac01764a4b579ee4ee832daeac8606", size = 75836, upload-time = "2026-03-20T21:34:46.674Z" },
+    { url = "https://files.pythonhosted.org/packages/61/a1/a4be024ba9aa1bbec5875552b2ddf665e9f56af8a52f16889d44823a2040/pipx-1.11.0-py3-none-any.whl", hash = "sha256:37b49e721e6a8a3b5fad3ebdf98f9cdb9d2a07ff2ce56f83e189f54633d3820b", size = 75913, upload-time = "2026-03-23T18:55:12.351Z" },
 ]
 
 [[package]]
@@ -884,16 +884,16 @@ wheels = [
 
 [[package]]
 name = "pytest-cov"
-version = "7.0.0"
+version = "7.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "coverage", extra = ["toml"] },
     { name = "pluggy" },
     { name = "pytest" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5e/f7/c933acc76f5208b3b00089573cf6a2bc26dc80a8aece8f52bb7d6b1855ca/pytest_cov-7.0.0.tar.gz", hash = "sha256:33c97eda2e049a0c5298e91f519302a1334c26ac65c1a483d6206fd458361af1", size = 54328, upload-time = "2025-09-09T10:57:02.113Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b1/51/a849f96e117386044471c8ec2bd6cfebacda285da9525c9106aeb28da671/pytest_cov-7.1.0.tar.gz", hash = "sha256:30674f2b5f6351aa09702a9c8c364f6a01c27aae0c1366ae8016160d1efc56b2", size = 55592, upload-time = "2026-03-21T20:11:16.284Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ee/49/1377b49de7d0c1ce41292161ea0f721913fa8722c19fb9c1e3aa0367eecb/pytest_cov-7.0.0-py3-none-any.whl", hash = "sha256:3b8e9558b16cc1479da72058bdecf8073661c7f57f7d3c5f22a1c23507f2d861", size = 22424, upload-time = "2025-09-09T10:57:00.695Z" },
+    { url = "https://files.pythonhosted.org/packages/9d/7a/d968e294073affff457b041c2be9868a40c1c71f4a35fcc1e45e5493067b/pytest_cov-7.1.0-py3-none-any.whl", hash = "sha256:a0461110b7865f9a271aa1b51e516c9a95de9d696734a2f71e3e78f46e1d4678", size = 22876, upload-time = "2026-03-21T20:11:14.438Z" },
 ]
 
 [[package]]
