@@ -127,16 +127,16 @@ wheels = [
 
 [[package]]
 name = "build"
-version = "1.4.2"
+version = "1.4.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "os_name == 'nt'" },
     { name = "packaging" },
     { name = "pyproject-hooks" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6c/1d/ab15c8ac57f4ee8778d7633bc6685f808ab414437b8644f555389cdc875e/build-1.4.2.tar.gz", hash = "sha256:35b14e1ee329c186d3f08466003521ed7685ec15ecffc07e68d706090bf161d1", size = 83433, upload-time = "2026-03-25T14:20:27.659Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/02/ec/bf5ae0a7e5ab57abe8aabdd0759c971883895d1a20c49ae99f8146840c3c/build-1.4.4.tar.gz", hash = "sha256:f832ae053061f3fb524af812dc94b8b84bac6880cd587630e3b5d91a6a9c1703", size = 89220, upload-time = "2026-04-22T20:53:44.807Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4a/57/3b7d4dd193ade4641c865bc2b93aeeb71162e81fc348b8dad020215601ed/build-1.4.2-py3-none-any.whl", hash = "sha256:7a4d8651ea877cb2a89458b1b198f2e69f536c95e89129dbf5d448045d60db88", size = 24643, upload-time = "2026-03-25T14:20:26.568Z" },
+    { url = "https://files.pythonhosted.org/packages/fa/88/6764e7a109dd84294850741501145da90d13cdeac9d4e614929464a37420/build-1.4.4-py3-none-any.whl", hash = "sha256:8c3f48a6090b39edec1a273d2d57949aaf13723b01e02f9d518396887519f64d", size = 25921, upload-time = "2026-04-22T20:53:43.251Z" },
 ]
 
 [[package]]
@@ -612,11 +612,11 @@ wheels = [
 
 [[package]]
 name = "libtmux"
-version = "0.55.0"
+version = "0.55.1"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/f7/85/99932ac9ddb90821778f8cabe32b81bbbec280dd1a14a457c512693fb11b/libtmux-0.55.0.tar.gz", hash = "sha256:cdc4aa564b2325618d73d57cb0d7d92475d02026dba2b96a94f87ad328e7e79d", size = 420859, upload-time = "2026-03-08T00:57:55.788Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/86/01/fa4f839045d32576d4c193d85ba37e47908fea8227f18800847f589e2476/libtmux-0.55.1.tar.gz", hash = "sha256:dcee950537b8bda4337267bc2cb62b434c4c8da3a75c1546151674238ef14e20", size = 439372, upload-time = "2026-04-19T18:25:39.358Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8b/34/b11ab24abb78c73a1b82f6471c2d71bdd1bf2c8f30768ed2f26f1dddc083/libtmux-0.55.0-py3-none-any.whl", hash = "sha256:4b746533856e022c759e5c5cae97f4932e85dae316a2afd4391d6d0e891d6ab8", size = 80094, upload-time = "2026-03-08T00:57:54.141Z" },
+    { url = "https://files.pythonhosted.org/packages/12/2e/819d7414b96f19ec4cafda95555246bdb9766dd7c0519b5b1bf4495789f7/libtmux-0.55.1-py3-none-any.whl", hash = "sha256:4382667d508610bdf71a7cc07d7a561d402fa2d5621cce299e7ae97b0cdcb93b", size = 80679, upload-time = "2026-04-19T18:25:37.61Z" },
 ]
 
 [[package]]
@@ -795,7 +795,7 @@ wheels = [
 
 [[package]]
 name = "pipx"
-version = "1.11.0"
+version = "1.11.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "argcomplete" },
@@ -804,9 +804,9 @@ dependencies = [
     { name = "platformdirs" },
     { name = "userpath" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5c/f6/a7af5727ecc6f390315471c95ed64eac03b33278d8bc92d9c81229a31f84/pipx-1.11.0.tar.gz", hash = "sha256:fa6ab8ab05084cd86bf38ed78e745c4c82ff5325b43ba73d836521b4815dab28", size = 289049, upload-time = "2026-03-23T18:55:14.035Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/4d/8f/64a3a5a9c58e7b296324e2764efcb51a74e2de2e5738ceb7591fb00158cc/pipx-1.11.1.tar.gz", hash = "sha256:e57354c3308b0abb75106d3b73a0d1ffa5c25f24f29e9f4a45e575776dbab85c", size = 289593, upload-time = "2026-03-31T09:49:03.213Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/61/a1/a4be024ba9aa1bbec5875552b2ddf665e9f56af8a52f16889d44823a2040/pipx-1.11.0-py3-none-any.whl", hash = "sha256:37b49e721e6a8a3b5fad3ebdf98f9cdb9d2a07ff2ce56f83e189f54633d3820b", size = 75913, upload-time = "2026-03-23T18:55:12.351Z" },
+    { url = "https://files.pythonhosted.org/packages/fd/39/5bcfb26e7ef76105249ade12243a32206bb9f503da45a34d289d1c66af0e/pipx-1.11.1-py3-none-any.whl", hash = "sha256:f854fbf01c179db4331adcf6e1b95836b524100135b5d35822497a47a3857e89", size = 76482, upload-time = "2026-03-31T09:49:01.934Z" },
 ]
 
 [[package]]
@@ -829,7 +829,7 @@ wheels = [
 
 [[package]]
 name = "pre-commit"
-version = "4.5.1"
+version = "4.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cfgv" },
@@ -838,9 +838,9 @@ dependencies = [
     { name = "pyyaml" },
     { name = "virtualenv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/40/f1/6d86a29246dfd2e9b6237f0b5823717f60cad94d47ddc26afa916d21f525/pre_commit-4.5.1.tar.gz", hash = "sha256:eb545fcff725875197837263e977ea257a402056661f09dae08e4b149b030a61", size = 198232, upload-time = "2025-12-16T21:14:33.552Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8e/22/2de9408ac81acbb8a7d05d4cc064a152ccf33b3d480ebe0cd292153db239/pre_commit-4.6.0.tar.gz", hash = "sha256:718d2208cef53fdc38206e40524a6d4d9576d103eb16f0fec11c875e7716e9d9", size = 198525, upload-time = "2026-04-21T20:31:41.613Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5d/19/fd3ef348460c80af7bb4669ea7926651d1f95c23ff2df18b9d24bab4f3fa/pre_commit-4.5.1-py2.py3-none-any.whl", hash = "sha256:3b3afd891e97337708c1674210f8eba659b52a38ea5f822ff142d10786221f77", size = 226437, upload-time = "2025-12-16T21:14:32.409Z" },
+    { url = "https://files.pythonhosted.org/packages/80/6e/4b28b62ecb6aae56769c34a8ff1d661473ec1e9519e2d5f8b2c150086b26/pre_commit-4.6.0-py2.py3-none-any.whl", hash = "sha256:e2cf246f7299edcabcf15f9b0571fdce06058527f0a06535068a86d38089f29b", size = 226472, upload-time = "2026-04-21T20:31:40.092Z" },
 ]
 
 [[package]]
