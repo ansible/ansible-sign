@@ -294,9 +294,9 @@ def test_gpg_sign_with_broken_symlink(
     capsys, unsigned_project_with_broken_symlink, gpg_home_with_secret_key_no_pass
 ):
     """
-    Test that we show a warning when there's a broken symlink in the project
-    directory. This works around a distlib.manifest bug, but tests our handling
-    of it.
+    Test that signing succeeds even with a broken symlink in the project
+    directory. distlib >= 0.4.3 handles broken symlinks gracefully by
+    excluding them from the manifest, so signing no longer fails.
     """
     project_root = str(unsigned_project_with_broken_symlink)
     args = [
@@ -307,8 +307,8 @@ def test_gpg_sign_with_broken_symlink(
     ]
     rc = main(args)
     captured = capsys.readouterr()
-    assert "Broken symlink found at" in captured.out
-    assert rc == 1
+    assert "GPG signing successful" in captured.out
+    assert rc == 0
 
 
 def test_main_color(capsys, signed_project_and_gpg):
