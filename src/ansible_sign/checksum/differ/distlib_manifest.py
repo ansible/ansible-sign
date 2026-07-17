@@ -11,7 +11,7 @@ class DistlibManifestChecksumFileExistenceDiffer(ChecksumFileExistenceDiffer):
     what is listed in the checksum file with what is "reality".
     """
 
-    always_added_files = set(["MANIFEST.in"])
+    always_added_files = {"MANIFEST.in"}
 
     def gather_files(self, verifying=False):
         files_set = set()

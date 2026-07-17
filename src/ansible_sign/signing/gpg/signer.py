@@ -39,9 +39,6 @@ class GPGSigner(SignatureSigner):
         self.gpg_home = gpg_home
 
     def sign(self) -> SignatureSigningResult:
-        # TODO: We currently use the default GPG home directory in the signing
-        # case and assume the secret key exists in it. Is there a better way to
-        # do this?
         gpg = gnupg.GPG(gnupghome=self.gpg_home)
         with open(self.manifest_path, "rb") as f:
             sign_result = gpg.sign_file(

@@ -12,5 +12,3 @@ All verification methods contain two modules:
 """
 
 from .gpg import GPGSigner, GPGVerifier  # noqa
-
-# from .base import *
