@@ -35,7 +35,7 @@ class ChecksumFileExistenceDiffer:
     def __init__(self, root):
         self.root = root
 
-    def gather_files(self, _verifying=False):
+    def gather_files(self, verifying=False):  # noqa: ARG002
         return set()
 
     def list_files(self, verifying):
