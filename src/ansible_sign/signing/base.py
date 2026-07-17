@@ -4,7 +4,9 @@ class SignatureVerificationResult:
     def __init__(self, success, summary, extra_information=None):
         self.success = success
         self.summary = summary
-        self.extra_information = extra_information if extra_information is not None else {}
+        self.extra_information = (
+            extra_information if extra_information is not None else {}
+        )
 
     def __bool__(self):
         return self.success
@@ -31,7 +33,9 @@ class SignatureSigningResult:
     def __init__(self, success, summary, extra_information=None):
         self.success = success
         self.summary = summary
-        self.extra_information = extra_information if extra_information is not None else {}
+        self.extra_information = (
+            extra_information if extra_information is not None else {}
+        )
 
     def __bool__(self):
         return self.success
