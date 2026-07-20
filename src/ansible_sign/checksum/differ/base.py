@@ -19,10 +19,10 @@ class ChecksumFileExistenceDiffer:
 
     # These are tuples of path elements, compared to the path's parts (as
     # presented by pathlib).
-    ignored_paths = set([
+    ignored_paths = {
         ".ansible-sign",
         ".ansible-sign/**",
-    ])
+    }
 
     # Files that get added to the manifest in list_files() even if not
     # explicitly found by gather_files()
@@ -35,7 +35,7 @@ class ChecksumFileExistenceDiffer:
     def __init__(self, root):
         self.root = root
 
-    def gather_files(self, verifying=False):
+    def gather_files(self, verifying=False):  # noqa: ARG002
         return set()
 
     def list_files(self, verifying):
@@ -47,7 +47,7 @@ class ChecksumFileExistenceDiffer:
         is what is used to toggle this logic.
         """
         gathered = self.gather_files(verifying=verifying)
-        files = set(os.path.normpath(f) for f in gathered)
+        files = {os.path.normpath(f) for f in gathered}
 
         for path in files.copy():
             for ignored_path in self.ignored_paths:

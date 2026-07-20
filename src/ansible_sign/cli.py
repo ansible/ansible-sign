@@ -20,6 +20,7 @@ __license__ = "MIT"
 
 # This is relative to the project root passed in by the user at runtime.
 ANSIBLE_SIGN_DIR = ".ansible-sign"
+CHECKSUM_MANIFEST_FILE = "sha256sum.txt"
 
 
 class AnsibleSignCLI:
@@ -249,7 +250,7 @@ class AnsibleSignCLI:
         differ = DistlibManifestChecksumFileExistenceDiffer
         checksum = ChecksumFile(self.args.project_root, differ=differ)
         checksum_path = os.path.join(
-            self.args.project_root, ".ansible-sign", "sha256sum.txt"
+            self.args.project_root, ANSIBLE_SIGN_DIR, CHECKSUM_MANIFEST_FILE
         )
         checksum_file_contents = open(checksum_path, "r").read()
 
@@ -298,10 +299,10 @@ class AnsibleSignCLI:
 
     def gpg_verify(self):
         signature_file = os.path.join(
-            self.args.project_root, ".ansible-sign", "sha256sum.txt.sig"
+            self.args.project_root, ANSIBLE_SIGN_DIR, f"{CHECKSUM_MANIFEST_FILE}.sig"
         )
         manifest_file = os.path.join(
-            self.args.project_root, ".ansible-sign", "sha256sum.txt"
+            self.args.project_root, ANSIBLE_SIGN_DIR, CHECKSUM_MANIFEST_FILE
         )
 
         if not os.path.exists(signature_file):
@@ -361,7 +362,7 @@ class AnsibleSignCLI:
     def gpg_sign(self):
         # Step 1: Manifest
         manifest_path = os.path.join(
-            self.args.project_root, ".ansible-sign", "sha256sum.txt"
+            self.args.project_root, ANSIBLE_SIGN_DIR, CHECKSUM_MANIFEST_FILE
         )
         checksum_file_contents = self._generate_checksum_manifest()
         if checksum_file_contents is False:
@@ -385,7 +386,7 @@ class AnsibleSignCLI:
             os.environ["GPG_TTY"] = os.ttyname(sys.stdin.fileno())
 
         signature_path = os.path.join(
-            self.args.project_root, ".ansible-sign", "sha256sum.txt.sig"
+            self.args.project_root, ANSIBLE_SIGN_DIR, f"{CHECKSUM_MANIFEST_FILE}.sig"
         )
         signer = GPGSigner(
             manifest_path=manifest_path,

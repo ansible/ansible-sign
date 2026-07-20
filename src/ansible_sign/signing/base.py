@@ -1,10 +1,12 @@
 class SignatureVerificationResult:
     """Represents the result after performing signature verification."""
 
-    def __init__(self, success, summary, extra_information={}):
+    def __init__(self, success, summary, extra_information=None):
         self.success = success
         self.summary = summary
-        self.extra_information = extra_information
+        self.extra_information = (
+            extra_information if extra_information is not None else {}
+        )
 
     def __bool__(self):
         return self.success
@@ -28,10 +30,12 @@ class SignatureVerifier:
 class SignatureSigningResult:
     """Represents the result after performing signing."""
 
-    def __init__(self, success, summary, extra_information={}):
+    def __init__(self, success, summary, extra_information=None):
         self.success = success
         self.summary = summary
-        self.extra_information = extra_information
+        self.extra_information = (
+            extra_information if extra_information is not None else {}
+        )
 
     def __bool__(self):
         return self.success
