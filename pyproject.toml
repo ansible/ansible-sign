@@ -1,7 +1,7 @@
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = [
-  "setuptools >= 65.3.0", # required by pyproject+setuptools_scm integration and editable installs
+  "setuptools >= 84.0.0", # required by pyproject+setuptools_scm integration and editable installs
   "setuptools_scm[toml] >= 7.0.5" # required for "no-local-version" scheme
 ]
 
@@ -15,7 +15,7 @@ dev = [
   "pytest-cov>=7.0.0",
   "pytest-mock>=3.15.0",
   "pytest-sugar>=1.1.1",
-  "setuptools>=80.9.0",
+  "setuptools>=84.0.0",
   "yamllint>=1.37.1"
 ]
 docs = [
@@ -28,7 +28,7 @@ lint = [
 ]
 pkg = [
   "build>=0.9",
-  "pip>=25.2",
+  "pip>=26.2.1",
   "pipx>=1.7.1",
   "twine>=4.0.1"
 ]
